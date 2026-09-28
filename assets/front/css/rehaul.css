@@ -1,0 +1,1649 @@
+/* ==========================================================================
+   DEXTE UI rehaul
+   --------------------------------------------------------------------------
+   Loaded AFTER themes.css. Deleting this file and its <link> in
+   front/layout/head.php reverts the whole visual change.
+
+   WHY SO MANY !important
+   themes.css carries 3,739 !important declarations, including on utility
+   classes like .bg-white, .text-secondary and .bg-hover-primary that appear
+   directly in the markup. A normal-specificity override loses every one of
+   those conflicts silently - which is exactly what happened on the first
+   attempt, where only the spacing (the one place !important was used) took
+   effect. Matching that weight is the only way to win without editing 22k
+   lines of vendor CSS.
+
+   PALETTE - soft blush / rose on warm neutrals.
+   Built from the blush pink and ivory in chnages-to-do/color-theme-full-web.md
+   and contrast-corrected. The doc's own values fail WCAG AA as text, so they
+   are kept for backgrounds only and darkened where text sits on them:
+     doc blush #F8D7DA on white =  1.28:1 -> background only
+     doc gold  #D4AF37 on white =  2.10:1 -> dropped
+     rose      #B04A63 + white  =  5.24:1 -> buttons, links, active states
+     charcoal  #333333 on white = 12.6:1  -> headings
+     body      #5F5458 on white =  6.4:1  -> body copy
+   No teal and no green anywhere.
+   ========================================================================== */
+
+:root {
+    /* Surfaces - warm, light, low-contrast */
+    --dx-ivory:       #faf7f5;   /* page background */
+    --dx-blush-bg:    #fdf3f5;   /* tinted section background */
+    --dx-blush:       #f8d7da;   /* accent block, from the palette doc */
+    --dx-blush-soft:  #fbe8ea;   /* hover tint */
+
+    /* Ink */
+    --dx-charcoal:    #333;
+    --dx-body:        #5f5458;
+    --dx-muted:       #9b8e92;
+
+    /* Action - dusty rose, 5.24:1 with white */
+    --dx-rose:        #b04a63;
+    --dx-rose-dark:   #8f3a4f;
+    --dx-plum:        #43303a;   /* footer / dark surface */
+
+    --dx-line:        #efe4e6;
+
+    --dx-radius:      14px;
+    --dx-radius-sm:   10px;
+    --dx-ease:        cubic-bezier(.2, .7, .3, 1);
+    --dx-shadow:      0 1px 2px rgba(67, 48, 58, .04), 0 8px 24px rgba(67, 48, 58, .07);
+    --dx-shadow-lg:   0 2px 6px rgba(67, 48, 58, .06), 0 18px 44px rgba(67, 48, 58, .12);
+
+    --dx-section-y:   5.5rem;
+}
+
+/* ==========================================================================
+   1. Typography
+   ========================================================================== */
+body {
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.65 !important;
+    color: var(--dx-body) !important;
+    background-color: var(--dx-ivory) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+p { line-height: 1.7 !important; }
+
+h1, h2, h3, h4, h5, h6,
+.fs-68, .fs-48, .fs-34, .fs-24, .fs-20 {
+    font-weight: 600 !important;
+    color: var(--dx-charcoal) !important;
+    line-height: 1.22 !important;
+}
+
+h1, .fs-68, .fs-48 { letter-spacing: -.022em !important; }
+h2, .fs-34         { letter-spacing: -.016em !important; }
+h3, h4, .fs-24     { letter-spacing: -.01em  !important; }
+
+/* .text-secondary is #000 in themes.css and carries most headings and prices. */
+.text-secondary { color: var(--dx-charcoal) !important; }
+
+/* ==========================================================================
+   2. Vertical rhythm
+   ========================================================================== */
+section.py-8, section.pt-8 { padding-top: var(--dx-section-y) !important; }
+section.py-8, section.pb-8 { padding-bottom: var(--dx-section-y) !important; }
+section.py-5  { padding-top: var(--dx-section-y) !important; padding-bottom: var(--dx-section-y) !important; }
+section.pt-10 { padding-top: calc(var(--dx-section-y) * 1.15) !important; }
+section.pb-10 { padding-bottom: calc(var(--dx-section-y) * 1.15) !important; }
+section.pt-11 { padding-top: calc(var(--dx-section-y) * 1.25) !important; }
+
+/* ==========================================================================
+   3. Buttons
+   The real button class across this site is .btn-secondary (--secondary:#000),
+   which is what renders the flat black pills. Those become dusty rose.
+   ========================================================================== */
+.btn {
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    letter-spacing: .01em !important;
+    padding: .72rem 1.6rem !important;
+    transition: background-color .2s var(--dx-ease), border-color .2s var(--dx-ease),
+                color .2s var(--dx-ease), transform .12s var(--dx-ease),
+                box-shadow .2s var(--dx-ease) !important;
+}
+
+.btn-secondary,
+.btn-secondary:not(:disabled):not(.disabled),
+.btn-primary,
+.btn-dark {
+    background-color: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+.btn-secondary:hover, .btn-secondary:focus,
+.btn-primary:hover,   .btn-primary:focus,
+.btn-dark:hover,      .btn-dark:focus {
+    background-color: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 22px rgba(176, 74, 99, .26) !important;
+    transform: translateY(-1px);
+}
+
+.btn:active { transform: translateY(1px); }
+
+.bg-hover-primary:hover,
+.bg-hover-secondary:hover {
+    background-color: var(--dx-rose-dark) !important;
+    color: #fff !important;
+}
+
+.hover-white:hover { color: #fff !important; }
+
+/* Chips sitting on photography (category tiles, "Shop Now"). */
+.bg-white.btn, .btn.bg-white {
+    background-color: rgba(255, 255, 255, .94) !important;
+    color: var(--dx-charcoal) !important;
+    box-shadow: 0 4px 16px rgba(67, 48, 58, .16) !important;
+}
+
+.bg-white.btn:hover, .btn.bg-white:hover {
+    background-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+/* Underlined text links ("Shop Now", "Shop All Products"). */
+.btn-link {
+    color: var(--dx-rose) !important;
+    border-radius: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.btn-link:hover { color: var(--dx-rose-dark) !important; }
+a:hover { color: var(--dx-rose) !important; }
+
+/* ==========================================================================
+   4. Cards
+   ========================================================================== */
+.card { border-radius: var(--dx-radius) !important; border-color: var(--dx-line) !important; }
+
+.card.product, .card.border-0 {
+    background: #fff !important;
+    overflow: hidden !important;
+    transition: transform .3s var(--dx-ease), box-shadow .3s var(--dx-ease) !important;
+}
+
+.card.product:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--dx-shadow-lg) !important;
+}
+
+.card.product .main-image, .card .card-img {
+    transition: transform .6s var(--dx-ease) !important;
+    width: 100%;
+}
+
+.card.product:hover .main-image,
+.card.hover-zoom-in:hover .card-img,
+.card.banner:hover .card-img { transform: scale(1.05); }
+
+.card.product .card-body { padding: 1.15rem 1rem 1.4rem !important; }
+
+.card.product .card-title, .card.product .card-title a {
+    color: var(--dx-charcoal) !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+}
+
+.card.product .card-text { color: var(--dx-charcoal) !important; }
+.text-decoration-through { color: var(--dx-muted) !important; font-weight: 400 !important; }
+
+/* The four absorbency boxes and any .shadow-1 panel. */
+.card.h-100, .shadow-1 {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius) !important;
+    box-shadow: var(--dx-shadow) !important;
+}
+
+/* ==========================================================================
+   5. Surfaces
+   The hard-coded tan (#deb08e) and grey (#F8F8F8) sections become blush/ivory.
+   ========================================================================== */
+section[style*="deb08e"], section[style*="DEB08E"] { background: var(--dx-blush-bg) !important; }
+section[style*="F8F8F8"], section[style*="f8f8f8"] { background: var(--dx-ivory) !important; }
+
+.bg-light, .bg-gray-1, .bg-gray-2 { background-color: var(--dx-blush-bg) !important; }
+
+/* ==========================================================================
+   6. FAQ accordion - flat tan bars become soft blush cards
+   ========================================================================== */
+.faqs .card, .accordion .card {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius-sm) !important;
+    margin-bottom: .85rem !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    box-shadow: 0 1px 2px rgba(67, 48, 58, .03) !important;
+}
+
+.faqs .card-header, .accordion .card-header {
+    background: var(--dx-blush-bg) !important;
+    border: 0 !important;
+    padding: .35rem .25rem !important;
+    transition: background-color .2s var(--dx-ease) !important;
+}
+
+.faqs .card-header:hover, .accordion .card-header:hover { background: var(--dx-blush-soft) !important; }
+
+.faqs .card-header a, .accordion .card-header a {
+    color: var(--dx-charcoal) !important;
+    font-weight: 600 !important;
+    border-bottom: 0 !important;
+}
+
+.faqs .card-body, .accordion .card-body { background: #fff !important; }
+
+/* ==========================================================================
+   7. Forms
+   ========================================================================== */
+.form-control, .custom-select, textarea.form-control {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius-sm) !important;
+    background-color: #fff !important;
+    color: var(--dx-charcoal) !important;
+    padding: .7rem 1rem !important;
+    height: auto !important;
+    box-shadow: none !important;
+    transition: border-color .18s var(--dx-ease), box-shadow .18s var(--dx-ease) !important;
+}
+
+.form-control:focus, .custom-select:focus {
+    border-color: var(--dx-rose) !important;
+    box-shadow: 0 0 0 3px rgba(176, 74, 99, .18) !important;
+}
+
+/* Contact page icon tiles - gold squares become soft blush. */
+.contact-info .icon, .contact-icon, .icon-box {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-rose) !important;
+    border-radius: var(--dx-radius-sm) !important;
+}
+
+/* ==========================================================================
+   8. Badges and size chips
+   ========================================================================== */
+.badge { border-radius: 999px !important; padding: .4em .9em !important; font-weight: 600 !important; }
+
+.badge-primary, .badge-secondary {
+    background-color: var(--dx-blush) !important;
+    color: var(--dx-rose-dark) !important;
+}
+
+.size-box label, .size label, .variation label {
+    border-radius: 999px !important;
+    border: 1px solid var(--dx-line) !important;
+    transition: all .18s var(--dx-ease) !important;
+}
+
+.size-box input:checked + label, .size input:checked + label {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+/* ==========================================================================
+   9. Header and footer
+   ========================================================================== */
+/* No backdrop-filter here: it creates a new containing block for absolutely
+   positioned descendants, which clipped the "Our Products" dropdown and made
+   it look like the menu had vanished. Solid background instead. */
+.header, header.header, .main-header {
+    background: transparent !important;
+    border-bottom: 0 !important;
+}
+
+footer, .footer, .bg-secondary {
+    background-color: var(--dx-plum) !important;
+    color: #e6d9dd !important;
+}
+
+footer a, .footer a { color: #e6d9dd !important; }
+footer a:hover, .footer a:hover { color: #fff !important; }
+footer h1, footer h2, footer h3, footer h4, footer h5, footer h6,
+.footer h1, .footer h2, .footer h3, .footer h4, .footer h5, .footer h6 { color: #fff !important; }
+
+.top-bar, .header-top, .announcement {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+/* ==========================================================================
+   10. Accessibility - themes.css strips focus outlines without replacing them
+   ========================================================================== */
+a:focus-visible, button:focus-visible, .btn:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--dx-rose) !important;
+    outline-offset: 2px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+    }
+    .card.product:hover { transform: none; }
+}
+
+@media (max-width: 767.98px) {
+    :root { --dx-section-y: 3.5rem; }
+    body { font-size: .9375rem !important; }
+    .btn { padding: .65rem 1.3rem !important; }
+}
+
+/* ==========================================================================
+   11. Gold -> rose, exhaustively
+   --------------------------------------------------------------------------
+   themes.css hard-codes the gold in 70 places as #e0c482 / #e1c584, only some
+   of which go through var(--primary). Overriding the variable alone therefore
+   changes almost nothing - which is why the first colour pass was invisible.
+   Every selector below was taken from a scan of themes.css, so this is the
+   complete set rather than a sample.
+   ========================================================================== */
+
+:root { --primary: #b04a63; --secondary: #333; }
+
+/* --- gold used as a BACKGROUND --- */
+.bg-primary,
+.badge-primary,
+.icn_data,
+.btn-style-one,
+.theme-btn.btn-style-one,
+.list-group-item.active,
+.main-header .navbar .cart-label,
+.main-header .navbar-right .number,
+.progress-bar,
+.cart-canvas .progress .indicator,
+.dropdown-item:active,
+.mfp-search-form .dropdown-item:focus,
+.nav-pills .show > .nav-link,
+.show > .btn-outline-primary.dropdown-toggle,
+.custom-control-input:checked ~ .custom-control-label::before,
+.dashboard-wrapper .pagination .page-item:hover .page-link,
+a.bg-hover-primary:focus,
+.rg marquee {
+    background-color: var(--dx-rose) !important;
+    background: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+.icn_data { border-radius: var(--dx-radius-sm) !important; }
+.icn_data svg, .icn_data i { color: #fff !important; }
+
+.btn-style-one, .theme-btn.btn-style-one {
+    border-color: var(--dx-rose) !important;
+    border-radius: 999px !important;
+}
+
+.btn-style-one:hover, .theme-btn.btn-style-one:hover {
+    background: var(--dx-rose-dark) !important;
+    background-color: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+}
+
+/* The FAQ accordion bars are .card-header painted with the gold. */
+.card-header {
+    background-color: var(--dx-blush-bg) !important;
+    background: var(--dx-blush-bg) !important;
+    border-color: var(--dx-line) !important;
+}
+
+.card-header a, .card-header h5, .card-header .mb-0 { color: var(--dx-charcoal) !important; }
+
+/* --- gold used as TEXT --- */
+.text-primary,
+.hover-primary:hover,
+a.hover-primary:hover,
+a.hover-primary:focus,
+.page-link:hover,
+.page-item.active .page-link,
+.nav-add-product .nav-link.active,
+.rate-input:hover > input:checked ~ label,
+.sidenav .dropdown-menu .dropdown-item:active,
+.main-header .sticky .main-menu .dropdown-menu .dropdown-header,
+.dashboard-wrapper .db-sidebar .list-group-item.active .sidebar-link,
+.dashboard-wrapper .db-sidebar .list-group-item.active .sidebar-link .sidebar-item-icon,
+.dashboard-wrapper .db-sidebar .sidebar-link:hover .sidebar-item-icon,
+.dashboard-wrapper .db-sidebar .sub-menu .sidebar-item.active .sidebar-link,
+.dashboard-wrapper .main-header .navbar a:hover,
+.dashboard-wrapper .sub-menu li a:hover,
+.dashboard-wrapper table thead th,
+.dashboard-wrapper .pagination .page-item .page-link,
+.btn-link:hover,
+.astrodivider i,
+.astrodivider span {
+    color: var(--dx-rose) !important;
+}
+
+/* --- gold used as a BORDER --- */
+.border-primary,
+.border-hover-primary:hover,
+.custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::before,
+.form-control-01 textarea.form-control:focus,
+.sidenav .dropdown-menu .dropdown-item:active .dropdown-link {
+    border-color: var(--dx-rose) !important;
+}
+
+input.checkbox-primary[type=checkbox] { accent-color: var(--dx-rose) !important; }
+
+/* The payment button swaps to the gold on hover. */
+.btn-payment:hover { background-color: var(--dx-rose) !important; color: #fff !important; }
+.btn-payment:hover svg { color: #fff !important; }
+
+/* The blush accent block keeps a soft tint rather than the solid rose. */
+.badge-primary, .badge-secondary {
+    background-color: var(--dx-blush) !important;
+    background: var(--dx-blush) !important;
+    color: var(--dx-rose-dark) !important;
+}
+
+/* The lilac promo strip at the very top. */
+[style*="ead1f0"], .top-strip, .offer-strip {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+/* Vendor-prefixed pseudo-elements MUST each be their own rule: a selector list
+   containing one the browser does not recognise is discarded entirely, which
+   silently killed the whole background block above on the previous attempt. */
+.custom-range::-webkit-slider-thumb { background-color: var(--dx-rose) !important; }
+.custom-range::-moz-range-thumb     { background-color: var(--dx-rose) !important; }
+.custom-range::-ms-thumb            { background-color: var(--dx-rose) !important; }
+
+/* ==========================================================================
+   12. Header height
+   --------------------------------------------------------------------------
+   themes.css sets img.logo1edit to 120px tall with 10px margins, so the logo
+   alone forces a ~140px header before the menu row is counted. That is what
+   makes the navbar read as oversized. Bringing the mark down to 64px and
+   trimming the sticky padding gives a header around 72-80px, which is the
+   normal range for a storefront.
+   ========================================================================== */
+
+img.logo1edit {
+    height: 64px !important;
+    margin: 6px 0 !important;
+    width: auto !important;
+    transition: height .2s var(--dx-ease) !important;
+}
+
+.main-header .navbar-brand { max-width: 150px !important; }
+
+/* The menu/search/icon rows carry sticky-py-xl-6 = 1.875rem top and bottom. */
+.main-header.header-sticky .sticky .sticky-py-xl-6 {
+    padding-top: .75rem !important;
+    padding-bottom: .75rem !important;
+}
+
+.main-header.header-sticky .sticky .sticky-py-xl-5 {
+    padding-top: .6rem !important;
+    padding-bottom: .6rem !important;
+}
+
+/* Slightly smaller again once the header sticks on scroll. */
+.main-header .sticky-area-wrap.sticky img.logo1edit {
+    height: 52px !important;
+}
+
+/* The thin promo strip above the header. */
+.main-header .topbar { padding-top: .3rem !important; padding-bottom: .3rem !important; }
+.main-header .topbar .fs-14 { font-size: 12px !important; }
+
+@media (max-width: 1199.98px) {
+    img.logo1edit { height: 48px !important; margin: 4px 0 !important; }
+    .main-header .navbar-brand { max-width: 120px !important; }
+}
+
+/* ==========================================================================
+   13. Card padding
+   --------------------------------------------------------------------------
+   The product-description panel is .card > .card-body.pt-5.pb-1.px-0, so its
+   text runs flush into the card edge once the card has a visible border and
+   radius. Restore horizontal padding on card bodies inside accordions, and
+   give the panel consistent inner spacing.
+   ========================================================================== */
+
+.accordion .card-body,
+.accordion .card-body.px-0 {
+    padding: 1.5rem 1.75rem 1.75rem !important;
+}
+
+.accordion .card-body h4,
+.accordion .card-body h3 {
+    margin-bottom: .85rem !important;
+}
+
+.accordion .card-body ul,
+.accordion .card-body ol {
+    padding-left: 1.25rem !important;
+    margin-bottom: .5rem !important;
+}
+
+.accordion .card-body li { margin-bottom: .35rem !important; }
+
+.accordion .card,
+.accordion .card.border-0 {
+    border: 1px solid var(--dx-line) !important;
+    background: #fff !important;
+}
+
+/* Section labels that sit directly above a panel ("Check Product Size"). */
+.product-detail h5, .product-detail h6,
+.accordion + h5, .accordion + h6 { margin-bottom: .6rem !important; }
+
+/* Generic card bodies elsewhere should never be flush to the edge either. */
+.card > .card-body.px-0:not(.product .card-body) { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+
+@media (max-width: 767.98px) {
+    .accordion .card-body,
+    .accordion .card-body.px-0 { padding: 1.15rem 1.15rem 1.35rem !important; }
+}
+
+/* ==========================================================================
+   14. Feature cards (Comfortable / Sustainable / Leak-Proof / Eco Friendly)
+   --------------------------------------------------------------------------
+   Markup is .card.border-0.text-center > .card-body.px-0.pt-6.mt-1.pb-0, so
+   the body has no horizontal and no bottom padding. Once the card gained a
+   surface in the rehaul the copy sat flush against the edges, and because the
+   cards size to their own content they end at different heights whenever one
+   caption wraps to three lines.
+   ========================================================================== */
+
+.card.border-0.text-center > .card-body,
+.card.border-0.text-center > .card-body.px-0 {
+    padding: .5rem 1.4rem 1.85rem !important;
+    margin-top: 0 !important;
+}
+
+.card.border-0.text-center > .card-body .fs-24 { margin-bottom: .6rem !important; }
+
+.card.border-0.text-center > .card-body p {
+    margin-bottom: 0 !important;
+    color: var(--dx-body) !important;
+}
+
+/* Icon gets room to breathe above the heading. */
+.card.border-0.text-center > .mw-102 { margin-top: 1.9rem !important; }
+
+/* Equal heights: stretch the column so height:100% on the card resolves.
+   :has() is supported in current Chrome/Safari/Firefox; where it is not, the
+   cards simply fall back to their natural heights - nothing breaks. */
+.row > [class*="col-"]:has(> .card.border-0.text-center) { display: flex !important; }
+
+.row > [class*="col-"] > .card.border-0.text-center {
+    height: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #fff !important;
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius) !important;
+    box-shadow: var(--dx-shadow) !important;
+    transition: transform .25s var(--dx-ease), box-shadow .25s var(--dx-ease) !important;
+}
+
+.row > [class*="col-"] > .card.border-0.text-center:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--dx-shadow-lg) !important;
+}
+
+/* Push the caption block to fill, so the cards bottom out evenly. */
+.row > [class*="col-"] > .card.border-0.text-center > .card-body { flex: 1 1 auto !important; }
+
+@media (max-width: 767.98px) {
+    .card.border-0.text-center > .card-body,
+    .card.border-0.text-center > .card-body.px-0 { padding: .4rem 1.15rem 1.4rem !important; }
+    .card.border-0.text-center > .mw-102 { margin-top: 1.4rem !important; }
+}
+
+/* ==========================================================================
+   15. Floating pill navbar
+   --------------------------------------------------------------------------
+   Turns the full-bleed white header into a floating rounded bar: dark plum,
+   inset from the page edges, riding above the hero. Purely visual - no markup,
+   class names or JS hooks change, so the sticky behaviour, the mega-menu and
+   the cart canvas all keep working.
+
+   Deliberately NO backdrop-filter anywhere in here: it establishes a new
+   containing block for absolutely positioned children, which is what made the
+   products dropdown disappear.
+   ========================================================================== */
+
+.main-header .sticky-area {
+    background: var(--dx-plum) !important;
+    border-radius: 999px !important;
+    max-width: 1240px !important;
+    margin: 14px auto 0 !important;
+    padding: 0 10px 0 6px !important;
+    box-shadow: 0 6px 28px rgba(67, 48, 58, .22) !important;
+    transition: max-width .25s var(--dx-ease), border-radius .25s var(--dx-ease),
+                margin .25s var(--dx-ease), box-shadow .25s var(--dx-ease) !important;
+}
+
+/* The bar must float over the hero rather than reserve a white strip. */
+.main-header .sticky-area-wrap { background: transparent !important; }
+
+/* Nav links go light on the dark bar. */
+.main-header .sticky-area .navbar .nav-link,
+.main-header .sticky-area .navbar-nav > li > a,
+.main-header .sticky-area .menu-bold .nav-link {
+    color: #f2e8ea !important;
+    font-weight: 500 !important;
+    letter-spacing: .005em !important;
+    transition: color .18s var(--dx-ease) !important;
+}
+
+.main-header .sticky-area .navbar .nav-link:hover,
+.main-header .sticky-area .navbar-nav > li > a:hover,
+.main-header .sticky-area .navbar-nav > li.active > a {
+    color: #fff !important;
+}
+
+/* Header action icons (search / account / cart). */
+.main-header .sticky-area .navbar-right a,
+.main-header .sticky-area .navbar-right .icon,
+.main-header .sticky-area svg { color: #f2e8ea !important; }
+.main-header .sticky-area .navbar-right a:hover { color: #fff !important; }
+
+/* The logo sits in a light lozenge so the gold mark stays legible on plum. */
+.main-header .sticky-area .navbar-brand {
+    background: #fff !important;
+    border-radius: 999px !important;
+    padding: 6px 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin-right: 6px !important;
+}
+
+.main-header .sticky-area img.logo1edit {
+    height: 40px !important;
+    margin: 0 !important;
+}
+
+/* Cart count chip. */
+.main-header .sticky-area .navbar .cart-label,
+.main-header .sticky-area .navbar-right .number {
+    background-color: var(--dx-rose) !important;
+    color: #fff !important;
+    border: 2px solid var(--dx-plum) !important;
+}
+
+/* Dropdowns: light panel, rounded, lifted. Must stay above the bar. */
+.main-header .dropdown-menu {
+    background: #fff !important;
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 18px 44px rgba(67, 48, 58, .16) !important;
+    padding: .5rem !important;
+    margin-top: 8px !important;
+    overflow: hidden !important;
+    z-index: 10000 !important;
+}
+
+.main-header .dropdown-menu a,
+.main-header .dropdown-menu .dropdown-item,
+.main-header .dropdown-menu .dropdown-link {
+    color: var(--dx-charcoal) !important;
+    border-radius: 9px !important;
+    padding: .5rem .75rem !important;
+}
+
+.main-header .dropdown-menu a:hover,
+.main-header .dropdown-menu .dropdown-item:hover {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-rose) !important;
+}
+
+/* Promo strip above the bar stays quiet. */
+.main-header .topbar {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+/* Once stuck, the bar widens to the full width and squares off, which reads as
+   "docked" rather than floating. */
+.main-header .sticky-area-wrap.sticky .sticky-area {
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    margin-top: 0 !important;
+    box-shadow: 0 2px 14px rgba(67, 48, 58, .18) !important;
+}
+
+@media (max-width: 1199.98px) {
+    .main-header .sticky-area {
+        max-width: calc(100% - 24px) !important;
+        border-radius: 22px !important;
+        padding: 4px 8px !important;
+    }
+    .main-header .sticky-area img.logo1edit { height: 34px !important; }
+    .main-header .sticky-area .navbar-brand { padding: 5px 12px !important; }
+}
+
+/* Nav items must not wrap - "About Us" and "Contact Us" were breaking onto a
+   second line and making the bar two rows tall. */
+.main-header .sticky-area .navbar .nav-link,
+.main-header .sticky-area .navbar-nav > li > a,
+.main-header .sticky-area .navbar-nav > li {
+    white-space: nowrap !important;
+}
+
+.main-header .sticky-area .navbar-nav > li > a,
+.main-header .sticky-area .navbar .nav-link {
+    padding-left: .85rem !important;
+    padding-right: .85rem !important;
+}
+
+.main-header .sticky-area .navbar-nav { flex-wrap: nowrap !important; align-items: center !important; }
+
+.main-header .sticky-area .navbar { min-height: 0 !important; }
+
+@media (min-width: 1200px) {
+    .main-header .sticky-area { padding-top: 4px !important; padding-bottom: 4px !important; }
+}
+
+/* The brand carries .mx-auto in the markup, which centres it inside the pill
+   and lands it on top of the first nav item. Pin it left instead. */
+.main-header .sticky-area .navbar-brand,
+.main-header .sticky-area .navbar-brand.mx-auto {
+    margin-left: 0 !important;
+    margin-right: 18px !important;
+    flex: 0 0 auto !important;
+}
+
+.main-header .sticky-area .d-flex.align-items-center { flex-wrap: nowrap !important; }
+
+/* Give the nav room so it starts clear of the logo lozenge. */
+.main-header .sticky-area .navbar-nav { margin-left: 4px !important; }
+
+/* The centring is on the WRAPPER (.mx-auto.flex-shrink-0.px-10), not on
+   .navbar-brand, so it has to be neutralised there or the lozenge keeps
+   landing on top of the first nav item. */
+.main-header .sticky-area .mx-auto.flex-shrink-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.main-header .sticky-area .px-10 {
+    padding-left: 0 !important;
+    padding-right: 22px !important;
+}
+
+/* The nav row is .w-100.justify-content-center; keep it centred but start it
+   clear of the brand. */
+.main-header .sticky-area .w-100.justify-content-center { padding-left: 10px !important; }
+
+/* ==========================================================================
+   16. Breadcrumb + hero
+   ========================================================================== */
+
+/* The breadcrumb carries .py-0, so it sat cramped between the header and the
+   gallery with no room and text small enough to disappear. */
+.breadcrumb.breadcrumb-site,
+.breadcrumb {
+    background: transparent !important;
+    padding: 1.35rem 0 1.5rem !important;
+    margin-bottom: 0 !important;
+    font-size: .9375rem !important;
+}
+
+.breadcrumb .breadcrumb-item,
+.breadcrumb .breadcrumb-item a {
+    color: var(--dx-body) !important;
+    font-weight: 500 !important;
+}
+
+.breadcrumb .breadcrumb-item a:hover { color: var(--dx-rose) !important; }
+
+.breadcrumb .breadcrumb-item.active,
+.breadcrumb .breadcrumb-item.active a {
+    color: var(--dx-charcoal) !important;
+    font-weight: 600 !important;
+}
+
+/* Breathing room under the breadcrumb strip before the product gallery. */
+.breadcrumb-wrap, .breadcrumb-area { padding-bottom: .75rem !important; }
+
+/* --------------------------------------------------------------------------
+   Hero
+   The slide is .bg-img-cover-center.py-8.py-lg-14, so its height comes purely
+   from padding and the artwork ends up short on wide screens. Give it a real
+   minimum height so the photography reads at full scale, and separate it from
+   the floating navbar.
+   -------------------------------------------------------------------------- */
+.slider .box .bg-img-cover-center,
+section.slider .bg-img-cover-center {
+    min-height: 74vh !important;
+    display: flex !important;
+    align-items: center !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* Gap between the floating pill navbar and the hero. */
+.main-header .sticky-area-wrap { padding-bottom: 14px !important; }
+
+section.slider, .slider { margin-top: 0 !important; }
+
+@media (max-width: 991.98px) {
+    .slider .box .bg-img-cover-center,
+    section.slider .bg-img-cover-center { min-height: 56vh !important; }
+    .breadcrumb.breadcrumb-site, .breadcrumb { padding: 1rem 0 1.1rem !important; font-size: .875rem !important; }
+}
+
+/* ==========================================================================
+   17. Header overlays the hero
+   --------------------------------------------------------------------------
+   The floating pill still sat in normal flow, so it reserved a band of page
+   background above the hero - the white strip. Lifting the header out of flow
+   lets the hero start at the very top with the pill riding over it.
+
+   Scoped with :has() to pages that actually have a hero slider. On pages
+   without one (shop, contact, product) the header must stay in flow or it
+   would sit on top of the content. Browsers without :has() simply keep the
+   old in-flow header, which is the safe fallback.
+   ========================================================================== */
+
+/* Promo marquee removed as requested. */
+.main-header .topbar,
+.main-header .topbar-wrap { display: none !important; }
+
+/* The header is CSS-fixed rather than absolute, and theme.js is deliberately
+   prevented from repositioning it (see the position:relative !important on
+   .sticky-area below). Its processSticky() re-measures $wrap.offset().top on
+   every scroll event; once it sets the bar to fixed that offset changes, so it
+   un-fixes, re-measures and re-fixes - a feedback loop that made the bar
+   stutter and vanish while scrolling. Letting CSS own the positioning removes
+   the loop entirely. The .sticky class JS still toggles is used only to change
+   the bar's appearance once docked. */
+body:has(section.slider) .main-header {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    width: 100% !important;
+    z-index: 1040 !important;
+    background: transparent !important;
+}
+
+body:has(section.slider) .main-header .sticky-area-wrap {
+    background: transparent !important;
+    padding-bottom: 0 !important;
+}
+
+body:has(section.slider) .main-header .sticky-area {
+    margin-top: 18px !important;
+}
+
+/* The hero starts at the top of the document. */
+body:has(section.slider) section.slider { margin-top: 0 !important; }
+
+/* Once the header sticks on scroll it must become fixed and opaque again,
+   otherwise it would scroll away with the hero. */
+body:has(section.slider) .main-header .sticky-area-wrap.sticky {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    width: 100% !important;
+    z-index: 1040 !important;
+}
+
+/* Pages with no hero keep a normal header; just drop the extra gap now that
+   the promo strip is gone. */
+body:not(:has(section.slider)) .main-header .sticky-area-wrap {
+    padding-top: 10px !important;
+    padding-bottom: 14px !important;
+}
+
+/* ==========================================================================
+   18. Nav overlap + hero crop
+   --------------------------------------------------------------------------
+   The menu <ul> carries .mx-xl-n5, a NEGATIVE margin that pulls it outside its
+   own column: measured at x=98 while its parent starts at x=222. That is what
+   slid the links under the logo lozenge, not the brand's centring. Neutralise
+   the negative margin instead of pushing the brand around.
+   ========================================================================== */
+
+.main-header .sticky-area .navbar-nav.mx-xl-n5,
+.main-header .sticky-area .navbar-nav.main-menu {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.main-header .sticky-area .w-50.justify-content-end { padding-left: 14px !important; }
+
+/* --------------------------------------------------------------------------
+   Hero framing
+   With the bar now floating over the artwork, the subject's head sat behind
+   it. A taller slide means background-size:cover reveals more vertical area,
+   so the subject drops clear of the bar, and the content gets top padding so
+   the headline never starts underneath it either.
+   -------------------------------------------------------------------------- */
+.slider .box .bg-img-cover-center,
+section.slider .bg-img-cover-center {
+    min-height: 88vh !important;
+    background-position: center top !important;
+    padding-top: 132px !important;
+}
+
+@media (max-width: 991.98px) {
+    .slider .box .bg-img-cover-center,
+    section.slider .bg-img-cover-center {
+        min-height: 66vh !important;
+        padding-top: 104px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Nav column width - the actual cause of the logo overlap
+   The menu <ul> needs ~745px but sits in a .w-50 column of ~597px. It
+   overflows by ~148px, and since that column is justify-content:flex-end the
+   overflow spills LEFT, putting the first links under the logo. Margins were
+   never the problem. Let the columns size to content instead of a hard 50%.
+   -------------------------------------------------------------------------- */
+.main-header .sticky-area .w-50 {
+    width: auto !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+.main-header .sticky-area .w-50.justify-content-end {
+    justify-content: flex-start !important;
+    padding-left: 18px !important;
+}
+
+/* Trim the per-item padding so the menu fits comfortably at 1440. */
+.main-header .sticky-area .navbar-nav > li.nav-item {
+    padding-left: .55rem !important;
+    padding-right: .55rem !important;
+}
+
+.main-header .sticky-area .navbar-nav > li > a,
+.main-header .sticky-area .navbar .nav-link {
+    padding-left: .35rem !important;
+    padding-right: .35rem !important;
+}
+
+/* Keep the icon cluster pinned right. */
+.main-header .sticky-area .nav-right-part,
+.main-header .sticky-area .navbar-right { margin-left: auto !important; }
+
+/* ==========================================================================
+   19. Frosted navbar
+   --------------------------------------------------------------------------
+   backdrop-filter must NOT go on .sticky-area itself: it would establish a new
+   containing block for absolutely positioned descendants and clip the
+   Our Products dropdown again, which is exactly the bug fixed earlier.
+
+   Instead the blur lives on a ::before pseudo-element sitting behind the bar's
+   content (z-index:-1). The filter still samples what is underneath, but the
+   dropdown's containing block is untouched.
+   ========================================================================== */
+
+.main-header .sticky-area {
+    /* NO !important on position: theme.js sets position:fixed INLINE when the
+       header docks, and an !important declaration here would outrank the inline
+       style and silently kill the sticky behaviour. `relative` is only the
+       resting state so the ::before has a positioned ancestor; `fixed` also
+       positions it, so the frost survives docking. */
+    /* !important here intentionally outranks the inline position:fixed that
+       theme.js writes on scroll. That is what stops the flicker loop. The bar
+       stays relative inside a fixed .main-header, so it is always on screen. */
+    position: relative !important;
+    background: transparent !important;
+    box-shadow: 0 8px 30px rgba(67, 48, 58, .16) !important;
+}
+
+.main-header .sticky-area::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(67, 48, 58, .42);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, .14);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Where backdrop-filter is unsupported the translucent fill alone would look
+   washed out, so fall back to a more solid plum. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .main-header .sticky-area::before { background: rgba(67, 48, 58, .88); }
+}
+
+/* Slightly stronger text so it stays legible over the blur. */
+.main-header .sticky-area .navbar-nav > li > a,
+.main-header .sticky-area .navbar .nav-link {
+    color: #fdf6f7 !important;
+    text-shadow: 0 1px 2px rgba(40, 26, 33, .28) !important;
+}
+
+
+
+/* --------------------------------------------------------------------------
+   Hero fills more of the viewport so the pale band at the bottom left closes up
+   -------------------------------------------------------------------------- */
+.slider .box .bg-img-cover-center,
+section.slider .bg-img-cover-center {
+    min-height: 95vh !important;
+}
+
+@media (max-width: 991.98px) {
+    .slider .box .bg-img-cover-center,
+    section.slider .bg-img-cover-center { min-height: 72vh !important; }
+}
+
+/* Hero: fill the viewport outright so no page background shows under it. */
+.slider .box .bg-img-cover-center,
+section.slider .bg-img-cover-center {
+    min-height: 100vh !important;
+}
+
+@media (max-width: 991.98px) {
+    .slider .box .bg-img-cover-center,
+    section.slider .bg-img-cover-center { min-height: 78vh !important; }
+}
+
+/* ==========================================================================
+   20. Docked (sticky) header
+   --------------------------------------------------------------------------
+   theme.js sets position:fixed + top inline on .sticky-area and adds .sticky
+   to .sticky-area-wrap. It does NOT set left/right, so a fixed element that
+   was previously centred by `margin: auto` would collapse to its content
+   width. Pin it across the viewport here.
+   ========================================================================== */
+
+.main-header .sticky-area-wrap.sticky .sticky-area {
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 2px 18px rgba(67, 48, 58, .22) !important;
+}
+
+/* Docked bar firms up so text stays readable over scrolling content. */
+/* Stay frosted when docked - only nudge the tint up a little so text keeps
+   its contrast over scrolling content. Going near-opaque threw the glass
+   effect away, which was the whole point of the bar. */
+.main-header .sticky-area-wrap.sticky .sticky-area::before {
+    background: rgba(67, 48, 58, .58) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    border-color: rgba(255, 255, 255, .12) !important;
+}
+
+.main-header .sticky-area-wrap.sticky img.logo1edit { height: 44px !important; }
+
+/* The wrap keeps the page from jumping when the bar leaves the flow. On hero
+   pages the header is already out of flow, so no reserve is needed there. */
+body:not(:has(section.slider)) .main-header .sticky-area-wrap.sticky { min-height: 76px; }
+
+/* ==========================================================================
+   21. Stop the header spilling past the viewport
+   --------------------------------------------------------------------------
+   Measured: at ~1425px the document scrollWidth ran 25px wider than the
+   client width, producing a horizontal scrollbar. The pill's fixed 1240px
+   max-width plus the menu's intrinsic width exceeded the available space in
+   that band. Clamping to the viewport and letting the flex children shrink
+   removes it without clipping the dropdown (no overflow:hidden on the bar).
+   ========================================================================== */
+
+.main-header .sticky-area {
+    max-width: min(1240px, calc(100vw - 30px)) !important;
+    box-sizing: border-box !important;
+}
+
+.main-header .sticky-area .container,
+.main-header .sticky-area .container-xxl {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Flex children default to min-width:auto and refuse to shrink below their
+   content, which is what pushed the row past the bar. */
+.main-header .sticky-area .d-flex,
+.main-header .sticky-area .w-50,
+.main-header .sticky-area .navbar-nav,
+.main-header .sticky-area .navbar-nav > li {
+    min-width: 0 !important;
+}
+
+.main-header .sticky-area .navbar-nav { flex-shrink: 1 !important; }
+
+/* Belt and braces: the page itself never scrolls sideways. overflow-x is on
+   the root rather than on the header, so dropdowns are unaffected. */
+html, body { overflow-x: hidden !important; max-width: 100% !important; }
+
+/* ==========================================================================
+   22. Absorbency cards
+   --------------------------------------------------------------------------
+   Two problems. The labels use .spancolor (#deb08e), which measures about
+   2.2:1 on white and reads as washed-out peach rather than a label. And the
+   cards size to their own content, so the four Shop buttons ended up at four
+   different heights - the single biggest reason the row looked unfinished.
+   ========================================================================== */
+
+/* Labels: readable, and clearly secondary to the value beneath them. */
+.spancolor {
+    color: var(--dx-rose) !important;
+    font-weight: 600 !important;
+    letter-spacing: .015em !important;
+}
+
+/* The droplet rating keeps the brand tint but at a legible strength. */
+.list-inline-item.spancolor .fa-tint,
+.list-inline-item.spancolor .fas { color: var(--dx-rose) !important; }
+
+/* The overlay MUST stay absolutely positioned. Setting it to relative takes it
+   out of overlay mode, so .card-img claims its own vertical space above the
+   text and the card balloons to roughly twice its height with a blank band on
+   top. Only the internal layout changes here: a flex column so the CTA can be
+   pushed to the bottom edge, which is what actually made the buttons line up.
+   The card itself keeps the height .card-img gives it. */
+.card .card-img-overlay {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.5rem 1.4rem 1.5rem !important;
+}
+
+/* Push the CTA to the bottom so all four line up. The auto margin has to go on
+   the wrapper <div class="text-center">, since that is the actual flex child of
+   the overlay - putting it on the .btn inside that div does nothing, which is
+   why the buttons stayed at four different heights. */
+.card .card-img-overlay > div:last-child { margin-top: auto !important; }
+.card .card-img-overlay > div:last-child .btn { margin-bottom: 0 !important; }
+
+.card .card-img-overlay .card-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    color: var(--dx-charcoal) !important;
+}
+
+/* The label/value pairs get consistent rhythm instead of ad-hoc margins. */
+.card .card-img-overlay .text-gray-03 { margin-bottom: .2rem !important; }
+.card .card-img-overlay p { margin-bottom: 1rem !important; }
+
+@media (max-width: 767.98px) {
+    .card .card-img-overlay { padding: 1.3rem 1.25rem 1.4rem !important; }
+    .card .card-img-overlay .card-title { font-size: 1.4rem !important; }
+}
+
+
+/* ==========================================================================
+   23. Footer - light, with the supplied floral artwork
+   --------------------------------------------------------------------------
+   Restyled only. No content, links, ordering or markup changed.
+
+   The artwork you supplied is JPEG on a solid white ground - the zips hold an
+   .eps plus a .jpg preview, and browsers cannot render EPS, so the JPEG is
+   what is usable. JPEG has no alpha, so the flowers can only sit cleanly on a
+   LIGHT surface, knocked out with mix-blend-mode: multiply. That is why the
+   footer moves to a warm blush ground rather than staying dark: on near-black
+   these images would show as white rectangles.
+
+   Originals were 5.0MB and 3.1MB. Both were downscaled and re-encoded to WebP
+   (91KB and 52KB) before being committed, so the footer costs ~143KB rather
+   than 8MB.
+   ========================================================================== */
+
+footer, .footer, .bg-footer-cstm {
+    background-color: #fdf3f5 !important;   /* blush, matches the palette doc */
+    color: var(--dx-body) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    padding-top: 4.5rem !important;
+    padding-bottom: 0 !important;
+    border-top: 1px solid var(--dx-line) !important;
+}
+
+/* Two floral corners. multiply drops the white ground of the JPEGs so only the
+   blooms and stems remain; on a light surface this reads as a clean knockout. */
+footer::before, .footer::before,
+footer::after, .footer::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    mix-blend-mode: multiply;
+    opacity: .85;
+    z-index: 0;
+}
+
+/* Both corners are kept low and partly cropped by the footer edge so the
+   blooms read as a border rather than sitting behind the logo and the brand
+   paragraph, which is where the first attempt put them. */
+footer::before, .footer::before {
+    left: -55px;
+    bottom: -45px;
+    width: 260px; height: 235px;
+    background-image: url("../images/footer/cosmos.webp");
+    background-size: contain;
+    background-position: left bottom;
+    opacity: .72;
+}
+
+footer::after, .footer::after {
+    right: -35px;
+    bottom: -30px;
+    width: 215px; height: 260px;
+    background-image: url("../images/footer/pinkbud.webp");
+    background-size: contain;
+    background-position: right bottom;
+    transform: scaleX(-1);
+    opacity: .8;
+}
+
+/* Content sits above the artwork. */
+footer > .container, .footer > .container,
+footer .container, .footer .container { position: relative; z-index: 2; }
+
+/* Serif column headings. */
+footer h3, .footer h3,
+footer .fs-20, .footer .fs-20 {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 1.9rem !important;
+    font-weight: 600 !important;
+    color: var(--dx-charcoal) !important;
+    letter-spacing: .005em !important;
+    margin-bottom: 1.1rem !important;
+}
+
+footer ul li, .footer ul li { padding-bottom: .45rem !important; }
+
+footer ul li a, .footer ul li a,
+footer p, .footer p {
+    color: var(--dx-body) !important;
+    font-size: .95rem !important;
+    line-height: 1.75 !important;
+    transition: color .18s var(--dx-ease), padding-left .18s var(--dx-ease) !important;
+}
+
+footer ul li a:hover, .footer ul li a:hover {
+    color: var(--dx-rose) !important;
+    padding-left: 4px !important;
+}
+
+footer .logo1edit, .footer .logo1edit { height: 62px !important; margin-bottom: 1.1rem !important; }
+footer .fs-14, .footer .fs-14 { color: var(--dx-body) !important; max-width: 40ch !important; }
+
+/* Copyright strip: slightly deeper blush so it reads as its own band and the
+   artwork never runs under the text. */
+footer .border-top, .footer .border-top,
+footer .copyright, .footer .copyright {
+    border-top: 1px solid var(--dx-line) !important;
+    background: rgba(253, 243, 245, .92) !important;
+    position: relative; z-index: 2;
+    margin-top: 3.25rem !important;
+    padding-top: 1.1rem !important;
+    padding-bottom: .9rem !important;
+}
+
+footer .fab, .footer .fab, footer .fa, .footer .fa {
+    color: var(--dx-body) !important;
+    transition: color .18s var(--dx-ease) !important;
+}
+footer .fab:hover, .footer .fab:hover { color: var(--dx-rose) !important; }
+
+@media (max-width: 991.98px) {
+    footer::before, .footer::before { width: 210px; height: 200px; left: -50px; opacity: .6; }
+    footer::after, .footer::after { width: 150px; height: 190px; right: -40px; opacity: .6; }
+    footer h3, .footer h3, footer .fs-20, .footer .fs-20 { font-size: 1.6rem !important; }
+}
+
+/* Give the brand column room so the left corner art never runs under its text. */
+footer .col-lg-5 .fs-14, .footer .col-lg-5 .fs-14 { position: relative; z-index: 3; }
+footer .col-lg-5, .footer .col-lg-5 { padding-bottom: 2.5rem !important; }
+
+/* ==========================================================================
+   24. Product detail page
+   --------------------------------------------------------------------------
+   Rebuilt toward the editorial split of the reference: the gallery takes the
+   larger share, the buy column reads as a spec sheet, and the primary action
+   spans the column.
+
+   Done entirely in CSS. No markup is touched, so every behaviour the page
+   depends on keeps working exactly as before - the #submit_form post, the
+   .variation_id radios and their #option-N:checked ~ .option-N selection, the
+   #qty_input stepper with #minus-btn / #plus-btn, #buy_now, #submit_button,
+   .add-to-wishlist, the #exampleModal size chart, and the slick
+   .slider-for / .slider-nav pair. Nothing is removed or renamed.
+   ========================================================================== */
+
+/* --- Split: gallery 58 / details 42 ------------------------------------- */
+@media (min-width: 992px) {
+    .product-details-layout-5 > .container > .row > .primary-gallery {
+        flex: 0 0 58% !important;
+        max-width: 58% !important;
+    }
+    .product-details-layout-5 > .container > .row > .pl-xl-7 {
+        flex: 0 0 42% !important;
+        max-width: 42% !important;
+        padding-left: 3.25rem !important;
+    }
+}
+
+.product-details-layout-5 { padding-top: 1rem !important; }
+
+/* Gallery imagery gets a surface and rounded corners. */
+.product-details-layout-5 .slider-for .card-img,
+.product-details-layout-5 .slider-for img {
+    border-radius: var(--dx-radius) !important;
+    overflow: hidden !important;
+}
+
+.product-details-layout-5 .slider-nav .box img {
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    transition: border-color .18s var(--dx-ease), opacity .18s var(--dx-ease) !important;
+    opacity: .68;
+}
+
+.product-details-layout-5 .slider-nav .slick-current img,
+.product-details-layout-5 .slider-nav .box img:hover {
+    border-color: var(--dx-rose) !important;
+    opacity: 1;
+}
+
+/* --- Title and price ----------------------------------------------------- */
+.product-details-layout-5 h2.fs-24 {
+    font-size: 2.35rem !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.022em !important;
+    margin-bottom: .6rem !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.product-details-layout-5 .text-line-through {
+    color: var(--dx-muted) !important;
+    font-weight: 400 !important;
+    font-size: 1.05rem !important;
+}
+
+.product-details-layout-5 .fs-18.font-weight-bold {
+    font-size: 1.9rem !important;
+    font-weight: 600 !important;
+    color: var(--dx-rose) !important;
+    letter-spacing: -.02em !important;
+}
+
+.product-details-layout-5 p.d-flex.align-items-center { margin-bottom: 1.6rem !important; }
+
+/* --- Spec rows -----------------------------------------------------------
+   The existing label/value pairs (Categories, Absorbancy, Size, Quantity) get
+   one shared rhythm with a hairline rule, so the column reads as a spec sheet
+   rather than stacked fragments. Structure is unchanged; only spacing,
+   alignment and label styling. */
+.product-details-layout-5 ul.list-unstyled > li.row,
+.product-details-layout-5 .d-flex.align-items-center.flex-wrap.mb-3,
+.product-details-layout-5 .form-group.shop-swatch {
+    border-top: 1px solid var(--dx-line) !important;
+    padding: .95rem 0 !important;
+    margin: 0 !important;
+    align-items: center !important;
+}
+
+.product-details-layout-5 ul.list-unstyled {
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+}
+
+.product-details-layout-5 ul.list-unstyled > li.row > span:first-child,
+.product-details-layout-5 .d-flex.align-items-center.flex-wrap.mb-3 > p.mb-0,
+.product-details-layout-5 .form-group.shop-swatch > span:first-child {
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+    font-size: .72rem !important;
+    font-weight: 600 !important;
+    color: var(--dx-muted) !important;
+    flex: 0 0 132px !important;
+    max-width: 132px !important;
+    margin-right: 0 !important;
+}
+
+.product-details-layout-5 ul.list-unstyled > li.row > span:last-child {
+    flex: 1 !important;
+    max-width: none !important;
+}
+
+.product-details-layout-5 ul.list-unstyled > li.row > span:last-child a {
+    color: var(--dx-charcoal) !important;
+}
+
+/* --- Size chips ---------------------------------------------------------- */
+.product-details-layout-5 .wrapper .option {
+    border-radius: 999px !important;
+    border: 1px solid var(--dx-line) !important;
+    padding: .42rem 1rem !important;
+    min-width: 54px;
+    font-weight: 600 !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.product-details-layout-5 .wrapper .option:hover {
+    border-color: var(--dx-rose) !important;
+}
+
+/* The page selects chips with #option-N:checked ~ .option-N. Matching that
+   sibling pattern re-colours the selected chip without touching the markup or
+   the radios the form posts. */
+.product-details-layout-5 .wrapper input:checked ~ label.option {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+/* --- Quantity and actions ------------------------------------------------ */
+.product-details-layout-5 .input-group .form-control,
+.product-details-layout-5 #qty_input {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    height: 54px !important;
+    font-size: 1.05rem !important;
+}
+
+.product-details-layout-5 .row.align-items-end.no-gutters {
+    border-top: 1px solid var(--dx-line) !important;
+    padding-top: 1.25rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+@media (min-width: 992px) {
+    .product-details-layout-5 .row.align-items-end.no-gutters > .col-lg-4:first-child {
+        flex: 0 0 180px !important;
+        max-width: 180px !important;
+    }
+    .product-details-layout-5 .row.align-items-end.no-gutters > .col-lg-4:not(:first-child) {
+        flex: 1 1 0 !important;
+        max-width: none !important;
+    }
+}
+
+.product-details-layout-5 #buy_now,
+.product-details-layout-5 #submit_button,
+.product-details-layout-5 .addedbutton {
+    height: 54px !important;
+    border-radius: 999px !important;
+    font-size: .95rem !important;
+    letter-spacing: .02em !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Add to cart is the commitment; Buy Now supports it. */
+.product-details-layout-5 #buy_now {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+.product-details-layout-5 #buy_now:hover {
+    background: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+}
+
+.product-details-layout-5 #submit_button {
+    background: transparent !important;
+    border: 1px solid var(--dx-charcoal) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.product-details-layout-5 #submit_button:hover {
+    background: var(--dx-charcoal) !important;
+    color: #fff !important;
+}
+
+/* --- Size chart link ----------------------------------------------------- */
+.product-details-layout-5 h6 {
+    margin: 1.35rem 0 .5rem !important;
+}
+
+.product-details-layout-5 h6 a {
+    display: inline-block !important;
+    font-size: .85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+    color: var(--dx-rose) !important;
+    border-bottom: 1px solid currentColor !important;
+    padding-bottom: 2px !important;
+}
+
+/* --- Description --------------------------------------------------------- */
+.product-details-layout-5 #accordion-style .card {
+    border: 0 !important;
+    border-top: 1px solid var(--dx-line) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+}
+
+.product-details-layout-5 #accordion-style .card-body {
+    padding: 1.5rem 0 .5rem !important;
+    background: transparent !important;
+}
+
+.product-details-layout-5 #accordion-style h4 {
+    font-size: .72rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+    color: var(--dx-muted) !important;
+    font-weight: 600 !important;
+    margin-bottom: .9rem !important;
+}
+
+.product-details-layout-5 #accordion-style .card-body p,
+.product-details-layout-5 #accordion-style .card-body li {
+    color: var(--dx-body) !important;
+}
+
+.product-details-layout-5 #accordion-style .card-body ul {
+    padding-left: 1.15rem !important;
+}
+
+/* Wishlist button on the gallery. */
+.product-details-layout-5 .add-to-wishlist {
+    box-shadow: 0 2px 12px rgba(67, 48, 58, .14) !important;
+    border: 1px solid var(--dx-line) !important;
+}
+
+.product-details-layout-5 .add-to-wishlist:hover {
+    background: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+@media (max-width: 991.98px) {
+    .product-details-layout-5 h2.fs-24 { font-size: 1.75rem !important; }
+    .product-details-layout-5 .fs-18.font-weight-bold { font-size: 1.5rem !important; }
+    .product-details-layout-5 ul.list-unstyled > li.row > span:first-child,
+    .product-details-layout-5 .d-flex.align-items-center.flex-wrap.mb-3 > p.mb-0,
+    .product-details-layout-5 .form-group.shop-swatch > span:first-child {
+        flex: 0 0 104px !important;
+        max-width: 104px !important;
+    }
+}
+
+/* --- Size chip selection: pair the radio to ITS OWN label -----------------
+   The markup emits every radio first and then every label, so a generic
+   `input:checked ~ label.option` matches ALL labels once any radio is checked,
+   which lit the whole size row. The page pairs them explicitly as
+   #option-N:checked ~ .option-N, so the override has to do the same. */
+.product-details-layout-5 .wrapper input:checked ~ label.option {
+    background: #fff !important;
+    border-color: var(--dx-line) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.product-details-layout-5 #option-1:checked ~ .option-1,
+.product-details-layout-5 #option-2:checked ~ .option-2,
+.product-details-layout-5 #option-3:checked ~ .option-3,
+.product-details-layout-5 #option-4:checked ~ .option-4,
+.product-details-layout-5 #option-5:checked ~ .option-5,
+.product-details-layout-5 #option-6:checked ~ .option-6,
+.product-details-layout-5 #option-7:checked ~ .option-7,
+.product-details-layout-5 #option-8:checked ~ .option-8,
+.product-details-layout-5 #option-9:checked ~ .option-9,
+.product-details-layout-5 #option-10:checked ~ .option-10,
+.product-details-layout-5 #option-11:checked ~ .option-11,
+.product-details-layout-5 #option-12:checked ~ .option-12,
+.product-details-layout-5 #option-13:checked ~ .option-13,
+.product-details-layout-5 #option-14:checked ~ .option-14,
+.product-details-layout-5 #option-15:checked ~ .option-15 {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+}
+
+/* --- Size row must wrap; XXXXL was being clipped ------------------------- */
+.product-details-layout-5 .form-group.shop-swatch {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+}
+
+.product-details-layout-5 .form-group.shop-swatch .wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: .5rem !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+.product-details-layout-5 .wrapper .option {
+    width: auto !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+}
+
+/* --- Action buttons: stop the labels wrapping to two lines --------------- */
+.product-details-layout-5 #buy_now,
+.product-details-layout-5 #submit_button,
+.product-details-layout-5 .addedbutton {
+    white-space: nowrap !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+@media (min-width: 992px) {
+    .product-details-layout-5 .row.align-items-end.no-gutters > .col-lg-4:first-child {
+        flex: 0 0 158px !important;
+        max-width: 158px !important;
+    }
+}
+
+/* Quantity label sits on the row like the other spec labels. */
+.product-details-layout-5 label[for="number"] {
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+    font-size: .72rem !important;
+    color: var(--dx-muted) !important;
+    font-weight: 600 !important;
+}

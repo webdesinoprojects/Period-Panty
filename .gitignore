@@ -1,0 +1,19 @@
+# Old backup copy sitting inside the web root (~669 MB): Wordpress/, application.zip,
+# applicationbkup.zip, system1/. Not part of the running site — and it should not be
+# served either, since those zips contain application/config/database.php.
+/public_html/
+
+# CodeIgniter runtime output
+/application/logs/*
+!/application/logs/index.html
+/application/cache/*
+!/application/cache/index.html
+
+# Local/editor noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Vendor theme demo/docs pages - not used by the site and they ship with
+# example API tokens that GitHub secret scanning blocks.
+/assets/front/docs/

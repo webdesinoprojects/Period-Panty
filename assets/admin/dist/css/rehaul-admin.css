@@ -1,0 +1,714 @@
+/* ==========================================================================
+   DEXTE UI rehaul - admin dashboard
+   --------------------------------------------------------------------------
+   Loaded AFTER AdminLTE.min.css and _all-skins.min.css. Deleting this file and
+   its <link> in admin/layout/head_css.php + admin/login.php reverts the admin.
+
+   AdminLTE 2 ships a 2015 look: flat #3c8dbc blue, square panels, hard 1px
+   greys, no elevation. This rebuilds the chrome toward a modern admin (the
+   TailAdmin reference) WITHOUT touching markup, class names or JS hooks, so
+   everything AdminLTE's scripts expect in the DOM is still there.
+
+   Palette: the storefront's blush/rose on warm neutrals. No green, no teal.
+     rose     #b04a63 + white = 5.24:1
+     plum     #43303a + white = 11.9:1  (sidebar, top bar)
+     charcoal #333333 on white = 12.6:1
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+
+:root {
+    --dx-ivory:      #faf7f5;
+    --dx-blush-bg:   #fdf3f5;
+    --dx-blush:      #f8d7da;
+    --dx-rose:       #b04a63;
+    --dx-rose-dark:  #8f3a4f;
+    --dx-plum:       #43303a;
+    --dx-plum-2:     #523c46;
+    --dx-charcoal:   #333;
+    --dx-body:       #5f5458;
+    --dx-line:       #efe4e6;
+    --dx-radius:     14px;
+    --dx-ease:       cubic-bezier(.2,.7,.3,1);
+    --dx-shadow:     0 1px 2px rgba(67,48,58,.04), 0 8px 24px rgba(67,48,58,.07);
+    --dx-shadow-lg:  0 2px 6px rgba(67,48,58,.06), 0 18px 44px rgba(67,48,58,.12);
+}
+
+body, .skin-blue, .content-wrapper, .main-footer, .wrapper {
+    font-family: Urbanist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    color: var(--dx-body) !important;
+    background-color: var(--dx-ivory) !important;
+}
+
+h1, h2, h3, h4, h5, h6, .box-title {
+    font-family: Urbanist, sans-serif !important;
+    font-weight: 600 !important;
+    color: var(--dx-charcoal) !important;
+    letter-spacing: -.012em !important;
+}
+
+.content-header > h1 { font-size: 26px !important; font-weight: 600 !important; }
+.content-header > h1 > small { color: #9b8e92 !important; }
+
+/* --------------------------------------------------------------------------
+   Top bar + sidebar - plum instead of AdminLTE blue
+   -------------------------------------------------------------------------- */
+.skin-blue .main-header .navbar,
+.skin-blue .main-header .logo {
+    background-color: var(--dx-plum) !important;
+    color: #fff !important;
+    border-bottom: 0 !important;
+}
+
+.skin-blue .main-header .logo { font-weight: 600 !important; letter-spacing: .01em !important; }
+
+.skin-blue .main-header .logo:hover,
+.skin-blue .main-header .navbar .nav > li > a:hover,
+.skin-blue .main-header .navbar .nav > li > a:focus,
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: var(--dx-plum-2) !important;
+    color: #fff !important;
+}
+
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+    background-color: var(--dx-plum) !important;
+}
+
+.skin-blue .sidebar-menu > li > a {
+    color: #d9cbd0 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 !important;
+    transition: background-color .18s var(--dx-ease), color .18s var(--dx-ease), border-color .18s var(--dx-ease) !important;
+}
+
+.skin-blue .sidebar-menu > li:hover > a,
+.skin-blue .sidebar-menu > li.active > a,
+.skin-blue .sidebar-menu > li.menu-open > a {
+    color: #fff !important;
+    background-color: var(--dx-plum-2) !important;
+    border-left-color: var(--dx-blush) !important;
+}
+
+.skin-blue .sidebar-menu > li > .treeview-menu { background-color: #3a2a32 !important; }
+.skin-blue .sidebar-menu .treeview-menu > li > a { color: #c6b5bb !important; }
+.skin-blue .sidebar-menu .treeview-menu > li.active > a,
+.skin-blue .sidebar-menu .treeview-menu > li > a:hover { color: #fff !important; }
+
+.sidebar-menu > li.header {
+    color: #a08e95 !important;
+    background: transparent !important;
+    text-transform: uppercase;
+    font-size: 11px !important;
+    letter-spacing: .08em !important;
+}
+
+/* --------------------------------------------------------------------------
+   Boxes / panels - rounded, hairline, soft elevation
+   -------------------------------------------------------------------------- */
+.box {
+    border: 1px solid var(--dx-line) !important;
+    border-top: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius) !important;
+    box-shadow: var(--dx-shadow) !important;
+    background: #fff !important;
+}
+
+.box.box-primary, .box.box-info, .box.box-success,
+.box.box-warning, .box.box-danger {
+    border-top-width: 1px !important;
+    border-top-color: var(--dx-line) !important;
+}
+
+.box-header { border-bottom: 1px solid var(--dx-line) !important; padding: 18px 22px !important; }
+.box-header .box-title { font-size: 17px !important; }
+.box-body { padding: 20px 22px !important; }
+
+/* --------------------------------------------------------------------------
+   Stat tiles - the small-box widgets become light cards with a rose figure,
+   closer to the reference dashboard than AdminLTE's saturated colour blocks.
+   -------------------------------------------------------------------------- */
+.small-box, .info-box {
+    border-radius: var(--dx-radius) !important;
+    box-shadow: var(--dx-shadow) !important;
+    background: #fff !important;
+    border: 1px solid var(--dx-line) !important;
+    transition: transform .2s var(--dx-ease), box-shadow .2s var(--dx-ease) !important;
+    overflow: hidden !important;
+}
+
+.small-box:hover, .info-box:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--dx-shadow-lg) !important;
+}
+
+/* AdminLTE paints these with .bg-aqua/.bg-green/.bg-yellow/.bg-red utilities.
+   Neutralise the fill and let the number carry the colour instead. */
+.small-box.bg-aqua, .small-box.bg-green, .small-box.bg-yellow,
+.small-box.bg-red, .small-box.bg-blue, .small-box.bg-light-blue,
+.small-box.bg-navy, .small-box.bg-teal, .small-box.bg-olive,
+.small-box.bg-purple, .small-box.bg-maroon {
+    background: #fff !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.small-box h3, .small-box p { color: var(--dx-charcoal) !important; }
+.small-box h3 { font-weight: 700 !important; font-size: 34px !important; letter-spacing: -.02em !important; }
+.small-box p  { color: var(--dx-body) !important; font-size: 14px !important; }
+
+.small-box .icon {
+    color: var(--dx-blush) !important;
+    opacity: 1 !important;
+    font-size: 64px !important;
+    top: 12px !important;
+    right: 14px !important;
+}
+
+.small-box > .small-box-footer {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-rose) !important;
+    border-top: 1px solid var(--dx-line) !important;
+    border-radius: 0 0 var(--dx-radius) var(--dx-radius) !important;
+    font-weight: 600 !important;
+}
+
+.small-box > .small-box-footer:hover { background: var(--dx-blush) !important; color: var(--dx-rose-dark) !important; }
+
+.info-box-icon {
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-rose) !important;
+    border-radius: var(--dx-radius) 0 0 var(--dx-radius) !important;
+}
+
+.info-box-number { color: var(--dx-charcoal) !important; font-weight: 700 !important; }
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    padding: 8px 20px !important;
+    transition: background-color .18s var(--dx-ease), border-color .18s var(--dx-ease),
+                color .18s var(--dx-ease), transform .12s var(--dx-ease), box-shadow .18s var(--dx-ease) !important;
+}
+
+.btn-primary, .btn-primary:active, .btn-primary.active,
+.btn-success, .btn-info {
+    color: #fff !important;
+    background-color: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus,
+.btn-success:hover, .btn-info:hover {
+    color: #fff !important;
+    background-color: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+    box-shadow: 0 8px 20px rgba(176,74,99,.24) !important;
+    transform: translateY(-1px);
+}
+
+.btn-default {
+    background: #fff !important;
+    border-color: var(--dx-line) !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.btn:active { transform: translateY(1px); }
+
+/* --------------------------------------------------------------------------
+   Forms and tables
+   -------------------------------------------------------------------------- */
+.form-control {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    padding: 9px 13px !important;
+    height: auto !important;
+    color: var(--dx-charcoal) !important;
+    transition: border-color .18s var(--dx-ease), box-shadow .18s var(--dx-ease) !important;
+}
+
+.form-control:focus {
+    border-color: var(--dx-rose) !important;
+    box-shadow: 0 0 0 3px rgba(176,74,99,.18) !important;
+}
+
+.table > thead > tr > th {
+    border-bottom: 1px solid var(--dx-line) !important;
+    color: var(--dx-charcoal) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 12px !important;
+    letter-spacing: .05em !important;
+    background: var(--dx-blush-bg) !important;
+}
+
+.table > tbody > tr > td {
+    border-top: 1px solid var(--dx-line) !important;
+    vertical-align: middle !important;
+}
+
+.table-hover > tbody > tr:hover { background-color: var(--dx-blush-bg) !important; }
+
+.pagination > li > a { color: var(--dx-charcoal) !important; border-color: var(--dx-line) !important; }
+.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > span {
+    background-color: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+}
+
+.label-primary, .label-info, .label-success { background-color: var(--dx-rose) !important; }
+.label { border-radius: 999px !important; padding: .35em .8em !important; font-weight: 600 !important; }
+
+/* --------------------------------------------------------------------------
+   Login / lockscreen
+   AdminLTE sets .login-page { background:#d2d6de } which outranks body.
+   -------------------------------------------------------------------------- */
+body.login-page, body.lockscreen {
+    background: var(--dx-ivory) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.login-box, .lockscreen-wrapper { margin: 0 !important; width: 390px; max-width: calc(100vw - 32px); }
+
+.login-box-body, .register-box-body {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 1px 2px rgba(67,48,58,.04), 0 20px 52px rgba(67,48,58,.12) !important;
+    padding: 30px 28px 32px !important;
+}
+
+.login-logo, .login-logo a { color: var(--dx-charcoal) !important; font-weight: 600 !important; }
+.login-box-msg { color: var(--dx-body) !important; padding-top: 0 !important; }
+.login-box-body .form-control { border-radius: 10px !important; }
+.login-box-body .btn { width: 100%; padding: 11px 20px !important; }
+
+/* Visible keyboard focus - AdminLTE 2 effectively has none. */
+.btn:focus-visible, a:focus-visible, .form-control:focus-visible {
+    outline: 2px solid var(--dx-rose) !important;
+    outline-offset: 2px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+/* ==========================================================================
+   Table controls
+   --------------------------------------------------------------------------
+   The global .btn rule (999px radius, 8px/20px padding) is right for page-level
+   actions but far too heavy inside data tables: the Edit/Gallery pair wrapped
+   onto two lines and the status labels ballooned into big rose pills, so every
+   row read as a wall of buttons. Table-scale controls get their own sizing,
+   and status labels become quiet tinted chips so only real actions carry the
+   solid brand colour.
+   ========================================================================== */
+
+.table .btn,
+.table .btn-xs,
+.table .btn-sm,
+.dataTables_wrapper .table .btn {
+    border-radius: 7px !important;
+    padding: 5px 11px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    line-height: 1.45 !important;
+    margin: 2px 3px 2px 0 !important;
+    white-space: nowrap !important;
+}
+
+.table .btn i, .table .btn .fa { margin-right: 4px !important; }
+
+/* Keep the action column on one line where there is room. */
+.table td:last-child { white-space: nowrap !important; }
+.table td:last-child .btn + .btn { margin-left: 2px !important; }
+
+/* Status chips: tinted, not solid. Differentiated by text colour so the table
+   is scannable without four different saturated fills. */
+.table .label,
+.table .badge,
+.label-success, .label-primary, .label-info, .label-warning, .label-danger,
+.badge.bg-green, .badge.bg-aqua, .badge.bg-red, .badge.bg-yellow {
+    border-radius: 999px !important;
+    padding: .3em .75em !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    letter-spacing: .01em !important;
+    background-color: var(--dx-blush-bg) !important;
+    background: var(--dx-blush-bg) !important;
+    color: var(--dx-rose-dark) !important;
+    border: 1px solid var(--dx-blush) !important;
+}
+
+/* Neutral/“off” states read grey rather than brand-coloured. */
+.label-default, .badge.bg-gray,
+.table .label-danger, .badge.bg-red {
+    background-color: #f2eeef !important;
+    background: #f2eeef !important;
+    color: #7a6b70 !important;
+    border-color: #e6dcdf !important;
+}
+
+/* Table density */
+.table > tbody > tr > td { padding: 10px 12px !important; }
+.table > thead > tr > th { padding: 11px 12px !important; }
+.table img { border-radius: 8px !important; }
+
+/* DataTables chrome */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+    height: auto !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+    border-radius: 7px !important;
+}
+
+/* Page-level primary action stays a full pill, just not oversized. */
+.content-header + .content .btn,
+.box-header .btn { padding: 7px 16px !important; font-size: 13.5px !important; }
+
+/* ==========================================================================
+   Fixed chrome: sidebar and header scroll independently of the content
+   --------------------------------------------------------------------------
+   AdminLTE 2 positions .main-sidebar absolutely, so on a long table the whole
+   sidebar scrolls up and out of view with the page. Pinning the header and
+   sidebar and giving the sidebar its own overflow keeps navigation reachable
+   at any scroll depth, which is what every modern admin does.
+
+   AdminLTE's own "fixed" layout class would do this, but it is applied to
+   <body> in the markup; doing it from CSS keeps the views untouched.
+   ========================================================================== */
+
+.main-header {
+    position: fixed !important;
+    top: 0; left: 0; right: 0;
+    width: 100% !important;
+    z-index: 1030 !important;
+}
+
+.main-sidebar, .left-side {
+    position: fixed !important;
+    top: 50px !important;
+    bottom: 0 !important;
+    left: 0;
+    height: calc(100vh - 50px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    z-index: 1020 !important;
+    /* Momentum scrolling + a scrollbar that is not a bright system grey. */
+    scrollbar-width: thin;
+    scrollbar-color: #6a5560 transparent;
+}
+
+.main-sidebar::-webkit-scrollbar { width: 8px; }
+.main-sidebar::-webkit-scrollbar-track { background: transparent; }
+.main-sidebar::-webkit-scrollbar-thumb {
+    background: #6a5560;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+/* Content sits below the now-fixed header. The footer must NOT take the
+   padding-top or the min-height: giving it both pushed it down a further 50px
+   and then stretched it to a full viewport, which is what left a huge blank
+   band under short pages. */
+.content-wrapper, .right-side {
+    padding-top: 50px !important;
+    min-height: calc(100vh - 50px) !important;
+}
+
+.main-footer {
+    padding-top: 15px !important;
+    min-height: 0 !important;
+}
+
+/* The footer must clear the fixed sidebar too. */
+.main-footer { margin-left: 230px !important; }
+
+.sidebar-collapse .main-footer,
+body.sidebar-collapse .main-footer { margin-left: 50px !important; }
+
+/* Small screens: AdminLTE slides the sidebar over the content, so it should
+   not stay pinned or it covers the page. */
+@media (max-width: 767px) {
+    .main-sidebar, .left-side {
+        position: absolute !important;
+        height: auto !important;
+        top: 50px !important;
+    }
+    .content-wrapper, .right-side, .main-footer { padding-top: 50px !important; }
+    .main-footer { margin-left: 0 !important; }
+}
+
+/* ==========================================================================
+   Dashboard stat tiles + chart panels
+   ========================================================================== */
+.dx-stats { margin-bottom: 4px; }
+
+.dx-stat {
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: var(--dx-radius);
+    box-shadow: var(--dx-shadow);
+    padding: 20px 22px 18px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: transform .2s var(--dx-ease), box-shadow .2s var(--dx-ease);
+}
+
+.dx-stat:hover { transform: translateY(-3px); box-shadow: var(--dx-shadow-lg); }
+
+.dx-stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--dx-blush-bg);
+    color: var(--dx-rose);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+    margin-bottom: 16px;
+}
+
+.dx-stat-label {
+    font-size: 13px; font-weight: 600;
+    color: #9b8e92;
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 4px;
+}
+
+.dx-stat-value {
+    font-size: 30px; font-weight: 700;
+    color: var(--dx-charcoal);
+    letter-spacing: -.025em; line-height: 1.15;
+}
+
+.dx-stat-sub { font-size: 12.5px; color: #9b8e92; margin-top: 5px; }
+
+.dx-box-sub { float: right; font-size: 12.5px; color: #9b8e92; padding-top: 3px; }
+
+.dx-empty {
+    color: #9b8e92; text-align: center;
+    padding: 34px 10px; margin: 0; font-size: 14px;
+}
+
+.box-body canvas { max-width: 100%; }
+
+/* ==========================================================================
+   Avatar + user dropdown
+   --------------------------------------------------------------------------
+   AdminLTE ships a stock cartoon photo (avatar5.png) and paints the dropdown
+   header with .bg-light-blue. Both are instant giveaways that this is an
+   untouched template, so the photo is replaced by a brand monogram and the
+   header takes the plum.
+   ========================================================================== */
+
+.dx-avatar {
+    display: inline-flex !important;
+    align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--dx-rose);
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: .02em;
+    line-height: 1;
+    border: 2px solid rgba(255,255,255,.28);
+    vertical-align: middle;
+}
+
+.navbar .dx-avatar { margin-right: 9px; margin-top: -3px; }
+
+.dx-avatar-lg {
+    width: 76px; height: 76px;
+    font-size: 30px;
+    border-width: 3px;
+    margin: 0 auto;
+}
+
+.dx-avatar-name {
+    margin: 12px 0 0; color: #fff; font-weight: 600; font-size: 15px;
+}
+
+.user-menu .dropdown-menu {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 18px 44px rgba(67,48,58,.18) !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.user-menu .dropdown-menu > .user-header {
+    background: var(--dx-plum) !important;
+    height: auto !important;
+    padding: 24px 16px 20px !important;
+    text-align: center;
+}
+
+.user-menu .dropdown-menu > .user-footer {
+    background: #fff !important;
+    padding: 14px 16px !important;
+    border-top: 1px solid var(--dx-line) !important;
+}
+
+.user-menu .dropdown-menu > .user-footer .btn-default {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+}
+
+.user-menu .dropdown-menu > .user-footer .btn-default:hover {
+    background: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+}
+
+/* Sidebar icons: consistent width so labels line up, and a softer tone. */
+.sidebar-menu > li > a > .fa,
+.sidebar-menu > li > a > .glyphicon,
+.sidebar-menu > li > a > .ion {
+    width: 22px !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    opacity: .9;
+}
+
+.sidebar-menu .treeview-menu > li > a > .fa {
+    font-size: 10px !important;
+    width: 14px !important;
+    opacity: .55;
+}
+
+/* ==========================================================================
+   Collapsed sidebar
+   --------------------------------------------------------------------------
+   The brand block is a plain <img style="width:60px"> inside <center>, with no
+   .logo-mini/.logo-lg split, so when AdminLTE narrows the sidebar to 50px the
+   logo keeps its width and spills over the edge. Constrain it to the rail and
+   drop a monogram in once collapsed.
+   ========================================================================== */
+
+.main-header .logo {
+    overflow: hidden !important;
+    padding: 0 6px !important;
+    transition: width .3s ease !important;
+}
+
+.main-header .logo img {
+    max-width: 100% !important;
+    height: auto !important;
+    transition: opacity .2s ease, max-width .2s ease !important;
+}
+
+/* Collapsed: hide the wordmark image, show a compact monogram instead. */
+.sidebar-collapse .main-header .logo img,
+body.sidebar-collapse .main-header .logo img { display: none !important; }
+
+.sidebar-collapse .main-header .logo center::after,
+body.sidebar-collapse .main-header .logo center::after {
+    content: "D";
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    background: var(--dx-rose);
+    color: #fff;
+    font-weight: 700; font-size: 16px; line-height: 1;
+}
+
+.sidebar-collapse .main-header .logo,
+body.sidebar-collapse .main-header .logo { padding: 0 !important; }
+
+/* Collapsed rail: centre the icons and never let a label bleed through. */
+.sidebar-collapse .sidebar-menu > li > a,
+body.sidebar-collapse .sidebar-menu > li > a {
+    padding-left: 0 !important;
+    text-align: center !important;
+}
+
+.sidebar-collapse .sidebar-menu > li > a > .fa,
+body.sidebar-collapse .sidebar-menu > li > a > .fa {
+    width: 100% !important;
+    margin: 0 !important;
+    font-size: 16px !important;
+}
+
+/* The flyout label AdminLTE shows on hover when collapsed. */
+.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right-container),
+body.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right-container) {
+    background: var(--dx-plum-2) !important;
+    color: #fff !important;
+    border-radius: 0 8px 8px 0 !important;
+    padding: 12px 14px !important;
+}
+
+.sidebar-collapse .sidebar-menu > li > .treeview-menu,
+body.sidebar-collapse .sidebar-menu > li > .treeview-menu {
+    background: var(--dx-plum-2) !important;
+    border-radius: 0 8px 8px 0 !important;
+}
+
+/* ==========================================================================
+   Brand block alignment
+   --------------------------------------------------------------------------
+   AdminLTE fixes .logo to 50px tall, but the markup is a bare
+   <img style="width:60px"> whose natural aspect ratio makes it taller than
+   that, so the mark was clipped at the top instead of sitting centred.
+   Constrain by height and centre it in the block.
+   ========================================================================== */
+
+.main-header .logo {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 50px !important;
+    line-height: normal !important;
+}
+
+.main-header .logo center {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.main-header .logo img {
+    max-height: 38px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   Double header offset
+   AdminLTE already sets .main-sidebar { padding-top: 50px } so the sidebar
+   clears the header in its default (absolute) position. Because the sidebar is
+   now fixed at top:50px, that padding is applied a second time and leaves a
+   50px dead band between the logo and the first menu item. Drop it.
+   -------------------------------------------------------------------------- */
+.main-sidebar, .left-side { padding-top: 0 !important; }
+
+.main-sidebar .sidebar { padding-top: 6px !important; padding-bottom: 14px !important; }
+
+.sidebar-menu > li > a { padding: 11px 14px !important; }
+
+@media (max-width: 767px) {
+    .main-sidebar, .left-side { padding-top: 0 !important; }
+}
