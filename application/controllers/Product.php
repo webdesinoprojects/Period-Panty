@@ -8,13 +8,34 @@ class Product extends CI_Controller{
    	public function shop($parent = 0)
 	{	 
 	   $data['RESULT'] = $this->page_model->get_page_by_id(31);
-	   
+
+	    // The filter sidebar, the sort control and the pager all post to
+	    // product/pagination, which already handles paging, sorting and every
+	    // filter. shop() previously returned every row with no LIMIT and never
+	    // passed this URL, so none of that machinery was reachable from /shop.
+	    $data['load_url'] = base_url('product/pagination');
+
 	    $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.delete_flag','0');
 		$this->db->where('product.status','1');
+		$data['PRODUCT_TOTAL'] = $this->db->count_all_results('', FALSE);
+
+		// First paint is server-rendered so the grid works without JS and stays
+		// crawlable; product/pagination takes over from the first interaction.
+		$this->db->order_by('product.id', 'DESC');
+		$this->db->limit(12, 0);
 		$data['PRODUCTS'] = $this->db->get()->result();
+
+		// Render the pager server-side with the same helper the AJAX endpoint
+		// uses, so page links exist on first paint instead of only appearing
+		// after the visitor sorts or filters.
+		$data['PAGER'] = $this->getAllPageLinks(
+			$data['PRODUCT_TOTAL'],
+			base_url('product/pagination') . '?page=',
+			12
+		);
 		$this->load->view('front/product/listing',$data);
 	}
 
@@ -157,7 +178,7 @@ class Product extends CI_Controller{
 	    }
         //  Get all Products
         
-        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_product_variation as product_variation',"product_variation.product_id=product.id",'left');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');

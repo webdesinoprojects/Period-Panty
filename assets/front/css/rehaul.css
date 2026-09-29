@@ -386,14 +386,19 @@ a.bg-hover-primary:focus,
     border-color: var(--dx-rose-dark) !important;
 }
 
-/* The FAQ accordion bars are .card-header painted with the gold. */
-.card-header {
+/* The FAQ accordion bars are .card-header painted with the gold. Scoped to
+   accordions: an unscoped .card-header rule also painted the filter panel's
+   section headings, which clipped their labels behind a blush bar. */
+.accordion .card-header,
+.faqs .card-header,
+#accordion-style .card-header {
     background-color: var(--dx-blush-bg) !important;
     background: var(--dx-blush-bg) !important;
     border-color: var(--dx-line) !important;
 }
 
-.card-header a, .card-header h5, .card-header .mb-0 { color: var(--dx-charcoal) !important; }
+.accordion .card-header a, .accordion .card-header h5, .accordion .card-header .mb-0,
+.faqs .card-header a, .faqs .card-header h5, .faqs .card-header .mb-0 { color: var(--dx-charcoal) !important; }
 
 /* --- gold used as TEXT --- */
 .text-primary,
@@ -2607,4 +2612,190 @@ section[style*="F8F8F8"] .col-lg-6 { display: flex; align-items: center; }
 
 @media (max-width: 991.98px) {
     [style*="videoimg"] { min-height: 280px; }
+}
+
+/* ==========================================================================
+   40. Shop toolbar, filter panel and pager
+   --------------------------------------------------------------------------
+   The filter sidebar, sorting and pagination were all already built; none of
+   them had a control on /shop. This styles the toolbar that now drives them.
+   ========================================================================== */
+
+.dx-shop-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.35rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--dx-line);
+}
+
+.dx-shop-count { color: var(--dx-body); font-size: .95rem; }
+.dx-shop-count strong { color: var(--dx-charcoal); }
+
+.dx-shop-tools { display: flex; align-items: center; gap: .65rem; }
+
+.dx-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: 999px;
+    padding: .55rem 1.15rem;
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--dx-charcoal);
+    cursor: pointer;
+    transition: border-color .18s var(--dx-ease), color .18s var(--dx-ease), background-color .18s var(--dx-ease);
+}
+
+.dx-filter-btn:hover { border-color: var(--dx-rose); color: var(--dx-rose); }
+
+.dx-filter-ico {
+    width: 15px; height: 12px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='12'%3E%3Cg fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1 2h13M3 6h9M6 10h3'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='12'%3E%3Cg fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M1 2h13M3 6h9M6 10h3'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.dx-sort {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%235f5458' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 1rem center;
+    border: 1px solid var(--dx-line);
+    border-radius: 999px;
+    padding: .55rem 2.4rem .55rem 1.15rem;
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--dx-charcoal);
+    cursor: pointer;
+}
+
+.dx-sort:focus-visible,
+.dx-filter-btn:focus-visible { outline: 2px solid var(--dx-rose); outline-offset: 2px; }
+
+/* --- Filter panel -------------------------------------------------------- */
+.canvas-sidebar.filter-canvas .card-header h4.fs-34 {
+    font-size: 1.7rem !important;
+    font-weight: 600 !important;
+    color: var(--dx-charcoal) !important;
+}
+
+.canvas-sidebar.filter-canvas .card-title.fs-20 {
+    font-size: .78rem !important;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600 !important;
+    color: var(--dx-muted) !important;
+}
+
+.canvas-sidebar.filter-canvas .canvas-close { cursor: pointer; }
+.canvas-sidebar.filter-canvas .canvas-close:hover { color: var(--dx-rose) !important; }
+
+/* --- Pager --------------------------------------------------------------- */
+#pagination { display: flex; justify-content: center; gap: .4rem; padding-top: 1.5rem; flex-wrap: wrap; }
+
+#pagination .link,
+#pagination a.link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px; height: 40px;
+    padding: 0 .6rem;
+    border-radius: 10px;
+    border: 1px solid var(--dx-line);
+    background: #fff;
+    color: var(--dx-charcoal);
+    font-weight: 600;
+    font-size: .92rem;
+    cursor: pointer;
+    transition: background-color .16s var(--dx-ease), border-color .16s var(--dx-ease), color .16s var(--dx-ease);
+}
+
+#pagination a.link:hover { border-color: var(--dx-rose); color: var(--dx-rose); }
+#pagination .link.current,
+#pagination .current { background: var(--dx-rose); border-color: var(--dx-rose); color: #fff; }
+#pagination .link.disabled { opacity: .4; cursor: default; }
+
+@media (max-width: 575.98px) {
+    .dx-shop-bar { padding-bottom: 1rem; margin-bottom: 1.25rem; }
+    .dx-shop-tools { width: 100%; }
+    .dx-filter-btn, .dx-sort { flex: 1; justify-content: center; }
+}
+
+/* ==========================================================================
+   41. Filter panel - scrolling and label clipping
+   --------------------------------------------------------------------------
+   Two faults. The panel's inner card never scrolled, so anything past Price
+   was unreachable. And its section headings inherited a blush bar from an
+   unscoped .card-header rule (now scoped), which clipped the label text.
+   ========================================================================== */
+
+.canvas-sidebar.filter-canvas > .card {
+    height: 100% !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dx-blush) transparent;
+    padding-bottom: 2.5rem !important;
+}
+
+.canvas-sidebar.filter-canvas > .card::-webkit-scrollbar { width: 7px; }
+.canvas-sidebar.filter-canvas > .card::-webkit-scrollbar-thumb {
+    background: var(--dx-blush); border-radius: 999px;
+}
+
+/* Section headings: plain uppercase labels, no bar, nothing clipped. */
+.canvas-sidebar.filter-canvas .card-header {
+    background: transparent !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.canvas-sidebar.filter-canvas .card-title.fs-20 {
+    display: block;
+    /* Left padding is deliberate, not decoration: with padding-left:0 the
+       first glyph sat exactly at x=0 and its left side bearing was clipped by
+       the scroll container, so the labels read as ATEGORIES and RICE. */
+    padding: 0 0 .5rem 2px !important;
+    margin-bottom: .75rem !important;
+    border-bottom: 1px solid var(--dx-line);
+    overflow: visible !important;
+    letter-spacing: .07em !important;
+}
+
+.canvas-sidebar.filter-canvas .card-header,
+.canvas-sidebar.filter-canvas .card,
+.canvas-sidebar.filter-canvas .card-body { overflow: visible !important; }
+
+/* The scroll container itself must still clip vertically, just not sideways. */
+.canvas-sidebar.filter-canvas > .card { overflow-x: hidden !important; padding-left: 1.5rem !important; }
+
+/* Keep the panel header pinned while the body scrolls. */
+.canvas-sidebar.filter-canvas > .card > .card-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff !important;
+    padding-top: 1rem !important;
+}
+
+.canvas-sidebar.filter-canvas .card-body { padding-left: 0 !important; padding-right: 0 !important; }
+
+.canvas-sidebar.filter-canvas ul li,
+.canvas-sidebar.filter-canvas label { color: var(--dx-body) !important; }
+.canvas-sidebar.filter-canvas a:hover { color: var(--dx-rose) !important; }
+
+/* The pager sat flush against the footer. Give it room, and the grid section
+   a closing margin so no page ends hard against the footer edge. */
+#pagination { padding-top: 1.75rem !important; padding-bottom: 3.5rem !important; }
+
+section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
+
+@media (max-width: 767.98px) {
+    #pagination { padding-bottom: 2.25rem !important; }
 }
