@@ -2463,3 +2463,28 @@ section:has(> a > img) > a > img { display: block; width: 100%; height: auto; }
     .card.product .card-body,
     .card.product .card-body.text-center { padding: .8rem .3rem .25rem !important; }
 }
+
+/* ==========================================================================
+   37. Ticker clearance
+   --------------------------------------------------------------------------
+   A band 108vw wide rotated 2.2deg rises roughly 58px at each corner, so with
+   no margin it climbed into the section above and covered the banner's own
+   "Reusable & Eco-Friendly" line. Standalone bands now reserve that vertical
+   space. The one deliberately layered over a banner keeps zero margin, since
+   overlapping is the point there.
+   ========================================================================== */
+
+.dx-ticker { margin: 3.75rem 0 !important; }
+
+.dx-ticker-over .dx-ticker { margin: 0 !important; }
+
+/* The earlier negative nudge worked against this; remove it. */
+.dx-ticker + section,
+section + .dx-ticker { margin-top: 3.75rem !important; }
+
+@media (max-width: 767.98px) {
+    .dx-ticker { margin: 2.25rem 0 !important; }
+    .dx-ticker + section,
+    section + .dx-ticker { margin-top: 2.25rem !important; }
+    .dx-ticker-over .dx-ticker { margin: 0 !important; }
+}
