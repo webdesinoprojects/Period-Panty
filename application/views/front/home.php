@@ -77,7 +77,8 @@
           <div class="container container-xl">
             <div class="row mb-md-6 mb-8">
               <div class="col-md-6">
-                <h2 class="fs-34" data-animate="fadeInUp">Shop Our Best Sellers</h2>
+                <span class="dx-eyebrow">Our bestsellers</span>
+                <h2 class="fs-34" data-animate="fadeInUp">Shop Our <strong>Best Sellers</strong></h2>
               </div>
               <div class="col-md-6 text-md-right">
                 <a href="<?php echo base_url('shop') ?>" class="btn btn-link p-0 mt-2">Shop All Products<i class="far fa-arrow-right pl-2 fs-13"></i></a>
@@ -102,7 +103,8 @@
             <div class="container container-xl">
                 <div class="row">
                     <div class="col-12 text-center mb-7">
-                        <h2 class="fs-34" data-animate="fadeInUp">Shop By Style</h2>
+                        <span class="dx-eyebrow">Find your fit</span>
+                        <h2 class="fs-34" data-animate="fadeInUp">Shop By <strong>Style</strong></h2>
                     </div>
                     <div class="col-12 col-lg-6">
                         <?php $first  =  $this->category_model->get_category_by_id(4) ;   ?>
@@ -177,9 +179,12 @@
         <section class="pt-lg-11 pb-lg-10 py-5" style="background:#deb08e;">
           <div class="container container-xl">
             <div class="row justify-content-center mb-7">
-              <h2 class="fs-34 text-center fadeInUp animated" data-animate="fadeInUp">
-                Find The Right Absorbency Power
-              </h2>
+              <div class="col-12 text-center">
+                <span class="dx-eyebrow dx-eyebrow-center">What&rsquo;s your flow?</span>
+                <h2 class="fs-34 text-center fadeInUp animated" data-animate="fadeInUp">
+                  Find The Right <strong>Absorbency Power</strong>
+                </h2>
+              </div>
             </div>
             <div class="row">
               <div class="mb-2 col-md-6 col-xl-3" data-animate="fadeInUp">
@@ -422,7 +427,8 @@
           <div class="container-fluid">
             <div class="row mb-md-6 mb-8">
               <div class="col-12">
-                <h2 class="fs-34 text-center" data-animate="fadeInUp">Period Underwear With Magic Membrane System</h2>
+                <span class="dx-eyebrow dx-eyebrow-center">How it works</span>
+                <h2 class="fs-34 text-center" data-animate="fadeInUp">Period Underwear With <strong>Magic Membrane System</strong></h2>
               </div>
             </div>
             <img src="<?php echo base_url('assets/front/') ?>images/processdigram.webp">
@@ -544,8 +550,9 @@ For every Sustain purchase, 1% of the purchase goes towards the animal and plant
 </div>
         <section class="faqs py-8">
           <div class="container">
+            <span class="dx-eyebrow dx-eyebrow-center">Good to know</span>
             <h2 class="fs-34 pb-8 text-center">
-              Frequently Asked Questions
+              Frequently Asked <strong>Questions</strong>
             </h2>
             <div class="row">
               <div class="col-12 mt-7 mt-md-0">

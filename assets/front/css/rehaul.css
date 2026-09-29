@@ -1647,3 +1647,72 @@ footer .col-lg-5, .footer .col-lg-5 { padding-bottom: 2.5rem !important; }
     color: var(--dx-muted) !important;
     font-weight: 600 !important;
 }
+
+/* ==========================================================================
+   25. Section eyebrows + two-weight headings   [Sirona pass, step 1]
+   --------------------------------------------------------------------------
+   Two moves from the reference, both cheap and both doing a lot of work:
+
+   1. A handwritten label in a soft torn-paper chip above each section
+      heading ("Our bestsellers", "What's your flow?"). Caveat is loaded for
+      this only.
+   2. Headings split into two weights - the first half light, the emphasised
+      half bold - which is why "Innovations, For Every Stage" reads as
+      designed rather than as a page title.
+
+   The chips are new markup (a <span class="dx-eyebrow">) rather than CSS
+   ::before content, so the label is real selectable text that screen readers
+   announce separately from the heading.
+   ========================================================================== */
+
+.dx-eyebrow {
+    display: inline-block;
+    position: relative;
+    font-family: "Caveat", "Segoe Script", cursive;
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--dx-rose);
+    background: var(--dx-blush-bg);
+    padding: .5rem 1.1rem .55rem;
+    margin-bottom: .85rem;
+    transform: rotate(-.6deg);
+    /* Torn-paper edge: an irregular clip rather than a straight rectangle. */
+    clip-path: polygon(
+        1% 8%, 12% 2%, 27% 7%, 41% 1%, 56% 6%, 70% 0%, 84% 6%, 99% 3%,
+        98% 40%, 100% 72%, 97% 96%, 82% 91%, 68% 98%, 52% 93%,
+        37% 99%, 22% 92%, 8% 97%, 2% 66%, 0% 34%
+    );
+}
+
+/* Centred variant for the sections whose heading is centred. */
+.dx-eyebrow-center {
+    display: block;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Two-weight headings: the base goes light, the <strong> carries the weight.
+   No words change - only which half is emphasised. */
+section h2.fs-34 {
+    font-weight: 400 !important;
+    font-size: 2.35rem !important;
+    line-height: 1.16 !important;
+    letter-spacing: -.02em !important;
+    color: var(--dx-charcoal) !important;
+}
+
+section h2.fs-34 strong {
+    font-weight: 700 !important;
+    color: var(--dx-charcoal) !important;
+}
+
+/* The FAQ heading carries its own bottom padding utility; keep the rhythm. */
+section h2.fs-34.pb-8 { padding-bottom: 2rem !important; }
+
+@media (max-width: 991.98px) {
+    section h2.fs-34 { font-size: 1.85rem !important; }
+    .dx-eyebrow { font-size: 1.25rem; padding: .42rem .9rem .48rem; }
+}
