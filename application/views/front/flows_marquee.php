@@ -1,5 +1,5 @@
 
-<section class="">
+<section class="dx-band dx-has-art dx-art-petals">
             <div class="col-12 text-center mb-7">
                 <span class="dx-eyebrow dx-eyebrow-center">Real women, real flows</span>
                 <h2 class="fs-34" data-animate="fadeInDown">DEXTE For <strong>Every Flow</strong></h2>

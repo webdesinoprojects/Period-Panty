@@ -173,12 +173,18 @@
             </div>
         </section>
         <?php include('flows_marquee.php'); ?>
-        <section class="py-8">
+        <!-- Banner with a ticker crossing over it, as on the reference board. -->
+        <section class="py-8 dx-bleed-banner">
             <a href="<?php echo base_url('shop') ?>">
                  <img src="<?php echo base_url('assets/front/') ?>images/ourimg/newbg2.jpg">
             </a>
-         
+            <div class="dx-ticker-over">
+              <?php $dx_ticker_dir = 'right'; $dx_ticker_tone = 'ink';
+                    $this->load->view('front/dx_ticker'); ?>
+            </div>
         </section>
+
+        <?php $this->load->view('front/dx_reviews'); ?>
         <section class="pt-lg-11 pb-lg-10 py-5 dx-has-art dx-art-waves" style="background:#deb08e;">
           <div class="container container-xl">
             <div class="row justify-content-center mb-7">

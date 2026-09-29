@@ -2228,3 +2228,238 @@ section.dx-has-art::after {
    paint time. */
 section.slider::after,
 section[style*="background-image"]::after { content: none !important; }
+
+/* ==========================================================================
+   32. Thicker ticker + more pattern variety
+   --------------------------------------------------------------------------
+   Two pieces of feedback: the band was too thin, and every section was using
+   the same droplet tile. Five tiles now, all drawn from this brand's own
+   vocabulary rather than generic shapes - droplets and waves from absorbency
+   and flow, petals from the floral footer artwork, sparks matching the
+   asterisk used between ticker items, and rings echoing the brand mark.
+   ========================================================================== */
+
+.dx-ticker { padding: 1.45rem 0 !important; }
+.dx-ticker-item { font-size: 1.14rem !important; letter-spacing: .14em !important; padding: 0 1.4rem !important; }
+.dx-ticker-dot svg { width: 16px; height: 20px; }
+
+@media (max-width: 767.98px) {
+    .dx-ticker { padding: .95rem 0 !important; }
+    .dx-ticker-item { font-size: .9rem !important; padding: 0 .9rem !important; }
+}
+
+/* --- Tile C: petals ------------------------------------------------------ */
+.dx-art-petals::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23b04a63' stroke-opacity='.06' stroke-width='1.5'%3E%3Cg transform='translate(46 44)'%3E%3Cellipse rx='9' ry='20'/%3E%3Cellipse rx='20' ry='9'/%3E%3Cellipse rx='15' ry='15'/%3E%3C/g%3E%3Cg transform='translate(150 118)'%3E%3Cellipse rx='7' ry='16'/%3E%3Cellipse rx='16' ry='7'/%3E%3C/g%3E%3Cg transform='translate(104 172)'%3E%3Cellipse rx='6' ry='13'/%3E%3Cellipse rx='13' ry='6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- Tile D: sparks (the asterisk used between ticker items) ------------- */
+.dx-art-sparks::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cg stroke='%23b04a63' stroke-opacity='.07' stroke-width='1.6' stroke-linecap='round'%3E%3Cg transform='translate(38 36)'%3E%3Cpath d='M0-11V11M-11 0H11M-8-8 8 8M8-8-8 8'/%3E%3C/g%3E%3Cg transform='translate(128 82)'%3E%3Cpath d='M0-8V8M-8 0H8M-6-6 6 6M6-6-6 6'/%3E%3C/g%3E%3Cg transform='translate(72 132)'%3E%3Cpath d='M0-9V9M-9 0H9M-6-6 6 6M6-6-6 6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- Tile E: rings ------------------------------------------------------- */
+.dx-art-rings::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%23b04a63' stroke-opacity='.055' stroke-width='1.5'%3E%3Ccircle cx='52' cy='56' r='16'/%3E%3Ccircle cx='52' cy='56' r='28'/%3E%3Ccircle cx='166' cy='142' r='12'/%3E%3Ccircle cx='166' cy='142' r='22'/%3E%3Ccircle cx='110' cy='196' r='9'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Finer droplet tile - the first one read as too large and repetitive. */
+.dx-art-drops::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Cg fill='%23b04a63' fill-opacity='.05'%3E%3Cpath d='M34 22c0 0-8 10-8 14a8 8 0 0 0 16 0c0-4-8-14-8-14Z'/%3E%3Cpath d='M146 62c0 0-6 7-6 10a6 6 0 0 0 12 0c0-3-6-10-6-10Z'/%3E%3Cpath d='M84 118c0 0-9 11-9 15a9 9 0 0 0 18 0c0-4-9-15-9-15Z'/%3E%3Cpath d='M176 162c0 0-7 8-7 11a7 7 0 0 0 14 0c0-3-7-11-7-11Z'/%3E%3Cpath d='M24 176c0 0-5 6-5 8a5 5 0 0 0 10 0c0-2-5-8-5-8Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   33. Full-bleed banner sections - remove the white gap
+   --------------------------------------------------------------------------
+   Some sections contain nothing but a linked banner image. The section rhythm
+   added in step 3 gave them 5.5rem of padding, which on a full-bleed image
+   renders as a white strip above and below it. Those sections opt out.
+   :has() catches them wherever they appear rather than needing a class on
+   each; browsers without it simply keep the padding, which is only cosmetic.
+   ========================================================================== */
+
+section:has(> a > img) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+section:has(> a > img) > a { display: block; }
+section:has(> a > img) > a > img { display: block; width: 100%; height: auto; }
+
+/* ==========================================================================
+   34. Customer review wall
+   --------------------------------------------------------------------------
+   Vertical video tiles and stall photographs mixed with quote cards.
+
+   The rail is a plain horizontal overflow container, not a carousel: there is
+   no slider library to initialise, it scrolls with a trackpad, a shift-wheel
+   or the keyboard, and scroll-snap keeps tiles aligned. Videos use native
+   controls with preload="none", so the page downloads nothing until someone
+   presses play.
+   ========================================================================== */
+
+.dx-reviews { overflow: hidden; }
+
+.dx-rail {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dx-blush) transparent;
+    padding-bottom: 1rem;
+}
+
+.dx-rail::-webkit-scrollbar { height: 6px; }
+.dx-rail::-webkit-scrollbar-track { background: transparent; }
+.dx-rail::-webkit-scrollbar-thumb { background: var(--dx-blush); border-radius: 999px; }
+
+.dx-rail:focus-visible { outline: 2px solid var(--dx-rose); outline-offset: 4px; border-radius: var(--dx-radius); }
+
+.dx-rail-track {
+    display: flex;
+    gap: 1.1rem;
+    width: max-content;
+    /* Align the first tile with the section heading rather than the viewport
+       edge, while letting the rest run off to the right. */
+    padding: .5rem calc((100vw - min(1440px, 100vw - 46px)) / 2 + 15px);
+}
+
+.dx-rev {
+    flex: 0 0 auto;
+    width: 268px;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--dx-radius);
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    box-shadow: var(--dx-shadow);
+}
+
+.dx-rev-video video,
+.dx-rev-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: var(--dx-charcoal);
+}
+
+/* Quote card: rose panel, as in the reference. */
+.dx-rev-quote {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.6rem 1.5rem;
+    text-align: center;
+}
+
+.dx-rev-quote-alt { background: var(--dx-plum) !important; border-color: var(--dx-plum) !important; }
+
+.dx-rev-stars { color: #fff; letter-spacing: .18em; font-size: 1rem; margin-bottom: .9rem; }
+
+.dx-rev-flow {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    opacity: .85;
+    margin-bottom: .75rem;
+}
+
+.dx-rev-text {
+    font-size: .95rem;
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+    color: #fff !important;
+}
+
+.dx-rev-name {
+    font-weight: 600;
+    font-size: .92rem;
+    margin-bottom: 0;
+    color: #fff !important;
+}
+
+.dx-rev-name::before { content: "\2014"; display: block; opacity: .55; margin-bottom: .4rem; }
+
+@media (max-width: 767.98px) {
+    .dx-rev { width: 214px; }
+    .dx-rail-track { padding-left: 15px; padding-right: 15px; gap: .8rem; }
+    .dx-rev-quote { padding: 1.2rem 1.05rem; }
+    .dx-rev-text { font-size: .86rem; }
+}
+
+/* ==========================================================================
+   35. Ticker crossing over a banner image
+   --------------------------------------------------------------------------
+   The reference board has these bands cutting across photographs rather than
+   only sitting between sections. The banner keeps its link and its image; the
+   strip is layered over it and stays click-through via pointer-events: none
+   on .dx-ticker, so the banner is still fully clickable.
+   ========================================================================== */
+
+.dx-bleed-banner { position: relative; overflow: hidden; }
+
+.dx-ticker-over {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.dx-ticker-over .dx-ticker {
+    box-shadow: 0 10px 30px rgba(40, 26, 33, .28);
+}
+
+@media (max-width: 767.98px) {
+    .dx-ticker-over .dx-ticker { padding: .6rem 0 !important; }
+}
+
+/* ==========================================================================
+   36. Product card - inset rounded image block
+   --------------------------------------------------------------------------
+   The image previously ran flush to the card edge with square bottom corners
+   where it met the text. In the reference the image is its own rounded block,
+   inset from the card on all four sides, which is what makes the card read as
+   a card rather than a photo with a caption under it.
+   ========================================================================== */
+
+.card.product {
+    padding: 10px !important;
+    border-radius: 18px !important;
+}
+
+.card.product .position-relative {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+}
+
+.card.product .main-image {
+    border-radius: 14px !important;
+    display: block !important;
+}
+
+.card.product .card-body,
+.card.product .card-body.text-center {
+    padding: .95rem .35rem .35rem !important;
+}
+
+/* The discount chip tucks into the rounded corner of the image block. */
+.card.product .card-img-overlay { padding: .6rem !important; }
+
+/* Hover lift applies to the whole card, image included. */
+.card.product:hover .main-image { transform: scale(1.04); }
+
+@media (max-width: 575.98px) {
+    .card.product { padding: 8px !important; border-radius: 16px !important; }
+    .card.product .position-relative,
+    .card.product .main-image { border-radius: 12px !important; }
+    .card.product .card-body,
+    .card.product .card-body.text-center { padding: .8rem .3rem .25rem !important; }
+}
