@@ -1935,3 +1935,108 @@ section[style*="deb08e"] .shadow-1 {
     section .row.mb-md-6, section .row.mb-8,
     section .col-12.text-center.mb-7 { margin-bottom: 1.85rem !important; }
 }
+
+/* ==========================================================================
+   28. Category cards - Shop By Style   [Sirona pass, step 4]
+   --------------------------------------------------------------------------
+   NOT a copy of the reference's "What's bothering you today?" cards. Those
+   group several links under a concern (Periods -> Pain / Stains / Heavy Flow).
+   DEXTE's categories are styles with one link each - Bikini, High Waist, Mid
+   Waist, Shorts, Thongs - so that grouping would have to be invented. What is
+   borrowed is the card language: rounded surface, a scrim so the label reads
+   against any photograph, a left-aligned pill with an arrow, and motion on
+   hover.
+
+   CSS only. The five cards, their images, links and order are untouched.
+   ========================================================================== */
+
+.dx-band .card.hover-zoom-in {
+    border-radius: var(--dx-radius) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    background: #fff !important;
+    box-shadow: var(--dx-shadow) !important;
+    transition: box-shadow .28s var(--dx-ease), transform .28s var(--dx-ease) !important;
+}
+
+.dx-band .card.hover-zoom-in:hover {
+    box-shadow: var(--dx-shadow-lg) !important;
+    transform: translateY(-3px);
+}
+
+.dx-band .card.hover-zoom-in .card-img {
+    transition: transform .6s var(--dx-ease) !important;
+    width: 100%;
+}
+
+.dx-band .card.hover-zoom-in:hover .card-img { transform: scale(1.05); }
+
+/* Scrim: the label previously sat on bare photography, so legibility depended
+   entirely on which image happened to be behind it. */
+.dx-band .card.hover-zoom-in .card-img-overlay::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 55%;
+    background: linear-gradient(to top, rgba(40, 26, 33, .55), rgba(40, 26, 33, 0));
+    pointer-events: none;
+    border-radius: 0 0 var(--dx-radius) var(--dx-radius);
+}
+
+/* Label sits bottom-left rather than centred, as in the reference. */
+.dx-band .card.hover-zoom-in .card-img-overlay {
+    padding: 1.35rem !important;
+    align-items: flex-start !important;
+    justify-content: flex-end !important;
+    text-align: left !important;
+}
+
+.dx-band .card.hover-zoom-in .card-img-overlay > div { position: relative; z-index: 2; }
+
+.dx-band .card.hover-zoom-in .card-img-overlay .btn {
+    background: #fff !important;
+    color: var(--dx-charcoal) !important;
+    border-radius: 999px !important;
+    padding: .55rem 1.15rem !important;
+    font-size: .92rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 16px rgba(40, 26, 33, .18) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .45rem;
+    transition: background-color .2s var(--dx-ease), color .2s var(--dx-ease),
+                gap .2s var(--dx-ease) !important;
+}
+
+/* Arrow drawn in CSS so no markup or icon font is needed. */
+.dx-band .card.hover-zoom-in .card-img-overlay .btn::after {
+    content: "";
+    width: 15px; height: 9px;
+    flex: 0 0 auto;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9'%3E%3Cpath d='M0 4.5h12M9 1l3.5 3.5L9 8' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='9'%3E%3Cpath d='M0 4.5h12M9 1l3.5 3.5L9 8' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+    transition: transform .2s var(--dx-ease);
+}
+
+.dx-band .card.hover-zoom-in:hover .card-img-overlay .btn {
+    background: var(--dx-rose) !important;
+    color: #fff !important;
+    gap: .7rem;
+}
+
+.dx-band .card.hover-zoom-in:hover .card-img-overlay .btn::after { transform: translateX(2px); }
+
+/* Even gutters across the mosaic; the markup mixes mt-6/mb-5 utilities. */
+@media (min-width: 992px) {
+    .dx-band .col-12.col-lg-6 > .card.hover-zoom-in { height: 100%; }
+    .dx-band .col-12.col-lg-6 > .card.hover-zoom-in .card-img { height: 100%; object-fit: cover; }
+    .dx-band .col-md-6.mt-6 { margin-top: 0 !important; margin-bottom: 1.5rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-band .card.hover-zoom-in,
+    .dx-band .card.hover-zoom-in .card-img { transition: none !important; }
+    .dx-band .card.hover-zoom-in:hover { transform: none; }
+    .dx-band .card.hover-zoom-in:hover .card-img { transform: none; }
+}
