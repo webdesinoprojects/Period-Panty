@@ -686,7 +686,12 @@ img.logo1edit {
     box-shadow: 0 18px 44px rgba(67, 48, 58, .16) !important;
     padding: .5rem !important;
     margin-top: 8px !important;
-    overflow: hidden !important;
+    /* NOT overflow:hidden. The theme opens this menu on the <li>'s mouseenter
+       and closes it on mouseleave, so the 8px offset above leaves a strip
+       where the pointer is over neither the item nor the panel and the menu
+       closes before it can be reached. The ::before below bridges that strip,
+       and overflow:hidden was clipping the bridge away. */
+    overflow: visible !important;
     z-index: 10000 !important;
 }
 
@@ -2922,13 +2927,17 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
    pointer never leaves a hovered element on the way down.
    ========================================================================== */
 
+/* Measured gap between the nav item's bottom and the panel's top is ~27px at
+   desktop, so the bridge is sized generously past that rather than to the
+   nominal 8px margin. It is transparent and sits above the panel's own
+   rounding, so it only serves to keep the pointer inside the <li> subtree. */
 .main-header .dropdown-menu::before {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    top: -12px;
-    height: 12px;
+    top: -34px;
+    height: 34px;
     background: transparent;
 }
 
