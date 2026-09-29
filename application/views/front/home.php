@@ -99,7 +99,7 @@
         <section class="pt-2 pb-2">
           <img src="<?php echo base_url('assets/front/') ?>images/ourimg/newbg1.jpg">
         </section>
-        <section class="py-8">
+        <section class="py-8 dx-band">
             <div class="container container-xl">
                 <div class="row">
                     <div class="col-12 text-center mb-7">
