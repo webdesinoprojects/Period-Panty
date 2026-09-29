@@ -9,9 +9,13 @@
  * testimonials that are already published on this site (front/flows_marquee),
  * with the names their authors gave. Nothing here is invented.
  *
- * Videos ship as WebM (VP9 + Opus) with an MP4 fallback, poster images, and
+ * Videos ship as H.264 MP4 with poster images, and
  * preload="none" so the page costs nothing until someone presses play. Native
  * controls, so there is no custom player script to break.
+ *
+ * WebM/VP9 was tried and dropped: encoded from the originals it beat H.264 on
+ * only one of the three clips, and by 11%. Shipping both codecs would have
+ * doubled the media weight to save 0.4MB on a single file.
  */
 $dx_media = base_url('assets/front/media/');
 
@@ -42,7 +46,6 @@ $dx_quotes = array(
 
       <article class="dx-rev dx-rev-video">
         <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-1.webp">
-          <source src="<?php echo $dx_media; ?>review-1.webm" type="video/webm">
           <source src="<?php echo $dx_media; ?>review-1.mp4" type="video/mp4">
         </video>
       </article>
@@ -60,7 +63,6 @@ $dx_quotes = array(
 
       <article class="dx-rev dx-rev-video">
         <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-2.webp">
-          <source src="<?php echo $dx_media; ?>review-2.webm" type="video/webm">
           <source src="<?php echo $dx_media; ?>review-2.mp4" type="video/mp4">
         </video>
       </article>
@@ -78,7 +80,6 @@ $dx_quotes = array(
 
       <article class="dx-rev dx-rev-video">
         <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-3.webp">
-          <source src="<?php echo $dx_media; ?>review-3.webm" type="video/webm">
           <source src="<?php echo $dx_media; ?>review-3.mp4" type="video/mp4">
         </video>
       </article>
