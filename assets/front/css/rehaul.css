@@ -1716,3 +1716,142 @@ section h2.fs-34.pb-8 { padding-bottom: 2rem !important; }
     section h2.fs-34 { font-size: 1.85rem !important; }
     .dx-eyebrow { font-size: 1.25rem; padding: .42rem .9rem .48rem; }
 }
+
+/* ==========================================================================
+   26. Product cards   [Sirona pass, step 2]
+   --------------------------------------------------------------------------
+   The reference card: white, hairline border, image on a tinted panel, a
+   discount chip top-left, left-aligned title, a short spec line, then price on
+   the left with a compact action on the right.
+
+   The "+ Add" link points at the product page, which is exactly where the
+   existing hover cart icon already pointed - a size has to be chosen before
+   anything can be added, so nothing new is wired up and nothing is removed.
+   ========================================================================== */
+
+.card.product {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius) !important;
+    background: #fff !important;
+    overflow: hidden !important;
+    height: 100%;
+}
+
+/* Image sits on a soft panel rather than bare, which is what stops the grid
+   looking like a contact sheet. */
+.card.product .position-relative {
+    background: var(--dx-blush-bg) !important;
+    border-radius: var(--dx-radius) var(--dx-radius) 0 0 !important;
+    overflow: hidden !important;
+}
+
+/* Left-aligned body: the markup carries .text-center, so it is overridden
+   here rather than edited out of every card. */
+.card.product .card-body,
+.card.product .card-body.text-center {
+    text-align: left !important;
+    padding: 1.1rem 1.15rem 1.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.card.product .card-title {
+    font-size: .98rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    margin-bottom: .55rem !important;
+    /* Two lines maximum so every card in a row ends level. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.75em;
+}
+
+.card.product .card-title a { color: var(--dx-charcoal) !important; }
+.card.product .card-title a:hover { color: var(--dx-rose) !important; }
+
+/* Spec line (absorbency droplets) left-aligned under the title. */
+.card.product .dx-card-spec {
+    justify-content: flex-start !important;
+    margin-bottom: .85rem !important;
+}
+
+/* Foot row: price left, action right, pinned to the bottom of the card. */
+.card.product .dx-card-foot {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .6rem;
+    margin-top: auto !important;
+}
+
+.card.product .dx-card-foot .card-text {
+    margin-bottom: 0 !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: var(--dx-charcoal) !important;
+    display: flex;
+    flex-direction: column-reverse;
+    line-height: 1.25;
+}
+
+/* Struck MRP sits under the live price and recedes. */
+.card.product .dx-card-foot .text-decoration-through {
+    font-size: .82rem !important;
+    font-weight: 400 !important;
+    color: var(--dx-muted) !important;
+    padding-right: 0 !important;
+}
+
+.dx-add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: var(--dx-rose);
+    color: #fff !important;
+    font-weight: 600;
+    font-size: .88rem;
+    letter-spacing: .01em;
+    padding: .5rem 1.05rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    transition: background-color .18s var(--dx-ease), transform .12s var(--dx-ease);
+}
+
+.dx-add-btn:hover {
+    background: var(--dx-rose-dark);
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.dx-add-btn:active { transform: translateY(1px); }
+
+/* Discount chip: square-ish corner tag top-left, as in the reference. */
+.card.product .card-img-overlay { padding: .75rem !important; }
+
+.card.product .badge-primary {
+    background: var(--dx-rose) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: .35em .7em !important;
+    font-size: .74rem !important;
+    letter-spacing: .02em !important;
+}
+
+/* The hover icons stay - wishlist is a real action - just quieter. */
+.card.product .content-change-vertical .w-48px {
+    width: 38px !important;
+    height: 38px !important;
+    box-shadow: 0 2px 10px rgba(67, 48, 58, .14) !important;
+}
+
+.card.product .content-change-vertical .icon { font-size: 1rem !important; }
+
+@media (max-width: 575.98px) {
+    .card.product .card-body,
+    .card.product .card-body.text-center { padding: .9rem .95rem 1.05rem !important; }
+    .dx-add-btn { padding: .45rem .85rem; font-size: .82rem; }
+    .card.product .dx-card-foot .card-text { font-size: 1rem !important; }
+}

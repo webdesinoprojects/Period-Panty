@@ -35,16 +35,10 @@
             </div>
             <div class="card-body pt-4 text-center px-0">
               <h2 class="card-title fs-20 font-weight-500 mt-0"><a href="<?php echo $url ?>"><?php echo $product->title; ?></a> </h2>
-           
-              <p class="card-text font-weight-bold fs-16 mb-1 text-secondary">
-                  <?php if($product->special_price !='0.00'){ ?> 
-                <span class="fs-15 font-weight-500 text-decoration-through text-body pr-1"> <?php echo CURRENCY_SYMBOL." ".round($product->price); ?></span>
-                 <span> <?php echo CURRENCY_SYMBOL." ".round($product->special_price); ?></span>
-                    <?php }else{ ?>
-                <span> <?php echo CURRENCY_SYMBOL." ".round($product->price); ?></span>
-                  <?php }?>
-              </p>
-              <div class="d-flex align-items-center justify-content-center flex-wrap">
+
+              <!-- Absorbency reads as the card's feature line, the way the
+                   reference puts a short spec under the title. -->
+              <div class="d-flex align-items-center justify-content-center flex-wrap dx-card-spec">
                 <ul class="list-inline mb-0 lh-1">
                 <?php for ($x = 1; $x <= $product->absorbency_rate; $x++) { ?>
 
@@ -58,12 +52,27 @@
                                   <li class="list-inline-item fs-14 text-primary mr-0">
                                     <i class="text-drops far fa-tint"></i>
                                   </li>
-                              
+
                           <?php   } ?>
                 </ul>
               </div>
-              
-          
+
+              <!-- Price on the left, action on the right. The link target is the
+                   product page - the same destination the hover cart icon above
+                   already uses, because a size has to be chosen before anything
+                   can go in the basket. Nothing new is wired up here. -->
+              <div class="dx-card-foot">
+                <p class="card-text font-weight-bold fs-16 mb-1 text-secondary">
+                    <?php if($product->special_price !='0.00'){ ?>
+                  <span class="fs-15 font-weight-500 text-decoration-through text-body pr-1"> <?php echo CURRENCY_SYMBOL." ".round($product->price); ?></span>
+                   <span> <?php echo CURRENCY_SYMBOL." ".round($product->special_price); ?></span>
+                      <?php }else{ ?>
+                  <span> <?php echo CURRENCY_SYMBOL." ".round($product->price); ?></span>
+                    <?php }?>
+                </p>
+                <a href="<?php echo $url ?>" class="dx-add-btn">+ Add</a>
+              </div>
+
             </div>
           </div>
   
