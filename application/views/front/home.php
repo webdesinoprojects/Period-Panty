@@ -55,7 +55,7 @@
 
         </section>
   
-        <section class="wemakes pt-8 ">
+        <section class="wemakes pt-8 dx-has-art dx-art-drops">
           <div class="container container-xl">
             <div class="row">
             <?php foreach($slider as $sliders ){ ?>
@@ -73,7 +73,7 @@
             </div>
           </div>
         </section>
-        <section class=" pt-8">
+        <section class=" pt-8 dx-has-art dx-art-waves">
           <div class="container container-xl">
             <div class="row mb-md-6 mb-8">
               <div class="col-md-6">
@@ -99,7 +99,10 @@
         <section class="pt-2 pb-2">
           <img src="<?php echo base_url('assets/front/') ?>images/ourimg/newbg1.jpg">
         </section>
-        <section class="py-8 dx-band">
+        <?php $dx_ticker_dir = 'left'; $dx_ticker_tone = 'rose';
+              $this->load->view('front/dx_ticker'); ?>
+
+        <section class="py-8 dx-band dx-has-art dx-art-drops">
             <div class="container container-xl">
                 <div class="row">
                     <div class="col-12 text-center mb-7">
@@ -176,7 +179,7 @@
             </a>
          
         </section>
-        <section class="pt-lg-11 pb-lg-10 py-5" style="background:#deb08e;">
+        <section class="pt-lg-11 pb-lg-10 py-5 dx-has-art dx-art-waves" style="background:#deb08e;">
           <div class="container container-xl">
             <div class="row justify-content-center mb-7">
               <div class="col-12 text-center">
@@ -423,7 +426,7 @@
             </div>
           </div>
         </section>
-        <section class="pt-10 pb-6">
+        <section class="pt-10 pb-6 dx-has-art dx-art-waves">
           <div class="container-fluid">
             <div class="row mb-md-6 mb-8">
               <div class="col-12">
@@ -435,7 +438,7 @@
           </div>
         </section>
         <hr>
-        <section class="py-8 pt-lg-5 pb-lg-5" style="background-color:#F8F8F8" data-animated-id="10">
+        <section class="py-8 pt-lg-5 pb-lg-5 dx-has-art dx-art-drops" style="background-color:#F8F8F8" data-animated-id="10">
           <div class="container container-xl">
             <div class="row mx-0">
               <div class="col-lg-5 py-xl-6 py-lg-12 py-1">
@@ -493,7 +496,10 @@
             </div>
           </div>
         </section>
-        <section class="pt-11 pb-md-7 pb-10 pb-lg-14" style="background: #f8f8f8;">
+        <?php $dx_ticker_dir = 'right'; $dx_ticker_tone = 'ink';
+              $this->load->view('front/dx_ticker'); ?>
+
+        <section class="pt-11 pb-md-7 pb-10 pb-lg-14 dx-has-art dx-art-waves" style="background: #f8f8f8;">
           <div class="container container-xl">
             <div class="row">
               <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
@@ -548,7 +554,7 @@
 For every Sustain purchase, 1% of the purchase goes towards the animal and plantation fund, which helps to support the planet. Products like period underwear are designed to minimize waste, reducing the amount of used tampons and pads that end up in landfills.
 </marquee>
 </div>
-        <section class="faqs py-8">
+        <section class="faqs py-8 dx-has-art dx-art-drops">
           <div class="container">
             <span class="dx-eyebrow dx-eyebrow-center">Good to know</span>
             <h2 class="fs-34 pb-8 text-center">

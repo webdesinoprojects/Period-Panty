@@ -2040,3 +2040,191 @@ section[style*="deb08e"] .shadow-1 {
     .dx-band .card.hover-zoom-in:hover { transform: none; }
     .dx-band .card.hover-zoom-in:hover .card-img { transform: none; }
 }
+
+/* ==========================================================================
+   29. Angled ticker bands   [Sirona pass, step 5]
+   --------------------------------------------------------------------------
+   A tilted scrolling strip used to separate sections, as in the reference
+   board. Two of them at opposing angles give the page a rhythm that plain
+   background bands cannot.
+
+   CSS animation only - no JS, no library. The strip is wider than the
+   viewport and rotated, so the cut corners never show, and the track is
+   rendered twice in the markup so the loop joins seamlessly at -50%.
+
+   Marked aria-hidden: it is decoration, and a screen reader reading six
+   looping adjectives would be noise.
+   ========================================================================== */
+
+.dx-ticker {
+    position: relative;
+    overflow: hidden;
+    width: 108vw;
+    margin-left: -4vw;
+    padding: .85rem 0;
+    z-index: 2;
+    user-select: none;
+    pointer-events: none;
+}
+
+.dx-ticker-left  { transform: rotate(-2.2deg); }
+.dx-ticker-right { transform: rotate(2.2deg); }
+
+.dx-ticker-rose { background: var(--dx-rose); color: #fff; }
+.dx-ticker-ink  { background: var(--dx-charcoal); color: #fff; }
+
+.dx-ticker-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: dx-ticker-scroll 38s linear infinite;
+}
+
+.dx-ticker-right .dx-ticker-track { animation-direction: reverse; }
+
+.dx-ticker-item {
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0 1.15rem;
+}
+
+.dx-ticker-dot {
+    display: inline-flex;
+    align-items: center;
+    opacity: .75;
+    flex: 0 0 auto;
+}
+
+/* The track holds two identical passes, so shifting by half its width lands
+   exactly on the start of the second pass and the seam is invisible. */
+@keyframes dx-ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* Sections either side need to sit under the tilted band rather than leave a
+   white wedge at the corners. */
+.dx-ticker + section,
+section + .dx-ticker { margin-top: -1px; }
+
+@media (max-width: 767.98px) {
+    .dx-ticker { padding: .65rem 0; }
+    .dx-ticker-item { font-size: .85rem; letter-spacing: .1em; padding: 0 .8rem; }
+    .dx-ticker-left  { transform: rotate(-1.6deg); }
+    .dx-ticker-right { transform: rotate(1.6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-ticker-track { animation: none !important; }
+}
+
+/* ==========================================================================
+   30. Absorbency card illustrations   [Sirona pass, step 5]
+   --------------------------------------------------------------------------
+   Each card already contains an empty white .card-img div, so the artwork goes
+   there with no markup change at all.
+
+   The illustration is a droplet filled to that card's level - a quarter full
+   for Light through to full for Super. It is drawn from the card's actual
+   meaning rather than being decorative filler, which is the difference between
+   this and dropping a stock icon on top.
+
+   Inline SVG as a data URI: no request, no icon font, and it recolours with
+   the palette because the stroke and fill are written in the brand rose.
+   ========================================================================== */
+
+.dx-band .card.banner-02 .card-img,
+section[style*="deb08e"] .card.banner-02 .card-img {
+    background-repeat: no-repeat !important;
+    background-position: right -18px top -10px !important;
+    background-size: 132px auto !important;
+}
+
+/* Light - a quarter full */
+section .row > [class*="col-xl-3"]:nth-of-type(1) .card.banner-02 .card-img {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='130' viewBox='0 0 120 130'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect y='100' width='120' height='30' fill='%23b04a63' opacity='.22'/%3E%3C/g%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z' fill='none' stroke='%23b04a63' stroke-opacity='.3' stroke-width='2.5'/%3E%3C/svg%3E") !important;
+}
+
+/* Moderate - half full */
+section .row > [class*="col-xl-3"]:nth-of-type(2) .card.banner-02 .card-img {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='130' viewBox='0 0 120 130'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect y='82' width='120' height='48' fill='%23b04a63' opacity='.22'/%3E%3C/g%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z' fill='none' stroke='%23b04a63' stroke-opacity='.3' stroke-width='2.5'/%3E%3C/svg%3E") !important;
+}
+
+/* Heavy - three quarters */
+section .row > [class*="col-xl-3"]:nth-of-type(3) .card.banner-02 .card-img {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='130' viewBox='0 0 120 130'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect y='58' width='120' height='72' fill='%23b04a63' opacity='.22'/%3E%3C/g%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z' fill='none' stroke='%23b04a63' stroke-opacity='.3' stroke-width='2.5'/%3E%3C/svg%3E") !important;
+}
+
+/* Super - full */
+section .row > [class*="col-xl-3"]:nth-of-type(4) .card.banner-02 .card-img {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='130' viewBox='0 0 120 130'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect y='6' width='120' height='124' fill='%23b04a63' opacity='.22'/%3E%3C/g%3E%3Cpath d='M60 8C60 8 18 58 18 82a42 42 0 0 0 84 0C102 58 60 8 60 8Z' fill='none' stroke='%23b04a63' stroke-opacity='.3' stroke-width='2.5'/%3E%3C/svg%3E") !important;
+}
+
+/* Keep the copy clear of the artwork. */
+.dx-band .card.banner-02 .card-img-overlay,
+section[style*="deb08e"] .card.banner-02 .card-img-overlay {
+    padding-right: 1.5rem !important;
+}
+
+@media (max-width: 575.98px) {
+    .dx-band .card.banner-02 .card-img,
+    section[style*="deb08e"] .card.banner-02 .card-img {
+        background-size: 96px auto !important;
+        background-position: right -10px top -6px !important;
+    }
+}
+
+/* ==========================================================================
+   31. Section background art   [Sirona pass, step 5]
+   --------------------------------------------------------------------------
+   A faint pattern behind every section rather than flat colour. Two tiles,
+   alternated so neighbouring sections never share one:
+
+     A - scattered droplets, drawn from the product's own absorbency language
+     B - soft contour waves, reading as flow
+
+   Both are brand rose at 4-6% against the section colour, which is enough to
+   give the surface texture at normal viewing distance and not enough to
+   compete with photography or copy. They are painted on a ::after layer at
+   z-index 0 with the section's own children lifted above it, so no existing
+   background image or inline style is overwritten.
+   ========================================================================== */
+
+section { position: relative; }
+
+section > .container,
+section > .container-xl,
+section > .container-xxl,
+section > .row { position: relative; z-index: 1; }
+
+section.dx-has-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: repeat;
+}
+
+/* --- Tile A: scattered droplets ----------------------------------------- */
+.dx-art-drops::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190' viewBox='0 0 190 190'%3E%3Cg fill='%23b04a63' fill-opacity='.055'%3E%3Cpath d='M30 18c0 0-11 13-11 19a11 11 0 0 0 22 0c0-6-11-19-11-19Z'/%3E%3Cpath d='M132 52c0 0-8 9-8 13a8 8 0 0 0 16 0c0-4-8-13-8-13Z'/%3E%3Cpath d='M74 104c0 0-13 16-13 22a13 13 0 0 0 26 0c0-6-13-22-13-22Z'/%3E%3Cpath d='M158 138c0 0-10 12-10 17a10 10 0 0 0 20 0c0-5-10-17-10-17Z'/%3E%3Cpath d='M18 152c0 0-7 8-7 11a7 7 0 0 0 14 0c0-3-7-11-7-11Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- Tile B: soft contour waves ----------------------------------------- */
+.dx-art-waves::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120'%3E%3Cg fill='none' stroke='%23b04a63' stroke-opacity='.05' stroke-width='1.6'%3E%3Cpath d='M-10 30C30 8 70 8 110 30s80 22 120 0'/%3E%3Cpath d='M-10 60C30 38 70 38 110 60s80 22 120 0'/%3E%3Cpath d='M-10 90C30 68 70 68 110 90s80 22 120 0'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Slightly stronger on tinted bands, which swallow a 5% wash. */
+.dx-band.dx-art-drops::after,
+.dx-band.dx-art-waves::after { opacity: 1.35; }
+
+/* The hero, the tickers and any section carrying its own photograph are left
+   alone - texture behind a full-bleed image is invisible and only costs
+   paint time. */
+section.slider::after,
+section[style*="background-image"]::after { content: none !important; }
