@@ -2409,11 +2409,14 @@ section:has(> a > img) > a > img { display: block; width: 100%; height: auto; }
 
 .dx-bleed-banner { position: relative; overflow: hidden; }
 
+/* Sits near the banner's lower edge rather than across its middle: centred it
+   cut straight through the headline and the Shop Now button. Low enough to
+   clear the artwork's own text, high enough to still read as crossing the
+   image rather than sitting under it. */
 .dx-ticker-over {
     position: absolute;
     left: 0; right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: 6%;
     z-index: 3;
     pointer-events: none;
 }
