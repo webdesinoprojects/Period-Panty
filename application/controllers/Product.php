@@ -212,7 +212,15 @@ class Product extends CI_Controller{
     //  echo $this->db->last_query() ; 
 
         //  count Rows
+        // This count has to mirror the product query above exactly, or the two
+        // disagree and the page reports "No Product Found" while the product
+        // query actually matched rows. It previously omitted the
+        // tbl_product_variation join and filtered size with
+        // find_in_set(size, product.size); tbl_products.size is empty for every
+        // row in this catalogue - sizes live only in tbl_product_variation - so
+        // any size filter counted zero and the grid came back empty.
         $this->db->from('tbl_products as product');
+		$this->db->join('tbl_product_variation as product_variation',"product_variation.product_id=product.id",'left');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.delete_flag','0');
 		$this->db->where('product.status','1');
@@ -232,10 +240,10 @@ class Product extends CI_Controller{
 		    $this->db->where('find_in_set("'.$age_group.'", product.age_group) <> 0');
 		}
 		if($size){
-		    $this->db->where('find_in_set("'.$size.'", product.size) <> 0');
-
+		    $this->db->where('product_variation.size',$size);
 		}
 
+		$this->db->group_by('product_variation.product_id');
        $count = $this->db->get()->num_rows();
 
         if(empty($_GET["rowcount"])) { $_GET["rowcount"] = $count; }
@@ -317,7 +325,23 @@ class Product extends CI_Controller{
     		   		$this->db->where_in('product.cat_id',$categoryArray); 
     		}
     		$this->db->order_by('product'.$order_by , $order_value) ;
+
+    		// The category page shares front/product/listing with /shop, so it
+    		// has to supply the same variables that view now expects. Without
+    		// these it raised "Undefined variable: PRODUCT_TOTAL" on every
+    		// category page.
+    		$data['PRODUCT_TOTAL'] = $this->db->count_all_results('', FALSE);
+
+    		$this->db->limit(12, 0);
     		$data['PRODUCTS'] = $this->db->get()->result();
+
+    		$data['load_url'] = base_url('product/pagination');
+    		$data['PAGER'] = $this->getAllPageLinks(
+    			$data['PRODUCT_TOTAL'],
+    			base_url('product/pagination') . '?cat_id=' . (int) $cat_id . '&page=',
+    			12
+    		);
+
 			$this->load->view('front/product/listing',$data);
 		}
 		else

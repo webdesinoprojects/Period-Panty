@@ -2799,3 +2799,148 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
 @media (max-width: 767.98px) {
     #pagination { padding-bottom: 2.25rem !important; }
 }
+
+/* ==========================================================================
+   42. Filter panel controls
+   --------------------------------------------------------------------------
+   The panel's controls are real inputs now rather than dead anchors, so they
+   need styling: selects, size chips, colour swatches and the two actions.
+   ========================================================================== */
+
+.dx-filter-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%235f5458' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 1rem center;
+    border: 1px solid var(--dx-line);
+    border-radius: 10px;
+    padding: .65rem 2.4rem .65rem 1rem;
+    font-size: .95rem;
+    color: var(--dx-charcoal);
+    cursor: pointer;
+}
+
+.dx-filter-select:focus-visible { outline: 2px solid var(--dx-rose); outline-offset: 2px; }
+
+/* --- Size chips ---------------------------------------------------------- */
+.dx-chip-group { display: flex; flex-wrap: wrap; gap: .5rem; }
+.dx-chip-input { position: absolute; opacity: 0; pointer-events: none; }
+
+.dx-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    padding: .4rem .8rem;
+    border: 1px solid var(--dx-line);
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--dx-charcoal);
+    cursor: pointer;
+    margin: 0;
+    transition: background-color .16s var(--dx-ease), border-color .16s var(--dx-ease), color .16s var(--dx-ease);
+}
+
+.dx-chip:hover { border-color: var(--dx-rose); color: var(--dx-rose); }
+.dx-chip-input:checked + .dx-chip {
+    background: var(--dx-rose);
+    border-color: var(--dx-rose);
+    color: #fff;
+}
+.dx-chip-input:focus-visible + .dx-chip { outline: 2px solid var(--dx-rose); outline-offset: 2px; }
+
+/* --- Colour swatches ----------------------------------------------------- */
+.dx-swatch-group { display: flex; flex-wrap: wrap; gap: .55rem; }
+.dx-swatch-input { position: absolute; opacity: 0; pointer-events: none; }
+
+.dx-swatch {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(40,26,33,.18);
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+    transition: transform .14s var(--dx-ease), box-shadow .14s var(--dx-ease);
+}
+
+.dx-swatch:hover { transform: scale(1.1); }
+
+/* A ring rather than a tick, so it reads on pale and dark swatches alike. */
+.dx-swatch-input:checked + .dx-swatch {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--dx-rose);
+}
+
+.dx-swatch-input:focus-visible + .dx-swatch { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--dx-rose); }
+
+/* --- Actions ------------------------------------------------------------- */
+.dx-filter-actions {
+    display: flex;
+    gap: .6rem;
+    padding-top: .5rem;
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding-bottom: 1rem;
+}
+
+.dx-filter-apply,
+.dx-filter-clear {
+    flex: 1;
+    border-radius: 999px;
+    padding: .7rem 1rem;
+    font-weight: 600;
+    font-size: .93rem;
+    cursor: pointer;
+    transition: background-color .18s var(--dx-ease), color .18s var(--dx-ease), border-color .18s var(--dx-ease);
+}
+
+.dx-filter-apply { background: var(--dx-rose); border: 1px solid var(--dx-rose); color: #fff; }
+.dx-filter-apply:hover { background: var(--dx-rose-dark); border-color: var(--dx-rose-dark); }
+
+.dx-filter-clear { background: #fff; border: 1px solid var(--dx-line); color: var(--dx-charcoal); }
+.dx-filter-clear:hover { border-color: var(--dx-rose); color: var(--dx-rose); }
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   43. Dropdown hover bridge
+   --------------------------------------------------------------------------
+   The 8px margin added under .main-header .dropdown-menu to lift it off the
+   bar created a dead strip between the nav item and the panel. On a
+   hover-opened menu that gap closes the dropdown the moment the pointer
+   crosses it, so the menu was unusable with a mouse.
+
+   The offset is kept, but a transparent pseudo-element spans the gap so the
+   pointer never leaves a hovered element on the way down.
+   ========================================================================== */
+
+.main-header .dropdown-menu::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -12px;
+    height: 12px;
+    background: transparent;
+}
+
+/* The nav item itself keeps the menu open while the pointer is anywhere over
+   the item or the panel. */
+.main-header .nav-item.dropdown:hover > .dropdown-menu,
+.main-header .dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+/* Submenu panels need the same bridge on their left edge. */
+.main-header .dropdown-menu .dropdown-menu::before {
+    top: 0;
+    left: -14px;
+    right: auto;
+    width: 14px;
+    height: 100%;
+}

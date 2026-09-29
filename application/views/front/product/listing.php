@@ -29,6 +29,12 @@
     </nav>
   </div>
 </section>
+<?php
+// Guarded so any caller that forgets one of these renders a sane page instead
+// of a notice: /shop and the category listing both use this view.
+$dx_total = isset($PRODUCT_TOTAL) ? (int) $PRODUCT_TOTAL : (isset($PRODUCTS) ? count($PRODUCTS) : 0);
+$PAGER    = isset($PAGER) ? $PAGER : '';
+?>
 <section class="mt-7">
     <div class="container container-xl">
 
@@ -38,8 +44,8 @@
              new code path. -->
         <div class="dx-shop-bar">
             <p class="dx-shop-count mb-0">
-                <strong><?php echo (int) $PRODUCT_TOTAL; ?></strong>
-                product<?php echo ((int) $PRODUCT_TOTAL === 1 ? '' : 's'); ?>
+                <strong><?php echo (int) $dx_total; ?></strong>
+                product<?php echo ($dx_total === 1 ? '' : 's'); ?>
             </p>
 
             <div class="dx-shop-tools">
@@ -58,8 +64,12 @@
             </div>
         </div>
 
-        <input type="hidden" id="rowcount" value="<?php echo (int) $PRODUCT_TOTAL; ?>">
-        <input type="hidden" class="cat_id" value="">
+        <!-- No hidden .cat_id here: the filter panel's category <select> already
+             carries that class, and getresult() reads it with jQuery .val(),
+             which returns the FIRST match in document order. A hidden input
+             earlier in the page shadowed the select and made every category
+             filter send an empty value. -->
+        <input type="hidden" id="rowcount" value="<?php echo (int) $dx_total; ?>">
         <input type="hidden" class="where_clause" value="">
 
         <!-- getresult() replaces the contents of this node. It has to exist or
@@ -117,55 +127,79 @@
         (function () {
             var sel = document.getElementById('dx-sorting');
             if (sel && DX_LOAD_URL) {
-                sel.addEventListener('change', function () { getresult(DX_LOAD_URL); });
+                sel.addEventListener('change', function () { getresult(DX_LOAD_URL); window.dxSyncUrl(); });
             }
         })();
 
         // Filtering and sorting happen over AJAX, so the address bar never
         // reflected what was on screen - a filtered view could not be shared,
-        // bookmarked or reached with the back button. Wrap getresult so every
-        // call also writes the current state into the query string. The
-        // wrapper delegates to the original, so no filter logic is duplicated.
-        (function () {
-            if (typeof getresult !== 'function') { return; }
-            var original = getresult;
+        // bookmarked or reached with the back button. dxSyncUrl() writes the
+        // current control state into the query string and is called from the
+        // same places that trigger a reload, rather than by wrapping
+        // getresult(), which proved unreliable.
+        window.dxSyncUrl = function () {
+            try {
+                var params = new URLSearchParams();
+                var read = function (sel) {
+                    var el = document.querySelector(sel);
+                    return (el && el.value) ? el.value : '';
+                };
 
-            window.getresult = function (url) {
-                original(url);
-                try {
-                    var params = new URLSearchParams();
+                var sorting = read('select.sorting');
+                if (sorting) { params.set('sorting', sorting); }
 
-                    var sort = document.querySelector('.sorting option:selected');
-                    if (sort && sort.value) { params.set('sorting', sort.value); }
+                var cat = read('select.cat_id');
+                if (cat) { params.set('cat_id', cat); }
 
-                    var size = document.querySelector("input[name='size']:checked");
-                    if (size && size.value) { params.set('size', size.value); }
+                var price = read('select.price');
+                if (price) { params.set('price', price); }
 
-                    var price = document.querySelector('.price');
-                    if (price && price.value) { params.set('price', price.value); }
+                var size = document.querySelector('input[name="size"]:checked');
+                if (size && size.value) { params.set('size', size.value); }
 
-                    var colours = [].slice.call(
-                        document.querySelectorAll("input[name='color[]']:checked")
-                    ).map(function (c) { return c.value; });
-                    if (colours.length) { params.set('color', colours.join(',')); }
+                var colours = [].slice.call(
+                    document.querySelectorAll('input[name="color[]"]:checked')
+                ).map(function (c) { return c.value; });
+                if (colours.length) { params.set('color', colours.join(',')); }
 
-                    var qs = params.toString();
-                    history.replaceState(null, '',
-                        qs ? location.pathname + '?' + qs : location.pathname);
-                } catch (e) { /* URL sync is cosmetic; never break the filter */ }
-            };
-        })();
+                var qs = params.toString();
+                history.replaceState(null, '',
+                    qs ? location.pathname + '?' + qs : location.pathname);
+            } catch (e) { /* cosmetic only - never break the filter */ }
+        };
 
         // Apply state from the URL on load, so a shared or bookmarked link
         // opens on the same view rather than the unfiltered default.
         (function () {
             if (!DX_LOAD_URL) { return; }
             var q = new URLSearchParams(location.search);
+            var touched = false;
+
             var sorting = q.get('sorting');
-            if (!sorting) { return; }
-            var sel = document.getElementById('dx-sorting');
-            if (sel) { sel.value = sorting; }
-            getresult(DX_LOAD_URL);
+            if (sorting) {
+                var sel = document.getElementById('dx-sorting');
+                if (sel) { sel.value = sorting; touched = true; }
+            }
+
+            var cat = q.get('cat_id');
+            if (cat) {
+                var catSel = document.querySelector('.cat_id');
+                if (catSel) { catSel.value = cat; touched = true; }
+            }
+
+            var price = q.get('price');
+            if (price) {
+                var priceSel = document.querySelector('.price');
+                if (priceSel) { priceSel.value = price; touched = true; }
+            }
+
+            var size = q.get('size');
+            if (size) {
+                var sizeInput = document.querySelector('input[name="size"][value="' + size + '"]');
+                if (sizeInput) { sizeInput.checked = true; touched = true; }
+            }
+
+            if (touched) { getresult(DX_LOAD_URL); }
         })();
 
         function get_filter(class_name) {
