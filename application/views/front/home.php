@@ -449,40 +449,40 @@
             <div class="row mx-0">
               <div class="col-lg-5 py-xl-6 py-lg-12 py-1">
                 <div class="mw-lg-695 ml-auto py-lg-7">
-                  <div class="fs-15 font-weight-600 text-uppercase letter-spacing-01 pb-2 text-secondary">DEXTE PERIOD PANTIES</div>
+                  <span class="dx-eyebrow">Why it works</span>
                   <h2 class="fs-34 pb-4">
-                    How Period Panties 
-                    Will Change Your Life
+                    How Period Panties
+                    <strong>Will Change Your Life</strong>
                   </h2>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600">
+                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
                 
                     They're
                     <span class="spancolor">
                       Reusable
                     </span>
                   </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600">
+                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
                   
                     360<sup class="fs-10 font-weight-600">o</sup> Anti-leak
                     <span class="spancolor">
                       Protection
                     </span>
                   </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600">
+                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
                
                     Made With Ultra-soft & Breathable
                     <span class="spancolor">
                       Material
                     </span>
                   </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600">
+                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
                  
                     Holds Up To 40ml
                     <span class="spancolor">
                       Of Blood
                     </span>
                   </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600">
+                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
                     
                     On Heavy Flow Change
                     <span class="spancolor">

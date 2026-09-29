@@ -2488,3 +2488,123 @@ section + .dx-ticker { margin-top: 3.75rem !important; }
     section + .dx-ticker { margin-top: 2.25rem !important; }
     .dx-ticker-over .dx-ticker { margin: 0 !important; }
 }
+
+/* ==========================================================================
+   38. Review rail - first tile alignment
+   --------------------------------------------------------------------------
+   scroll-snap-type: x mandatory snapped the first tile flush to the container
+   edge on load, ignoring the track's left padding, so tile one was clipped.
+   scroll-padding tells the snap where the content actually starts. Snapping
+   is also relaxed to proximity, so a partial drag is not yanked back.
+   ========================================================================== */
+
+.dx-rail {
+    scroll-snap-type: x proximity;
+    scroll-padding-left: calc((100vw - min(1440px, 100vw - 46px)) / 2 + 15px);
+}
+
+@media (max-width: 767.98px) {
+    .dx-rail { scroll-padding-left: 15px; }
+}
+
+/* ==========================================================================
+   39. "How period panties will change your life"
+   --------------------------------------------------------------------------
+   Was a flat block: small uppercase label, plain heading, five bare lines of
+   text and a square video. Now it matches the rest of the page - eyebrow chip,
+   two-weight heading, and the five benefits as rounded rows each carrying a
+   tick, with the video rounded and lifted.
+
+   Wording is untouched; only the label above the heading changed, and that was
+   a style label rather than content.
+   ========================================================================== */
+
+.dx-benefit {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: 999px;
+    padding: .62rem 1.1rem .62rem 2.9rem !important;
+    margin-bottom: .6rem !important;
+    font-size: .98rem !important;
+    color: var(--dx-charcoal) !important;
+    text-transform: none !important;
+    transition: transform .18s var(--dx-ease), box-shadow .18s var(--dx-ease);
+}
+
+.dx-benefit:hover {
+    transform: translateX(3px);
+    box-shadow: var(--dx-shadow);
+}
+
+/* Tick drawn as a CSS mask - no icon font, no extra markup. */
+.dx-benefit::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--dx-blush-bg);
+}
+
+.dx-benefit::after {
+    content: "";
+    position: absolute;
+    left: 1.32rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 11px; height: 9px;
+    background-color: var(--dx-rose);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9'%3E%3Cpath d='M1 4.6 4 7.6 10 1.4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9'%3E%3Cpath d='M1 4.6 4 7.6 10 1.4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* The emphasised half of each line keeps the brand colour and gains weight. */
+.dx-benefit .spancolor { font-weight: 700 !important; }
+
+/* Video: rounded, lifted, and no longer a hard-edged black square. */
+section[style*="F8F8F8"] iframe,
+section[style*="F8F8F8"] video,
+section[style*="F8F8F8"] .embed-responsive,
+section[style*="F8F8F8"] .video-wrapper {
+    border-radius: var(--dx-radius) !important;
+    overflow: hidden !important;
+    box-shadow: var(--dx-shadow-lg) !important;
+}
+
+section[style*="F8F8F8"] .col-lg-7,
+section[style*="F8F8F8"] .col-lg-6 { display: flex; align-items: center; }
+
+@media (max-width: 767.98px) {
+    .dx-benefit { font-size: .9rem !important; padding: .55rem .9rem .55rem 2.6rem !important; }
+}
+
+/* The video thumbnail is a column carrying an inline background-image with a
+   play button inside, not an iframe or <video>, which is why the earlier
+   rounding rules missed it. */
+[style*="videoimg"] {
+    border-radius: var(--dx-radius) !important;
+    box-shadow: var(--dx-shadow-lg) !important;
+    overflow: hidden !important;
+    min-height: 420px;
+}
+
+/* Play button takes the brand colour rather than plain white. */
+[style*="videoimg"] .btn-light {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 34px rgba(176, 74, 99, .42) !important;
+    transition: transform .2s var(--dx-ease), background-color .2s var(--dx-ease) !important;
+}
+
+[style*="videoimg"] .btn-light:hover {
+    background: var(--dx-rose-dark) !important;
+    transform: scale(1.06);
+}
+
+@media (max-width: 991.98px) {
+    [style*="videoimg"] { min-height: 280px; }
+}
