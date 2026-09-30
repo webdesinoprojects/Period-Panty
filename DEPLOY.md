@@ -107,7 +107,11 @@ splitting out once the site is settled.
 
 ### Before taking real payments
 
-- Rotate the Razorpay keys. The previous pair was committed to git history and
-  must be treated as compromised.
+- Rotate the Razorpay keys. They were hardcoded in the source, so anyone who has
+  ever held a copy of this codebase has them. They are **not** in this GitHub
+  repository -- `main` is a clean branch and no pushed commit ever contained
+  them -- but they do exist in unpushed local branches on the original machine
+  and in whatever copies of the site archive are floating around. Treat them as
+  known to third parties, not as publicly indexed.
 - Set `RAZOR_KEY_ID` and `RAZOR_KEY_SECRET` in `.env`; the code no longer
   contains them, so payments will not work until they are set.
