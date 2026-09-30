@@ -2956,3 +2956,64 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
     width: 14px;
     height: 100%;
 }
+
+/* ==========================================================================
+   44. Sticky header on inner pages
+   --------------------------------------------------------------------------
+   Section 17 fixed the header only under `body:has(section.slider)`, which is
+   the home page. Every other page kept it in normal flow, so it scrolled away
+   on /shop, on product detail and on the content pages.
+
+   The theme ships its own sticky - theme.js sets position:fixed inline on
+   .sticky-area once .sticky-area-wrap passes the scroll offset - but it is not
+   usable here. Section 19 deliberately pins .sticky-area to relative with
+   !important to stop theme.js's re-measure/re-fix feedback loop, and the
+   theme's approach collapses .sticky-area-wrap to zero height the moment its
+   only child leaves the flow, jumping the page up by the whole header height.
+
+   So the header is CSS-fixed here exactly as on the home page, and the height
+   it no longer occupies is handed back as padding on <body>.
+
+   The padding figures are measured rather than guessed: the bar renders 114px
+   at >=1200px, and 120-124px / 112-115px below that, varying by page because
+   the collapsed-menu row differs. The larger figure of each pair is used - 4px
+   of surplus whitespace is invisible, 4px of overlap clips the breadcrumb.
+
+   position:sticky would avoid the constants altogether but does not work here:
+   body carries overflow-x:hidden, which is what keeps horizontal scrollbars
+   away, and that makes body a scroll container, which breaks sticky for its
+   own children. Verified failing at all nine widths before settling on fixed.
+   ========================================================================== */
+
+body:not(:has(section.slider)) .main-header {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100% !important;
+    z-index: 1040 !important;
+}
+
+/* Section 19's frost is tuned for the hero: a 42% plum over one large, calm
+   piece of artwork. Over a scrolling product grid that same value lets whole
+   photographs read through the bar and the nav links lose their contrast
+   against them. Inner pages therefore get a near-solid plum - same colour, so
+   the bar still matches the home page, but it stops competing with whatever
+   happens to be sliding underneath it. */
+body:not(:has(section.slider)) .main-header .sticky-area::before {
+    background: rgba(67, 48, 58, .94) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    backdrop-filter: blur(20px) saturate(140%);
+}
+
+body:not(:has(section.slider)) {
+    padding-top: 114px !important;
+}
+
+@media (max-width: 1199.98px) {
+    body:not(:has(section.slider)) { padding-top: 124px !important; }
+}
+
+@media (max-width: 767.98px) {
+    body:not(:has(section.slider)) { padding-top: 115px !important; }
+}
