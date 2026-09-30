@@ -65,5 +65,12 @@ fi
 } > /etc/apache2/conf-available/zz-app-env.conf
 a2enconf zz-app-env >/dev/null 2>&1 || true
 
+# uploads/ is bind-mounted from the host so that customer and product images
+# survive rebuilds - which also means the host's ownership applies to it, not
+# the image's. Apache runs as www-data, so without this the admin panel cannot
+# save new product images (existing ones still render, which makes it look
+# fine until someone tries to add a product). No-op when nothing is mounted.
+chown -R www-data:www-data /var/www/html/uploads 2>/dev/null || true
+
 echo ">> Starting Apache (foreground)..."
 exec apache2-foreground
