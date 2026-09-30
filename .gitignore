@@ -17,3 +17,6 @@ Thumbs.db
 # Vendor theme demo/docs pages - not used by the site and they ship with
 # example API tokens that GitHub secret scanning blocks.
 /assets/front/docs/
+
+# Server credentials - never commit.
+.env

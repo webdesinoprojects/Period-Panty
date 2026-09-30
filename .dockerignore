@@ -1,0 +1,9 @@
+.git
+.gitignore
+.env
+.env.example
+backups/
+deploy/*.md
+DEPLOY.md
+*.sql
+*.sql.gz

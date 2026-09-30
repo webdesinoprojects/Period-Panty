@@ -1,0 +1,30 @@
+# DEXTE - production compose file.
+#
+# Binds to 127.0.0.1 only: nginx on the host proxies to it, so this never
+# opens a new public port. That matches how the other services on this box
+# (for example crikoptions-api on 8090) are already arranged.
+services:
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: dexte_web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${APP_PORT:-8082}:80"
+    environment:
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASS: "${DB_PASS}"
+      RAZOR_KEY_ID: "${RAZOR_KEY_ID:-}"
+      RAZOR_KEY_SECRET: "${RAZOR_KEY_SECRET:-}"
+    volumes:
+      # Database files live in a named volume so they survive rebuilds and
+      # redeploys. Removing this volume destroys the database.
+      - dbdata:/var/lib/mysql
+      # Customer uploads are written at runtime and are NOT rebuilt from the
+      # image, so they are kept on the host too.
+      - ./uploads:/var/www/html/uploads
+
+volumes:
+  dbdata:
