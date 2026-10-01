@@ -15,7 +15,7 @@
 <body>
 <?php $this->load->view('front/layout/header'); ?>
 
- <div class="pt-9 pb-9">
+ <div class="dx-acct pt-9 pb-9">
         <div class="container">
             <div class="row">
                     <div class="col-lg-2"></div>

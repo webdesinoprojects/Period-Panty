@@ -184,7 +184,56 @@
             </div>
         </section>
 
-        <?php $this->load->view('front/dx_reviews'); ?>
+        <section class="pt-11 pb-md-7 pb-10 pb-lg-14 dx-has-art dx-art-waves" style="background: #f8f8f8;">
+          <div class="container container-xl">
+            <div class="row">
+              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
+                <div class="card border-0 text-center">
+                  <div class="mw-102 mx-auto">
+                    <img src="<?php echo base_url('assets/front/') ?>images/qu1.avif" alt="comfortable">
+                  </div>
+                  <div class="card-body px-0 pt-6 mt-1 pb-0">
+                    <h3 class="fs-24 mb-3">Comfortable</h3>
+                    <p class="mb-0">In Our products you feel just as beautiful and cozy as in your favorite underwear. </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
+                <div class="card border-0 text-center">
+                  <div class="mw-102 mx-auto">
+                    <img src="<?php echo base_url('assets/front/') ?>images/qu2.avif" alt="sustainable">
+                  </div>
+                  <div class="card-body px-0 pt-6 mt-1 pb-0">
+                    <h3 class="fs-24 mb-3">Sustainable</h3>
+                    <p class="mb-0">With Our products you avoid tons of waste. </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
+                <div class="card border-0 text-center">
+                  <div class="mw-102 mx-auto">
+                    <img src="<?php echo base_url('assets/front/') ?>images/qu3.avif" alt="leak-proof">
+                  </div>
+                  <div class="card-body px-0 pt-6 mt-1 pb-0">
+                    <h3 class="fs-24 mb-3">Leak-Proof</h3>
+                    <p class="mb-0">With Our products you don't have to worry about leakage. </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
+                <div class="card border-0 text-center">
+                  <div class="mw-102 mx-auto">
+                    <img src="<?php echo base_url('assets/front/') ?>images/ourimg/eco.png" alt="leak-proof">
+                  </div>
+                  <div class="card-body px-0 pt-6 mt-1 pb-0">
+                    <h3 class="fs-24 mb-3">Eco Friendly</h3>
+                    <p class="mb-0">With Our products you don't have to worry about harm earth. </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="pt-lg-11 pb-lg-10 py-5 dx-has-art dx-art-waves" style="background:#deb08e;">
           <div class="container container-xl">
             <div class="row justify-content-center mb-7">
@@ -505,56 +554,7 @@
         <?php $dx_ticker_dir = 'right'; $dx_ticker_tone = 'ink';
               $this->load->view('front/dx_ticker'); ?>
 
-        <section class="pt-11 pb-md-7 pb-10 pb-lg-14 dx-has-art dx-art-waves" style="background: #f8f8f8;">
-          <div class="container container-xl">
-            <div class="row">
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu1.avif" alt="comfortable">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Comfortable</h3>
-                    <p class="mb-0">In Our products you feel just as beautiful and cozy as in your favorite underwear. </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu2.avif" alt="sustainable">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Sustainable</h3>
-                    <p class="mb-0">With Our products you avoid tons of waste. </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu3.avif" alt="leak-proof">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Leak-Proof</h3>
-                    <p class="mb-0">With Our products you don't have to worry about leakage. </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/ourimg/eco.png" alt="leak-proof">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Eco Friendly</h3>
-                    <p class="mb-0">With Our products you don't have to worry about harm earth. </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <?php $this->load->view('front/dx_reviews'); ?>
         <div class="rg">
         <marquee width="100%" direction="left">
 For every Sustain purchase, 1% of the purchase goes towards the animal and plantation fund, which helps to support the planet. Products like period underwear are designed to minimize waste, reducing the amount of used tampons and pads that end up in landfills.

@@ -16,20 +16,13 @@
 
 <body>
     <?php $this->load->view('front/layout/header'); ?>
-    <section class="py-2 bg-gray-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-site py-0 d-flex justify-content-center">
-                <li class="breadcrumb-item active pl-0 d-flex align-items-center" aria-current="page">Edit Profile</li>
-            </ol>
-        </nav>
-    </div>
-</section>
- <div class="pt-9 pb-9">
+ <div class="dx-acct pt-9 pb-9">
         <div class="container">
             <div class="row">
-                   <div class="col-sm-3"><?php $this->load->view('front/account/left-menu'); ?></div>
-            <div class="col-sm-9">
+                   <div class="col-lg-3 mb-5 mb-lg-0"><?php $this->load->view('front/account/left-menu'); ?></div>
+            <div class="col-lg-9">
+              <div class="dx-panel">
+                <div class="dx-panel-head"><h2 class="dx-panel-title">Edit profile</h2></div>
                     <?php echo $this->session->flashdata('msg'); ?>
                     <form method="post" class="setting-form" id="profile_form">
                         <div class="row">
@@ -104,6 +97,7 @@
                         </div>
                         <!--- Row End -->
                     </form>
+              </div>
                 </div>
             </div>
         </div>

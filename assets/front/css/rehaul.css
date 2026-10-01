@@ -3006,14 +3006,524 @@ body:not(:has(section.slider)) .main-header .sticky-area::before {
     backdrop-filter: blur(20px) saturate(140%);
 }
 
-body:not(:has(section.slider)) {
-    padding-top: 114px !important;
+/* The offset goes on the first element after the header, not on <body>.
+   Padding the body leaves a strip of the body's own background - white -
+   showing through behind a bar that is deliberately transparent, so the nav
+   appeared to sit in a white box of its own rather than floating over the
+   page. Pushing the first section down instead lets THAT section's background
+   run up behind the bar, and the seam disappears. */
+
+body:not(:has(section.slider)) .main-header + * {
+    padding-top: 130px !important;
 }
 
 @media (max-width: 1199.98px) {
-    body:not(:has(section.slider)) { padding-top: 124px !important; }
+    body:not(:has(section.slider)) .main-header + * { padding-top: 140px !important; }
 }
 
 @media (max-width: 767.98px) {
-    body:not(:has(section.slider)) { padding-top: 115px !important; }
+    body:not(:has(section.slider)) .main-header + * { padding-top: 131px !important; }
 }
+
+/* ==========================================================================
+   45. The whole product card is a link
+   --------------------------------------------------------------------------
+   Only the image, the title and the two buttons were clickable, so most of the
+   card - the price row, the absorbency dots, the padding - did nothing. The
+   title's anchor is stretched over the entire card with an ::after overlay
+   instead, which is the Bootstrap stretched-link technique and needs no markup
+   change: every existing link still points where it always did.
+
+   .card is already position:relative in Bootstrap, so the overlay resolves
+   against the card rather than the page.
+
+   The hover actions sit above it. .card-img-overlay is NOT given a position
+   here - it is already absolutely positioned and overriding that to relative
+   takes it out of overlay mode, which previously made these cards balloon.
+   z-index alone is enough on an already-positioned element.
+   ========================================================================== */
+
+.card.product {
+    position: relative !important;
+}
+
+.card.product .card-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+}
+
+/* The overlay holding the hover bag and star is stretched across the whole
+   image, so every click on the photo landed on this div instead of the link
+   underneath it - the image was the one part of the card that did nothing.
+   It is made transparent to the pointer and only its two anchors take clicks
+   back, so the photo falls through to the product link while the icons still
+   work. position is deliberately left alone: this element is already
+   absolutely positioned, and forcing it to relative drops it out of overlay
+   mode, which is what made these cards balloon once before. */
+.card.product .card-img-overlay {
+    z-index: 2;
+    pointer-events: none;
+}
+
+.card.product .card-img-overlay a,
+.card.product .card-img-overlay button {
+    pointer-events: auto;
+}
+
+.card.product .dx-card-foot .dx-add-btn {
+    position: relative;
+    z-index: 2;
+}
+
+/* ==========================================================================
+   46. Customer account panel
+   --------------------------------------------------------------------------
+   The account pages were six stacked gradient buttons - green, red and blue -
+   on a bare white page, with the colours written inline on every anchor. They
+   predate the rehaul entirely and matched nothing else on the site.
+
+   This is a proper panel: a sidebar carrying identity and navigation, then
+   stat tiles, panels and a six-month spend strip. Every destination is the one
+   the old buttons used; only the presentation changed.
+
+   All class names here are new (dx-acct-*, dx-stat-*, dx-panel-*), so none of
+   them collide with themes.css. Element selectors inside the panels still need
+   !important in places, because themes.css styles bare h1/h2/dl/dd that way.
+   ========================================================================== */
+
+.dx-acct { background: var(--dx-ivory); }
+
+/* ---- sidebar ---- */
+
+.dx-acct-nav {
+    position: sticky;
+    top: 130px;                      /* clears the fixed header from section 44 */
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: var(--dx-radius);
+    padding: 22px 16px 16px;
+    box-shadow: 0 6px 28px rgba(67, 48, 58, .05);
+}
+
+.dx-acct-ident {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 6px 18px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--dx-line);
+}
+
+.dx-acct-avatar {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dx-blush-bg);
+    color: var(--dx-rose);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: .02em;
+}
+
+.dx-acct-ident-text { min-width: 0; }
+
+.dx-acct-name {
+    display: block;
+    font-size: 15px;
+    color: var(--dx-plum);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dx-acct-mail {
+    display: block;
+    font-size: 12.5px;
+    color: var(--dx-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dx-acct-links { display: block; }
+
+.dx-acct-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    color: var(--dx-body) !important;
+    font-size: 14.5px;
+    line-height: 1.2;
+    text-decoration: none !important;
+    transition: background .18s var(--dx-ease), color .18s var(--dx-ease);
+}
+
+.dx-acct-link i {
+    width: 18px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--dx-muted);
+    transition: color .18s var(--dx-ease);
+}
+
+.dx-acct-link:hover {
+    background: var(--dx-blush-bg);
+    color: var(--dx-rose) !important;
+}
+
+.dx-acct-link:hover i { color: var(--dx-rose); }
+
+.dx-acct-link.is-active {
+    background: var(--dx-rose);
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.dx-acct-link.is-active i { color: #fff; }
+
+.dx-acct-logout {
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--dx-line);
+}
+
+.dx-acct-logout:hover { background: #fdf0f0; color: #b3261e !important; }
+.dx-acct-logout:hover i { color: #b3261e; }
+
+/* ---- page head ---- */
+
+.dx-acct-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.dx-acct-title {
+    font-size: 28px !important;
+    color: var(--dx-plum) !important;
+    margin: 0 0 4px !important;
+}
+
+.dx-acct-sub {
+    margin: 0 !important;
+    color: var(--dx-muted);
+    font-size: 14.5px;
+}
+
+.dx-acct-cta {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--dx-rose);
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: background .18s var(--dx-ease);
+}
+
+.dx-acct-cta:hover { background: var(--dx-rose-dark); }
+
+/* ---- stat tiles ---- */
+
+.dx-stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.dx-stat {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: var(--dx-radius);
+    padding: 18px 16px;
+    text-decoration: none !important;
+    transition: transform .18s var(--dx-ease), box-shadow .18s var(--dx-ease);
+}
+
+a.dx-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(67, 48, 58, .08);
+}
+
+.dx-stat-ico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--dx-blush-bg);
+    color: var(--dx-rose);
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.dx-stat-n {
+    display: block;
+    font-size: 25px;
+    font-weight: 700;
+    color: var(--dx-plum);
+    line-height: 1.15;
+}
+
+.dx-stat-l {
+    display: block;
+    font-size: 12.5px;
+    color: var(--dx-muted);
+    margin-top: 3px;
+}
+
+/* ---- panels ---- */
+
+.dx-panel {
+    background: #fff;
+    border: 1px solid var(--dx-line);
+    border-radius: var(--dx-radius);
+    padding: 20px 22px 22px;
+    margin-bottom: 22px;
+}
+
+.dx-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--dx-line);
+}
+
+.dx-panel-title {
+    font-size: 17px !important;
+    color: var(--dx-plum) !important;
+    margin: 0 !important;
+}
+
+.dx-panel-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--dx-rose) !important;
+    text-decoration: none !important;
+}
+
+.dx-panel-link:hover { text-decoration: underline !important; }
+
+.dx-panel-note { font-size: 12.5px; color: var(--dx-muted); }
+
+/* ---- order rows ---- */
+
+.dx-order-list { list-style: none; margin: 0 !important; padding: 0 !important; }
+.dx-order-list li + li { border-top: 1px solid var(--dx-line); }
+
+.dx-order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 8px;
+    margin: 0 -8px;
+    border-radius: 10px;
+    text-decoration: none !important;
+    transition: background .18s var(--dx-ease);
+}
+
+.dx-order-row:hover { background: var(--dx-blush-bg); }
+
+.dx-order-main { min-width: 0; }
+.dx-order-main strong { display: block; font-size: 14.5px; color: var(--dx-plum); }
+.dx-order-date { display: block; font-size: 12.5px; color: var(--dx-muted); margin-top: 2px; }
+
+.dx-order-right { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.dx-order-amt { font-size: 14.5px; font-weight: 700; color: var(--dx-plum); }
+
+/* ---- status chips ---- */
+
+.dx-chip {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    background: var(--dx-blush-bg);
+    color: var(--dx-rose);
+}
+
+.dx-chip-delivered  { background: #e7f4ec; color: #1d7a45; }
+.dx-chip-cancelled  { background: #fdecec; color: #b3261e; }
+.dx-chip-pending    { background: #fdf3e3; color: #9a6513; }
+.dx-chip-shipped    { background: #e9f1fb; color: #1f5fa8; }
+
+/* ---- spend strip ---- */
+
+.dx-spark {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 150px;
+    padding-top: 8px;
+}
+
+.dx-spark-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    text-align: center;
+}
+
+.dx-spark-bar {
+    background: linear-gradient(180deg, var(--dx-rose) 0%, #d98aa0 100%);
+    border-radius: 6px 6px 3px 3px;
+    min-height: 2px;
+    transition: opacity .18s var(--dx-ease);
+}
+
+.dx-spark-col:hover .dx-spark-bar { opacity: .82; }
+
+.dx-spark-lab {
+    font-size: 11.5px;
+    color: var(--dx-muted);
+    margin-top: 8px;
+}
+
+/* ---- empty states ---- */
+
+.dx-empty { text-align: center; padding: 34px 16px 30px; }
+.dx-empty i { font-size: 32px; color: var(--dx-blush); margin-bottom: 12px; display: block; }
+.dx-empty p { color: var(--dx-muted); font-size: 14px; margin: 0 0 16px !important; }
+.dx-empty-sm { padding: 22px 12px; }
+.dx-empty-sm i { font-size: 26px; }
+.dx-empty-sm p { margin-bottom: 0 !important; }
+
+/* ---- definition list ---- */
+
+.dx-deflist { margin: 0 !important; }
+.dx-deflist > div {
+    display: flex;
+    gap: 18px;
+    padding: 11px 0;
+}
+.dx-deflist > div + div { border-top: 1px solid var(--dx-line); }
+
+.dx-deflist dt {
+    flex: 0 0 120px;
+    font-size: 13.5px;
+    font-weight: 500 !important;
+    color: var(--dx-muted);
+}
+
+.dx-deflist dd {
+    margin: 0 !important;
+    font-size: 14.5px;
+    color: var(--dx-plum);
+    word-break: break-word;
+}
+
+.dx-muted { color: var(--dx-muted); font-style: italic; }
+
+/* ---- responsive ---- */
+
+@media (max-width: 1199.98px) {
+    .dx-stat-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 991.98px) {
+    .dx-acct-nav { position: static; }
+    .dx-acct-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .dx-acct-logout { border-radius: 10px; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-stat-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .dx-acct-title { font-size: 23px !important; }
+    .dx-acct-links { grid-template-columns: 1fr; }
+    .dx-panel { padding: 16px 16px 18px; }
+    .dx-deflist > div { flex-direction: column; gap: 3px; }
+    .dx-deflist dt { flex: none; }
+    .dx-order-row { flex-direction: column; align-items: flex-start; gap: 7px; }
+}
+
+/* ---- forms inside the account panel ----
+   edit_profile and change_password ship Bootstrap's btn-success, so the submit
+   buttons were bright green. Restyled to the rose CTA rather than editing the
+   class on every form, which keeps the markup - and the name= attributes the
+   controllers check - untouched. */
+
+.dx-acct label {
+    font-size: 13.5px;
+    font-weight: 500 !important;
+    color: var(--dx-muted);
+    margin-bottom: 6px;
+}
+
+.dx-acct .form-control {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: 10px !important;
+    padding: 11px 14px !important;
+    height: auto !important;
+    font-size: 14.5px !important;
+    background: #fff !important;
+    color: var(--dx-plum) !important;
+    box-shadow: none !important;
+}
+
+.dx-acct .form-control:focus {
+    border-color: var(--dx-rose) !important;
+    box-shadow: 0 0 0 3px rgba(176, 74, 99, .12) !important;
+}
+
+.dx-acct .btn-success,
+.dx-acct input[type="submit"].btn {
+    background: var(--dx-rose) !important;
+    border-color: var(--dx-rose) !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    padding: 11px 26px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+}
+
+.dx-acct .btn-success:hover,
+.dx-acct input[type="submit"].btn:hover {
+    background: var(--dx-rose-dark) !important;
+    border-color: var(--dx-rose-dark) !important;
+}
+
+/* The order blocks in my_orders carry inline borders from the original markup;
+   soften them to match the panels around them. */
+.dx-acct .row[style*="e8e6e6"] {
+    border: 1px solid var(--dx-line) !important;
+    border-radius: var(--dx-radius);
+    overflow: hidden;
+    background: #fff;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 16px !important;
+}
+
+.dx-acct .row[style*="e8e6e6"] > .col-sm-12[style*="ececec"] {
+    background: var(--dx-blush-bg) !important;
+    border-bottom: 1px solid var(--dx-line);
+}
+
+.dx-acct .row[style*="e8e6e6"] h6 { font-size: 13.5px; color: var(--dx-plum); margin: 0; }

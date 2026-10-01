@@ -14,22 +14,15 @@
 </head>
 <body>
 <?php $this->load->view('front/layout/header'); ?>
-<section class="py-2 bg-gray-2">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-site py-0 d-flex justify-content-center">
-                <li class="breadcrumb-item active pl-0 d-flex align-items-center" aria-current="page">Change Password</li>
-            </ol>
-        </nav>
-    </div>
-</section>
-<div class="pt-9 pb-9">
+<div class="dx-acct pt-9 pb-9">
       <div class="container">
      
         <div class="row">
          
-            <div class="col-sm-3"><?php $this->load->view('front/account/left-menu'); ?></div>
-            <div class="col-sm-6">
+            <div class="col-lg-3 mb-5 mb-lg-0"><?php $this->load->view('front/account/left-menu'); ?></div>
+            <div class="col-lg-9">
+              <div class="dx-panel" style="max-width:560px">
+                <div class="dx-panel-head"><h2 class="dx-panel-title">Change password</h2></div>
 				<?php echo $this->session->flashdata('msg'); ?>	
 				<form class="changepassword row" id="profile_form" method="post">
 					<input type="hidden" value="<?php echo $user[0]->password; ?>" name="form_key">
@@ -52,6 +45,7 @@
 						<button type="submit" class="btn btn-solid btn-success btn-block" name="changepass">Submit</button>
 					</div>
 				</form>
+              </div>
     				
             </div>
         </div>

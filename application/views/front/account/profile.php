@@ -11,77 +11,186 @@
 <meta name="keywords" content="<?php  echo $RESULT[0]->meta_keyword; ?>">
 <link rel="canonical" href="<?php  echo $RESULT[0]->canonical; ?>">
 <?php $this->load->view('front/layout/head'); ?>
-<style>
-    .btn-div{
-        width:100%;
-            border-radius: 5px;
-            box-shadow: 2px 4px 10px rgb(0 0 0 / 20%);
-            text-align:center;
-            margin-bottom:20px;
-    }
-</style>
 </head>
 <body>
 <?php $this->load->view('front/layout/header'); ?>
 
-    <div class="about-content mt-4">
-      <div class="container">
-     
-        <div class="row">
-    
-          <div class="col-sm-12">
-            <div class="tab-pane active" role="tabpanel" id="tab_1">
-              <div class="ps-block--product-set">
-         
-                <div class="ps-block__content">
-                  <h3 style="color: #dc1f26;">Hello <span class="heading-color fwb"><?php echo @ucwords($user[0]->fname.' '.@$user[0]->lname); ?>!</h3>
-            
-                    <p class="fz14">From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
-                   
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <a class="btn btn-div " style="color: #fff;background: rgb(3,177,38); background: radial-gradient(circle, rgba(3,177,38,1) 0%, rgba(3,192,60,1) 100%);" href="<?php echo base_url('user/my_orders'); ?>"> <i class="fa fa-list"></i> View Orders  </a>
-                        </div> 
-                     
-                        <div class="col-sm-4">
-                             <a class="btn btn-div"  style="color:#fff;background: rgb(220,31,38);background: radial-gradient(circle, rgba(220,31,38,1) 0%, rgba(201,30,37,1) 100%);"  href="<?php echo base_url('user/wishlist'); ?>"><i class="fa fa-heart"></i> Wishlist  </a>
-                        </div> 
-                        <div class="col-sm-4">
-                             <a class="btn btn-div"  style="color: #fff;background: rgb(3,177,38); background: radial-gradient(circle, rgba(3,177,38,1) 0%, rgba(3,192,60,1) 100%);" href="<?php echo base_url('user/edit_profile'); ?>"><i class="fa fa-edit"></i> Edit Profile  </a>
-                        </div> 
-                        <div class="col-sm-4">
-                             <a class="btn btn-div"  style="color:#fff;background: rgb(220,31,38);background: radial-gradient(circle, rgba(220,31,38,1) 0%, rgba(201,30,37,1) 100%);"  href="<?php echo base_url('user/change_password'); ?>"><i class="fa fa-cog"></i> Change Password  </a>
-                        </div>
-                        <div class="col-sm-4">
-                             <a class="btn btn-div"  style="color:#fff; background: rgb(26,152,213);background: radial-gradient(circle, rgba(26,152,213,1) 0%, rgba(24,141,198,1) 100%);  " href="<?php echo base_url('user/logout'); ?>"><i class="fa fa-sign-out"></i> Logout </a> 
-                        </div> 
-                        
-                    </div>
-                    
-              
-                </div>
-              </div>
-            </div>
-            
+<?php
+/**
+ * Account dashboard.
+ *
+ * The figures below are read straight from the models the way listing-view.php
+ * and my_orders.php already do - order_model and product_model are autoloaded,
+ * so no controller change was needed and nothing new is wired up. Every link
+ * points where the old gradient buttons pointed.
+ */
+$dx_uid     = $this->session->userdata('USER_ID');
+$dx_orders  = $this->order_model->get_user_order($dx_uid);
+$dx_wish    = $this->product_model->get_user_wishlist($dx_uid);
+
+$dx_total_orders = count($dx_orders);
+$dx_wish_count   = count($dx_wish);
+$dx_delivered    = 0;
+$dx_spent        = 0;
+$dx_by_month     = array();
+
+foreach ($dx_orders as $dx_o) {
+    if (strtolower($dx_o->status) === 'delivered') { $dx_delivered++; }
+    if (strtolower($dx_o->status) !== 'cancelled') {
+        $dx_spent += (float) $dx_o->final_amount;
+        $dx_k = date('Y-m', strtotime($dx_o->create_date));
+        $dx_by_month[$dx_k] = (isset($dx_by_month[$dx_k]) ? $dx_by_month[$dx_k] : 0) + (float) $dx_o->final_amount;
+    }
+}
+
+/* Last six months, oldest first, so the strip reads left to right. */
+$dx_months = array();
+for ($dx_i = 5; $dx_i >= 0; $dx_i--) {
+    $dx_k = date('Y-m', strtotime("-$dx_i month"));
+    $dx_months[$dx_k] = isset($dx_by_month[$dx_k]) ? $dx_by_month[$dx_k] : 0;
+}
+$dx_peak = max(array_values($dx_months));
+
+$dx_u     = isset($user[0]) ? $user[0] : null;
+$dx_fname = $dx_u && !empty($dx_u->fname) ? $dx_u->fname : 'there';
+$dx_since = $dx_u && !empty($dx_u->create_date) ? date('F Y', strtotime($dx_u->create_date)) : '';
+?>
+
+
+<div class="dx-acct pt-9 pb-9">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-3 mb-5 mb-lg-0">
+        <?php $this->load->view('front/account/left-menu'); ?>
+      </div>
+
+      <div class="col-lg-9">
+
+        <div class="dx-acct-head">
+          <div>
+            <h1 class="dx-acct-title">Hello, <?php echo ucwords($dx_fname); ?></h1>
+            <p class="dx-acct-sub">
+              Here's what's happening with your account<?php if ($dx_since) { ?> &middot; member since <?php echo $dx_since; ?><?php } ?>.
+            </p>
+          </div>
+          <a href="<?php echo base_url('shop'); ?>" class="dx-acct-cta">Continue shopping</a>
+        </div>
+
+        <div class="dx-stat-row">
+          <a class="dx-stat" href="<?php echo base_url('user/my_orders'); ?>">
+            <span class="dx-stat-ico"><i class="far fa-box"></i></span>
+            <span class="dx-stat-n"><?php echo $dx_total_orders; ?></span>
+            <span class="dx-stat-l">Orders placed</span>
+          </a>
+          <div class="dx-stat">
+            <span class="dx-stat-ico"><i class="far fa-check-circle"></i></span>
+            <span class="dx-stat-n"><?php echo $dx_delivered; ?></span>
+            <span class="dx-stat-l">Delivered</span>
+          </div>
+          <a class="dx-stat" href="<?php echo base_url('user/wishlist'); ?>">
+            <span class="dx-stat-ico"><i class="far fa-heart"></i></span>
+            <span class="dx-stat-n"><?php echo $dx_wish_count; ?></span>
+            <span class="dx-stat-l">Saved items</span>
+          </a>
+          <div class="dx-stat">
+            <span class="dx-stat-ico"><i class="far fa-wallet"></i></span>
+            <span class="dx-stat-n"><?php echo CURRENCY_SYMBOL . ' ' . number_format($dx_spent); ?></span>
+            <span class="dx-stat-l">Total spent</span>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-xl-7 mb-4">
+            <div class="dx-panel h-100">
+              <div class="dx-panel-head">
+                <h2 class="dx-panel-title">Recent orders</h2>
+                <?php if ($dx_total_orders) { ?>
+                  <a href="<?php echo base_url('user/my_orders'); ?>" class="dx-panel-link">View all</a>
+                <?php } ?>
+              </div>
+
+              <?php if ($dx_total_orders) { ?>
+                <ul class="dx-order-list">
+                  <?php foreach (array_slice($dx_orders, 0, 4) as $dx_o) { ?>
+                    <li>
+                      <a href="<?php echo base_url('user/view_order/' . $dx_o->order_no); ?>" class="dx-order-row">
+                        <span class="dx-order-main">
+                          <strong>#<?php echo $dx_o->order_no; ?></strong>
+                          <span class="dx-order-date"><?php echo date('d M Y', strtotime($dx_o->create_date)); ?></span>
+                        </span>
+                        <span class="dx-order-right">
+                          <span class="dx-order-amt"><?php echo CURRENCY_SYMBOL . ' ' . round($dx_o->final_amount); ?></span>
+                          <span class="dx-chip dx-chip-<?php echo strtolower(str_replace(' ', '-', $dx_o->status)); ?>"><?php echo $dx_o->status; ?></span>
+                        </span>
+                      </a>
+                    </li>
+                  <?php } ?>
+                </ul>
+              <?php } else { ?>
+                <div class="dx-empty">
+                  <i class="far fa-box-open"></i>
+                  <p>No orders yet. When you place one it will show up here.</p>
+                  <a href="<?php echo base_url('shop'); ?>" class="dx-acct-cta">Start shopping</a>
+                </div>
+              <?php } ?>
+            </div>
+          </div>
+
+          <div class="col-xl-5 mb-4">
+            <div class="dx-panel h-100">
+              <div class="dx-panel-head">
+                <h2 class="dx-panel-title">Spending</h2>
+                <span class="dx-panel-note">Last 6 months</span>
+              </div>
+
+              <?php if ($dx_peak > 0) { ?>
+                <div class="dx-spark" role="img" aria-label="Monthly spend for the last six months">
+                  <?php foreach ($dx_months as $dx_k => $dx_v) { ?>
+                    <div class="dx-spark-col">
+                      <div class="dx-spark-bar" style="height: <?php echo $dx_v > 0 ? max(6, round($dx_v / $dx_peak * 100)) : 2; ?>%"
+                           title="<?php echo date('M Y', strtotime($dx_k . '-01')) . ': ' . CURRENCY_SYMBOL . ' ' . round($dx_v); ?>"></div>
+                      <span class="dx-spark-lab"><?php echo date('M', strtotime($dx_k . '-01')); ?></span>
+                    </div>
+                  <?php } ?>
+                </div>
+              <?php } else { ?>
+                <div class="dx-empty dx-empty-sm">
+                  <i class="far fa-chart-bar"></i>
+                  <p>Your spending will chart here once you've placed an order.</p>
+                </div>
+              <?php } ?>
+            </div>
+          </div>
+        </div>
+
+        <div class="dx-panel">
+          <div class="dx-panel-head">
+            <h2 class="dx-panel-title">Contact &amp; address</h2>
+            <a href="<?php echo base_url('user/edit_profile'); ?>" class="dx-panel-link">Edit</a>
+          </div>
+          <?php if ($dx_u) { ?>
+            <dl class="dx-deflist">
+              <div><dt>Name</dt><dd><?php echo ucwords(trim($dx_u->fname . ' ' . $dx_u->lname)); ?></dd></div>
+              <div><dt>Email</dt><dd><?php echo $dx_u->email; ?></dd></div>
+              <div><dt>Phone</dt><dd><?php echo $dx_u->contact_no ? $dx_u->contact_no : '<span class="dx-muted">Not added</span>'; ?></dd></div>
+              <div><dt>Address</dt>
+                <dd>
+                  <?php
+                    $dx_addr = array_filter(array($dx_u->address, $dx_u->landmark, $dx_u->city, $dx_u->state, $dx_u->pincode, $dx_u->country));
+                    echo $dx_addr ? implode(', ', $dx_addr) : '<span class="dx-muted">Not added</span>';
+                  ?>
+                </dd>
+              </div>
+            </dl>
+          <?php } ?>
+        </div>
+
       </div>
     </div>
-    <script>
-    function copyFunction() {
-   /* Get the text field */
-   var copyText = document.getElementById("copy_code");
+  </div>
+</div>
 
-   /* Select the text field */
-   copyText.select();
-
-   /* Copy the text inside the text field */
-   document.execCommand("Copy");
-    
-    $('#copy_msg').text('Copied the text'); 
-   
- }
-</script>
 <?php $this->load->view('front/layout/footer'); ?>
 <?php $this->load->view('front/layout/footer-js'); ?>
 
