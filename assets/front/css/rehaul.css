@@ -7071,10 +7071,36 @@ a.dx-sf-card:hover {
     align-items: center;
     overflow: hidden;
     padding-bottom: 78px;
-    background-position: right center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background: var(--dx-ivory-2, #f5f0e8);
     isolation: isolate;
+}
+
+/* The figure stands at the right on plain ivory rather than the hero being a
+   full-bleed photograph. The old artwork was a 3.2:1 strip, so filling a
+   viewport-height hero meant enlarging it by half and cropping it hard; a
+   cut-out has no background to crop and stays sharp at any height.
+
+   Sized to 108% of the hero so both crop lines - the chin and the shins -
+   fall outside the frame. The chin ends up behind the floating header. */
+.dx-about-hero-figure {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 3%;
+    width: 52%;
+    z-index: -1;
+    background: url('../media/dx-about-figure.png') no-repeat right top;
+    background-size: auto 108%;
+    pointer-events: none;
+}
+
+@media (max-width: 1199.98px) {
+    .dx-about-hero-figure { right: 0; width: 56%; background-size: auto 100%; }
+}
+
+@media (max-width: 767.98px) {
+    /* Behind the copy card at this width, so it drops to a soft backdrop. */
+    .dx-about-hero-figure { right: -12%; width: 78%; opacity: .32; }
 }
 
 .dx-about-hero::before {
@@ -7082,7 +7108,7 @@ a.dx-sf-card:hover {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(90deg, rgba(245, 240, 232, .96) 0%, rgba(245, 240, 232, .82) 39%, rgba(245, 240, 232, .08) 68%, rgba(245, 240, 232, 0) 100%);
+    background: linear-gradient(90deg, rgba(245, 240, 232, .9) 0%, rgba(245, 240, 232, .35) 34%, rgba(245, 240, 232, 0) 56%);
 }
 
 .dx-about-hero-copy {

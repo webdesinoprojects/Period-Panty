@@ -1,5 +1,9 @@
 <main class="dx-about">
-  <section class="dx-about-hero" style="background-image: url('<?php echo base_url('assets/front/') ?>images/banners/about_us.jpg');">
+  <section class="dx-about-hero">
+    <!-- Cut-out figure, anchored right and bleeding off the top edge so the
+         chin crop sits behind the floating header rather than reading as a
+         severed head. Decorative, hence aria-hidden. -->
+    <span class="dx-about-hero-figure" aria-hidden="true"></span>
     <div class="container container-xl">
       <div class="dx-about-hero-copy" data-animate="fadeInUp">
         <span class="dx-eyebrow"><?php echo $RESULT[0]->title; ?></span>
