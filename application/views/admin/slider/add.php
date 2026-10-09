@@ -94,6 +94,22 @@
                                         <input type="color" class="form-control" name="color" placeholder="Enter color" value="">
                                     </div>
                                     <div class="form-group col-sm-4">
+                                        <!-- Hero card, Upper sliders only. The controller hands the whole
+                                             POST array to the model, so a field named after a column saves
+                                             itself; no controller change was needed for these two. -->
+                                        <label for="card_product_id">Hero Card Product <small>(Upper only)</small></label>
+                                        <select class="form-control" name="card_product_id">
+                                            <option value="">Automatic &mdash; first bestseller</option>
+                                            <?php foreach ($this->product_model->get_all_product() as $dx_p) { ?>
+                                            <option value="<?php echo $dx_p->id; ?>"><?php echo $dx_p->title; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label for="card_label">Hero Card Label</label>
+                                        <input type="text" class="form-control" name="card_label" placeholder="e.g. New Collection" value="">
+                                    </div>
+                                    <div class="form-group col-sm-4">
                                         <label for="exampleInputPassword1">Status</label>
                                         <select class="form-control" name="status" required>
                                             <option value='1'>Active</option>

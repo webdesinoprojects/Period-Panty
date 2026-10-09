@@ -15,7 +15,7 @@ class Product extends CI_Controller{
 	    // passed this URL, so none of that machinery was reachable from /shop.
 	    $data['load_url'] = base_url('product/pagination');
 
-	    $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate");
+	    $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.delete_flag','0');
@@ -178,7 +178,7 @@ class Product extends CI_Controller{
 	    }
         //  Get all Products
         
-        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate");
+        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_product_variation as product_variation',"product_variation.product_id=product.id",'left');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
@@ -316,7 +316,7 @@ class Product extends CI_Controller{
     		    }
     		}
    
-            $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate");
+            $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.id,product.qty,product.discount,product.absorbency_volume,product.absorbency_rate,product.color");
     		$this->db->from('tbl_products as product');
     		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
     		$this->db->where('product.delete_flag','0');

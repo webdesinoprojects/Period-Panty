@@ -6,7 +6,8 @@
  <!-- Serif used for the footer column headings only (UI rehaul). -->
  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;display=swap" rel="stylesheet">
  <!-- Handwritten face for the section eyebrow labels (UI rehaul). -->
- <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&amp;display=swap" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>vendors/fontawesome-pro-5/css/all.css">
 <link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>vendors/bootstrap-select/css/bootstrap-select.min.css">
 <link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>vendors/slick/slick.min.css">
@@ -20,7 +21,7 @@
 <link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>vendors/fonts/a-antara-distance/stylesheet.min.css">
 <link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>css/themes.css">
 <!-- UI rehaul phase 1 (typography + spacing). Must stay after themes.css. -->
-<link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>css/rehaul.css">
+<link rel="stylesheet" href="<?php echo base_url('assets/front/') ?>css/rehaul.css?v=<?php echo @filemtime(FCPATH.'assets/front/css/rehaul.css'); ?>">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11183006313"></script>
 <script>

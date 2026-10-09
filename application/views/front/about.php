@@ -16,6 +16,8 @@
 
 <body>
   <?php $this->load->view('front/layout/header'); ?>
+  <?php $this->load->view('front/about_redesign'); ?>
+  <?php if (false) { ?>
   <section class="pt-lg-14 pb-lg-14 py-14 bg-img-cover-center" style="background-image: url('<?php echo base_url('assets/front/') ?>images/banners/about_us.jpg');">
     <div class="container pt-lg-8 pb-lg-7">
       <h1 class="fs-44 fs-lg-56 lh-121" data-animate="fadeInUp"><?php  echo $RESULT[0]->title ; ?></h1>
@@ -218,6 +220,7 @@
       </div>
     </div>
   </section>
+  <?php } ?>
   <?php $this->load->view('front/layout/footer'); ?>
   <?php $this->load->view('front/layout/footer-js'); ?>
 </body>

@@ -1,232 +1,130 @@
+<?php
+/**
+ * Editorial customer-story wall.
+ *
+ * The names and review copy below come from the testimonial strip this view
+ * replaces. The complete set is rendered twice so CSS can move it in one
+ * continuous loop without a blank gap. The second copy is hidden from screen
+ * readers because it is decorative duplication, not additional content.
+ */
+$dx_flow_reviews = array(
+    array(
+        "name" => "Nikita Srivastav",
+        "flow" => "Heavy flow",
+        "title" => "Freedom on my heaviest days",
+        "text" => "My first two days are very heavy. Dexte is comfortable, the fabric feels so good, and now I do not have to think twice before going anywhere."
+    ),
+    array(
+        "name" => "Radhika Sharma",
+        "flow" => "Moderate flow",
+        "title" => "A game changer for workdays",
+        "text" => "Carrying pads, tampons and cups used to feel like a task. Dexte feels lightweight and comfortable, and the absorbency is up to the mark."
+    ),
+    array(
+        "name" => "Swati Verma",
+        "flow" => "Moderate heavy flow",
+        "title" => "The fit feels exceptional",
+        "text" => "The material quality is excellent. The waistband stretches without digging into my skin and the leg openings feel snug without being too tight."
+    ),
+    array(
+        "name" => "Ranjana Rathore",
+        "flow" => "Very light flow",
+        "title" => "Better nights, fewer worries",
+        "text" => "I prefer period panties because they are sustainable, absorbent and comfortable through a typical day. They also help me avoid stains on my sheets at night."
+    ),
+    array(
+        "name" => "Khushi",
+        "flow" => "Light moderate flow",
+        "title" => "Comfort from first day to last",
+        "text" => "For the light first and last days of my cycle, a period panty feels extremely comfortable. The absorbency and quality genuinely impressed me."
+    ),
+    array(
+        "name" => "Ishita",
+        "flow" => "Moderate flow",
+        "title" => "Confidence, day and night",
+        "text" => "My flow often changes to spotting, but the high-waist period panty keeps me comfortable through the day and night without worrying about leaks."
+    ),
+    array(
+        "name" => "Kanika Taneja",
+        "flow" => "Moderate heavy flow",
+        "title" => "Absorbency beyond expectations",
+        "text" => "Dexte handled my heavy flow without leaks or irritation. It is easy to clean and reusable, which makes it a great alternative to disposable pads."
+    ),
+    array(
+        "name" => "Priyanka Singh",
+        "flow" => "Light moderate flow",
+        "title" => "A seamless, secure fit",
+        "text" => "I love the ease of mid-waist period panties. They need no extra product, feel seamless and give me confidence during the day or overnight."
+    )
+);
 
-<section class="dx-band dx-has-art dx-art-petals">
-            <div class="col-12 text-center mb-7">
-                <span class="dx-eyebrow dx-eyebrow-center">Real women, real flows</span>
-                <h2 class="fs-34" data-animate="fadeInDown">DEXTE For <strong>Every Flow</strong></h2>
-                <div class="astrodivider"><div class="astrodividermask"></div><span><i>&#9733;</i></span></div>
-            </div>
-          <div class="marquee-list">
-            <ul>
-        
-            
-              <li id="sh1">
-                <span>
-                  Heavy flow
-                </span>
-                <br>
-                Nikita srivastav
-                <p id="hd1">
-               My first two days of periods are very heavy as compared to the last two days I was literally searching for these panties and I got these from Dexte at a very reasonable price so for me this is the best. Now, I don't have to think twice before going anywhere. These are comfortable and the fabric is so good. It does not leave any stains and long-lasting product.
+$dx_flow_styles = array("note", "bubble", "feature", "post", "mini", "quote", "recommend", "profile");
+?>
 
-                </p>
-              </li>
-              <li id="sh2">
-                <span>
-                Moderate Flow
-                </span>
-                <br>
-                Radhika Sharma
-                <p id="hd2">
-              My period days are very stressful and being a working woman it is a heavy task for me to carry tampons, sanitary pads, and menstrual cups. But dexte period panty is a game changer for me and they are quite affordable as they are light weight and comfortable. Highly recommendable products as its absorbancy is up to the mark. 
-                </p>
-              </li>
-              <li id="sh3">
-                <span>
-                Moderate heavy flow
-                </span>
-                <br>
-                Swati Verma 
-                <p id="hd3">
-              My period flow was high and then I came to know about these period panties.  So, I ordered a mid-waist panty from Dexte, and I am impressed with its performance. The material quality is excellent, and the fit and comfort of these panties are exceptional. The waistband is stretchy and doesn't dig into my skin, and the leg openings are snug without being too tight.
+<section class="dx-flow-stories" aria-labelledby="dx-flow-heading">
+    <span class="dx-flow-lily" aria-hidden="true"></span>
 
-                </p>
-              </li>
-              <li id="sh4">
-                <span>
-                Very Light Flow 
-                </span>
-                <br>
-                Ranjana Rathore
-                <p id="hd4">
-               During my mensuration days I prefer period panty, because they’re a more sustainable, absorbant and often more comfortable to work in a typical day. To avoid stains on my sheets at night.
+    <svg class="dx-flow-symbols" aria-hidden="true" width="0" height="0">
+        <defs>
+            <symbol id="dx-flower-mark" viewBox="0 0 64 64">
+                <path d="M32 28C20 20 18 8 32 4C46 8 44 20 32 28Z"></path>
+                <path d="M36 32C44 20 56 18 60 32C56 46 44 44 36 32Z"></path>
+                <path d="M32 36C44 44 46 56 32 60C18 56 20 44 32 36Z"></path>
+                <path d="M28 32C20 44 8 46 4 32C8 18 20 20 28 32Z"></path>
+                <circle cx="32" cy="32" r="5"></circle>
+            </symbol>
+            <symbol id="dx-sprig-mark" viewBox="0 0 80 80">
+                <path d="M12 70C31 53 43 35 61 10"></path>
+                <path d="M31 51C18 49 14 39 15 31C25 32 34 39 31 51Z"></path>
+                <path d="M44 34C43 20 51 14 61 12C61 23 56 32 44 34Z"></path>
+                <path d="M51 24C39 21 35 13 37 5C47 7 53 14 51 24Z"></path>
+            </symbol>
+        </defs>
+    </svg>
 
-                </p>
-              </li>
-              <li id="sh5">
-                <span>
-                Light Moderate Flow
-                </span>
-                <br>
-               Khushi
-                <p id="hd5">
-               On the first and last day of my menstrual cycle, I experience a very light flow, which is why I find wearing a period panty extremely comfortable. Not only does it provide incredible absorbency, but I am also impressed by the exceptional quality of the product.
-                </p>
-              </li>
-        
-              <li id="sh6">
-                <span>
-                Moderate Flow
-                </span>
-                <br>
-               Ishita 
-                <p id="hd6">
-               On the second day of my period, I face a heavy flow that often transitions into spotting. However, by using a high-waist period panty, I find great comfort both during the day and at night. I only need to switch them out once a day after taking a shower, and I no longer worry about any leakage issues.
-                </p>
-              </li>
-              <li id="sh7">
-                <span>
-                
-Moderate heavy flow
-                </span>
-                <br>
-               Kanika Taneja
-                <p id="hd7">
-                When it comes to absorption, Dexte’s panty exceeded my expectations. It was able to handle my heavy flow without any leaks, and I didn't experience any discomfort or irritation throughout the day. The best part is that it's easy to clean and can be reused multiple times, which makes it a great alternative to disposable pads.
+    <div class="container container-xl dx-flow-head">
+        <span class="dx-eyebrow dx-eyebrow-center">Real women, real stories</span>
+        <h2 id="dx-flow-heading">Every flow has a <strong>story</strong></h2>
+        <p>Honest experiences from women who found comfort, confidence and freedom with DEXTE.</p>
+    </div>
 
-                </p>
-              </li>
-              <li id="sh8">
-                <span>
-                Light Moderate flow: 
+    <div class="dx-flow-viewport" tabindex="0" role="region" aria-label="Customer reviews. The reviews move automatically; hover or focus to pause.">
+        <div class="dx-flow-track">
+            <?php for ($dx_copy = 0; $dx_copy < 2; $dx_copy++) { ?>
+                <div class="dx-flow-set"<?php echo $dx_copy === 1 ? " aria-hidden=\"true\"" : ""; ?>>
+                    <?php foreach ($dx_flow_reviews as $dx_i => $dx_review) { ?>
+                        <article class="dx-flow-card dx-flow-<?php echo $dx_flow_styles[$dx_i]; ?>">
+                            <svg class="dx-flow-card-flower" viewBox="0 0 64 64" aria-hidden="true">
+                                <use href="#dx-flower-mark"></use>
+                            </svg>
+                            <svg class="dx-flow-card-sprig" viewBox="0 0 80 80" aria-hidden="true">
+                                <use href="#dx-sprig-mark"></use>
+                            </svg>
 
-                </span>
-                <br>
-                Priyanka Singh
-                <p id="hd8">
-                I highly recommend this period panty to anyone who wants a comfortable and effective solution for managing their menstrual cycle. I appreciate the comfort and ease of wearing mid-waist period panties, as they eliminate the need for additional products and offer a seamless fit. I gained confidence in wearing them during the day or overnight, as they offer excellent leak protection even on heavy flow days.
-                </p>
-              </li>
-              <li id="sh9">
-                <span>
-                Heavy flow
-                </span>
-                <br>
-                 Nikita srivastav
-                <p id="hd9">
-                My first two days of periods are very heavy as compared to the last two days I was literally searching for these panties and I got these from Dexte at a very reasonable price so for me this is the best. Now, I don't have to think twice before going anywhere. These are comfortable and the fabric is so good. It does not leave any stains and long-lasting product.
-                </p>
-              </li>
-              <li id="sh10">
-                <span>
-               Moderate Flow
-                </span>
-                <br>
-                 Radhika Sharma
-                <p id="hd10">
-                My period days are very stressful and being a working woman it is a heavy task for me to carry tampons, sanitary pads, and menstrual cups. But dexte period panty is a game changer for me and they are quite affordable as they are light weight and comfortable. Highly recommendable products as its absorbancy is up to the mark. 
-                </p>
-              </li>
-        
-        
-              <li id="sh11">
-                <span>
-                  Moderate heavy flow
-                </span>
-                <br>
-                Swati Verma
-                <p id="hd11">
-               My period flow was high and then I came to know about these period panties.  So, I ordered a mid-waist panty from Dexte, and I am impressed with its performance. The material quality is excellent, and the fit and comfort of these panties are exceptional. The waistband is stretchy and doesn't dig into my skin, and the leg openings are snug without being too tight.
-                </p>
-              </li>
-              <li id="sh12">
-                <span>
-                Very Light Flow 
-                </span>
-                <br>
-               Ranjana Rathore
-                <p id="hd12">
-                During my mensuration days I prefer period panty, because they’re a more sustainable, absorbant and often more comfortable to work in a typical day. To avoid stains on my sheets at night.
-                </p>
-              </li>
-              <li id="sh13">
-                <span>
-                  Light Moderate Flow
-                </span>
-                <br>
-              Khushi
-                <p id="hd13">
-              On the first and last day of my menstrual cycle, I experience a very light flow, which is why I find wearing a period panty extremely comfortable. Not only does it provide incredible absorbency, but I am also impressed by the exceptional quality of the product.
+                            <div class="dx-flow-card-top">
+                                <span class="dx-flow-meta">
+                                    <span class="dx-flow-name">
+                                        <strong><?php echo $dx_review["name"]; ?></strong>
+                                        <svg viewBox="0 0 24 24" role="img" aria-label="Verified customer">
+                                            <circle cx="12" cy="12" r="11"></circle>
+                                            <path d="M7.5 12.3L10.5 15.2L16.8 8.8"></path>
+                                        </svg>
+                                    </span>
+                                    <span><?php echo $dx_review["flow"]; ?></span>
+                                </span>
+                                <span class="dx-flow-quote-mark" aria-hidden="true">&ldquo;</span>
+                            </div>
 
-                </p>
-              </li>
-              <li id="sh14">
-                <span>
-                Moderate Flow
-                </span>
-                <br>
-               Ishita 
-                <p id="hd14">
-                On the second day of my period, I face a heavy flow that often transitions into spotting. However, by using a high-waist period panty, I find great comfort both during the day and at night. I only need to switch them out once a day after taking a shower, and I no longer worry about any leakage issues.
-                </p>
-              </li>
-              <li id="sh15">
-                <span>
-                Moderate heavy flow
-                </span>
-                <br>
-                Kanika Taneja
-                <p id="hd15">
-                When it comes to absorption, Dexte’s panty exceeded my expectations. It was able to handle my heavy flow without any leaks, and I didn't experience any discomfort or irritation throughout the day. The best part is that it's easy to clean and can be reused multiple times, which makes it a great alternative to disposable pads.
-                </p>
-              </li>
-        
-        
-              <li id="sh16">
-                 <span>
-              Light Moderate flow
-                </span>
-                <br>
-                Priyanka Singh
-                <p id="hd16">
-            I highly recommend this period panty to anyone who wants a comfortable and effective solution for managing their menstrual cycle. I appreciate the comfort and ease of wearing mid-waist period panties, as they eliminate the need for additional products and offer a seamless fit. I gained confidence in wearing them during the day or overnight, as they offer excellent leak protection even on heavy flow days.
-                </p>
-              </li>
-              <li id="sh17">
-                <span>
-              Heavy flow
-                </span>
-                <br>
-              Nikita srivastav
-                <p id="hd17">
-         My first two days of periods are very heavy as compared to the last two days I was literally searching for these panties and I got these from Dexte at a very reasonable price so for me this is the best. Now, I don't have to think twice before going anywhere. These are comfortable and the fabric is so good. It does not leave any stains and long-lasting product.
+                            <div class="dx-flow-stars" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <h3><?php echo $dx_review["title"]; ?></h3>
+                            <p><?php echo $dx_review["text"]; ?></p>
 
-                </p>
-              </li>
-              <li id="sh18">
-                 <span>
-                Moderate Flow
-                </span>
-                <br>
-               Swati Verma
+                        </article>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
 
-                <p id="hd8">
-            My period days are very stressful and being a working woman it is a heavy task for me to carry tampons, sanitary pads, and menstrual cups. But dexte period panty is a game changer for me and they are quite affordable as they are light weight and comfortable. Highly recommendable products as its absorbancy is up to the mark. 
-                </p>
-              </li>
-              <li id="sh19">
-                 <span>
-Moderate heavy flow
-                </span>
-                <br>
-                Radhika Sharma
-                <p id="hd19">
-                When it comes to absorption, Dexte’s panty exceeded my expectations. It was able to handle my heavy flow without any leaks, and I didn't experience any discomfort or irritation throughout the day. The best part is that it's easy to clean and can be reused multiple times, which makes it a great alternative to disposable pads.
-
-                </p>
-              </li>
-              <li id="sh20">
-                <span>
-                Light Moderate flow: 
-
-                </span>
-                <br>
-                Ranjana Rathore
-                <p id="hd20">
-                I highly recommend this period panty to anyone who wants a comfortable and effective solution for managing their menstrual cycle. I appreciate the comfort and ease of wearing mid-waist period panties, as they eliminate the need for additional products and offer a seamless fit. I gained confidence in wearing them during the day or overnight, as they offer excellent leak protection even on heavy flow days.
-                </p>
-              </li>
-        
-        
-            </ul>
-          </div>
-        </section>
+    <p class="dx-flow-pause"><span aria-hidden="true"></span> Hover to pause and read</p>
+</section>

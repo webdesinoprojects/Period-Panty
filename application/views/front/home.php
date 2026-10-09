@@ -22,58 +22,268 @@
 
 <body>
      <?php $this->load->view('front/layout/header'); ?>
- <section class="mx-0 slick-slider dots-inner-center custom-slider-02 slider" data-slick-options='{"slidesToShow": 1,"infinite":true,"autoplay":true,"dots":true,"arrows":false,"fade":true,"cssEase":"ease-in-out","speed":2000}'>
-            <?php $slider = $this->slider_model->get_all_active_slider();?>
-            <?php foreach($slider as $sliders ){ ?>
-            <?php if($sliders->type=='Upper'){ ?>
-         
-            <div class="box px-0">
-                <div class="bg-img-cover-center py-8 py-lg-14" style="background-image: url('<?php echo base_url();?>uploads/slider/<?php echo $sliders->image?>');">
-                    <div class="container container-xl pt-7 pb-9">
-                        <div data-animate="fadeInDown">
-                            <h1 class="font-weight-500 mb-5 fs-48 fs-md-68 lh-128" style="color: <?php echo $sliders->color; ?>">
-                               <?php echo $sliders->title; ?>
-                            </h1>
-                            <p class=" mb-5 font-weight-600 fs-24 lh-15" style="color: <?php echo $sliders->color; ?>">
-                             <?php echo $sliders->description; ?>
-                            </p>
-                        </div>
-                        
-                         <a href="<?php if($sliders->button_link){ echo  $sliders->button_link; }else{ echo base_url('shop') ; }  ?>" style="color: <?php echo $sliders->color; ?>" class="btn btn-link btn-light bg-transparent  border-bottom border-0 rounded-0 p-0 fs-16 font-weight-600 border-2x" data-animate="fadeInUp">
-                              <?php echo $sliders->button_title; ?>
-                                <svg class="icon icon-arrow-right">
-                                    <use xlink:href="#icon-arrow-right"></use>
-                                </svg>
-                            </a>
-                       
-                    </div>
-                </div>
-            </div>
-            <?php }?>
-            <?php }?>
-          
+<?php
+/**
+ * Editorial hero carousel.
+ *
+ * Slides are the Upper rows of tbl_slider, so CMS > Sliders still owns the
+ * content: image, headline, strapline, button text and link. The headline is
+ * split on a pipe - "MAKE YOUR | OWN RULES" - because the composition needs
+ * two halves to sit either side of the figure.
+ *
+ * The image MUST be a transparent PNG. A normal JPEG is a rectangle and would
+ * cover the headline, which collapses the whole layout.
+ *
+ * The small card follows the first bestseller rather than a pinned filename,
+ * so it does not go stale. Its label, the ghost word and "Discover Best" are
+ * fixed - tbl_slider has nowhere to put them.
+ */
+$slider = $this->slider_model->get_all_active_slider();
 
-        </section>
-  
-        <section class="wemakes pt-8 dx-has-art dx-art-drops">
-          <div class="container container-xl">
-            <div class="row">
-            <?php foreach($slider as $sliders ){ ?>
-            <?php if($sliders->type=='Middle'){ ?>
-              <div class="col-12 col-lg-6 mb-3 mb-lg-0">
-                <a href="<?php if($sliders->button_link){ echo  $sliders->button_link; }else{ echo base_url('shop') ; }  ?>">
-                  <div class="card border-0 hover-shine banner banner-02" data-animate="fadeInUp">
-                    <div class="card-img bg-img-cover-center" style="background-image: url('<?php echo base_url();?>uploads/slider/<?php echo $sliders->image?>');"></div>
-                  </div>
+$dx_slides = array();
+foreach ($slider as $dx_s) {
+    if ($dx_s->type === 'Upper') { $dx_slides[] = $dx_s; }
+}
+
+
+?>
+        <section class="dx-hero">
+
+          <div class="dx-hero-track slick-slider" data-slick-options='{"slidesToShow":1,"infinite":true,"autoplay":true,"autoplaySpeed":6000,"dots":true,"arrows":false,"fade":true,"cssEase":"ease-in-out","speed":900,"pauseOnHover":true}'>
+          <?php foreach ($dx_slides as $dx_s) {
+                $dx_bits = explode('|', $dx_s->title);
+                $dx_left  = trim($dx_bits[0]);
+                $dx_right = isset($dx_bits[1]) ? trim($dx_bits[1]) : '';
+
+                /* Card product: the slide's own choice, else the first bestseller,
+                   so a slide left on Automatic still shows something current. */
+                $dx_cp = null;
+                if (!empty($dx_s->card_product_id)) {
+                    $dx_found = $this->product_model->get_product_by_id($dx_s->card_product_id);
+                    if ($dx_found) { $dx_cp = $dx_found[0]; }
+                }
+                if (!$dx_cp && isset($PRODUCTS[0])) { $dx_cp = $PRODUCTS[0]; }
+
+                $dx_card_img = null;
+                $dx_card_url = base_url('shop');
+                if ($dx_cp) {
+                    $dx_imgs = $this->product_model->select_product_images($dx_cp->id);
+                    if ($dx_imgs) { $dx_card_img = base_url('uploads/product/' . $dx_imgs[0]->image); }
+                    $dx_card_url = $this->product_model->get_product_url($dx_cp->id);
+                }
+                $dx_card_label = !empty($dx_s->card_label) ? $dx_s->card_label : 'New Collection';
+          ?>
+            <div class="dx-hero-slide">
+              <div class="dx-hero-inner">
+
+                <span class="dx-hero-ghost" aria-hidden="true">Period Panty</span>
+
+                <h2 class="dx-hero-title">
+                  <span class="dx-hero-l"><?php echo $dx_left; ?></span>
+                  <span class="dx-hero-r"><?php echo $dx_right; ?></span>
+                </h2>
+
+                <img class="dx-hero-figure"
+                     src="<?php echo base_url('uploads/slider/' . $dx_s->image); ?>"
+                     alt="" aria-hidden="true">
+
+                <?php if ($dx_card_img) { ?>
+                <a class="dx-hero-card" href="<?php echo $dx_card_url; ?>">
+                  <span class="dx-hero-card-img" style="background-image:url('<?php echo $dx_card_img; ?>')"></span>
+                  <span class="dx-hero-card-eyebrow"><?php echo $dx_card_label; ?></span>
+                  <span class="dx-hero-card-title"><?php echo $dx_cp->title; ?></span>
+                  <span class="dx-hero-card-foot">
+                    <span>Shop Now</span>
+                    <span class="dx-hero-card-arrow" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M7 17 17 7M9 7h8v8"/>
+                      </svg>
+                    </span>
+                  </span>
                 </a>
+                <?php } ?>
+
+                <p class="dx-hero-desc"><?php echo $dx_s->description; ?></p>
+
+                <div class="dx-hero-proof">
+                  <span class="dx-hero-layers" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                  <span class="dx-hero-proof-text">
+                    <strong>4&#8209;Layer</strong>
+                    Protection
+                  </span>
+                </div>
+
+                <div class="dx-hero-actions">
+                  <span class="dx-hero-kicker">Discover Best</span>
+                  <a class="dx-hero-btn" href="<?php echo $dx_s->button_link ? base_url($dx_s->button_link) : base_url('shop'); ?>">
+                    <?php echo $dx_s->button_title ? $dx_s->button_title : 'Shop Now'; ?>
+                  </a>
+                </div>
+
               </div>
-                <?php }?>
-            <?php }?>
-             
+            </div>
+          <?php } ?>
+          </div>
+
+          <a class="dx-hero-scroll" href="#dx-next" aria-label="Scroll to content">
+            <span class="dx-hero-scroll-track"><span class="dx-hero-scroll-dot"></span></span>
+            <span class="dx-hero-scroll-label">Scroll</span>
+          </a>
+
+
+          <script>
+          /* The headline is two halves either side of the figure, and the copy
+             is admin-editable, so a long title would run past the edge and get
+             clipped - which is exactly what happened with "HEALTHIER YOU".
+             This shrinks the type on any slide whose longer half does not fit
+             its column. It only applies to the grid layout; below 992px the
+             headline is a centred flex line and wraps normally. */
+          (function () {
+            function fit() {
+              document.querySelectorAll('.dx-hero-title').forEach(function (t) {
+                var l = t.querySelector('.dx-hero-l'),
+                    r = t.querySelector('.dx-hero-r');
+                if (!l || !r) { return; }
+                t.style.fontSize = '';
+                var cs = getComputedStyle(t);
+                if (cs.display !== 'grid') { return; }
+                var cols = cs.gridTemplateColumns.split(' ');
+                var gap  = parseFloat(cols[1]) || 280;
+                var col  = (t.clientWidth - gap) / 2;
+                if (col <= 0) { return; }
+                var widest = Math.max(l.scrollWidth, r.scrollWidth);
+                if (widest > col) {
+                  t.style.fontSize = Math.floor(parseFloat(cs.fontSize) * col / widest) + 'px';
+                }
+              });
+            }
+            document.addEventListener('DOMContentLoaded', fit);
+            window.addEventListener('load', fit);
+            window.addEventListener('resize', fit);
+          })();
+          </script>
+        </section>
+        <?php
+        /* "Made for different needs" row.
+           Each card is a Footer-type row in tbl_slider, so CMS > Sliders owns
+           them - image, label, the small line under it (Description) and the
+           link - with no schema change. Footer was the one unused value in the
+           type enum. Status Inactive drops a card from the row. */
+        $dx_made = array();
+        foreach ($slider as $dx_m) { if ($dx_m->type === 'Footer') { $dx_made[] = $dx_m; } }
+        ?>
+        <?php if ($dx_made) { ?>
+        <section id="dx-next" class="dx-made">
+          <div class="container container-xl">
+            <h2 class="dx-made-head">Made for different needs.<br><strong>Dexte has all solutions.</strong></h2>
+            <div class="dx-made-row">
+              <?php foreach ($dx_made as $dx_m) { ?>
+              <a class="dx-made-item" href="<?php echo base_url($dx_m->button_link ? $dx_m->button_link : 'shop'); ?>">
+                <span class="dx-made-img" style="background-image:url('<?php echo base_url('uploads/slider/' . $dx_m->image); ?>')"></span>
+                <span class="dx-made-label"><?php echo $dx_m->title; ?></span>
+                <?php if ($dx_m->description) { ?>
+                <span class="dx-made-sub"><?php echo $dx_m->description; ?></span>
+                <?php } ?>
+              </a>
+              <?php } ?>
             </div>
           </div>
         </section>
-        <section class=" pt-8 dx-has-art dx-art-waves">
+        <?php } ?>
+  
+<?php
+/* Category bento.
+   One grid holding the two Middle-slider banners AND the shop categories,
+   interleaved - the banners are the two large anchor tiles with categories
+   woven around them, rather than appended as their own row.
+
+   Categories come from the ones flagged Home Display, banners from the
+   Middle-type sliders, so CMS > Category and CMS > Sliders already control
+   the whole grid. No new table, no new admin fields.
+
+   Tile sizes are assigned by position, so the order built here is the layout. */
+$dx_cats    = $this->category_model->get_home_category_by_parent(0);
+$dx_banners = array();
+foreach ($slider as $dx_mb) { if ($dx_mb->type === 'Middle') { $dx_banners[] = $dx_mb; } }
+
+/* Six tiles on a 4-column grid:
+     row 1  [ banner 1 (2 wide) ][ cat ][ cat ]
+     row 2  [ banner 2 (2 wide) ][ cat ][ cat ]
+   The banner artwork is 1080x793 (1.36:1) and the tile is wider than that, so
+   it is cropped. The crop is anchored to the top in CSS, because the headings
+   sit at the top of the artwork and losing those is what looked broken. */
+$dx_pick  = array_slice($dx_cats, 0, 4);
+$dx_tiles = array();
+if (isset($dx_banners[0])) { $dx_tiles[] = array('kind' => 'banner', 'row' => $dx_banners[0]); }
+if (isset($dx_pick[0]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $dx_pick[0]); }
+if (isset($dx_pick[1]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $dx_pick[1]); }
+if (isset($dx_banners[1])) { $dx_tiles[] = array('kind' => 'banner', 'row' => $dx_banners[1]); }
+if (isset($dx_pick[2]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $dx_pick[2]); }
+if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $dx_pick[3]); }
+?>
+        <?php if ($dx_tiles) { ?>
+        <section class="dx-bento">
+          <div class="container container-xl">
+
+            <div class="dx-bento-head">
+              <!-- Botanicals flanking the heading. Decorative only, so they are
+                   empty spans with the artwork as a background and hidden from
+                   assistive tech. -->
+              <span class="dx-bot dx-bot-left" aria-hidden="true"></span>
+              <span class="dx-bot dx-bot-right" aria-hidden="true"></span>
+              <span class="dx-bento-eyebrow">Shop by style</span>
+              <h2 class="dx-bento-title">Find <strong>your fit</strong></h2>
+            </div>
+
+            <div class="dx-bento-grid">
+              <?php foreach ($dx_tiles as $dx_t) { $dx_r = $dx_t['row']; ?>
+
+                <?php if ($dx_t['kind'] === 'banner') { ?>
+                <a class="dx-bento-card dx-bento-banner"
+                   href="<?php echo $dx_r->button_link ? $dx_r->button_link : base_url('shop'); ?>">
+                  <span class="dx-bento-banner-img"
+                        style="background-image:url('<?php echo base_url('uploads/slider/' . $dx_r->image); ?>')"></span>
+                </a>
+
+                <?php } else { ?>
+                <a class="dx-bento-card" href="<?php echo base_url($dx_r->url_slug . '.html'); ?>">
+
+                  <?php if ($dx_r->image) { ?>
+                  <span class="dx-bento-art" style="background-image:url('<?php echo base_url('uploads/category/' . $dx_r->image); ?>')"></span>
+                  <?php } ?>
+
+                  <!-- Brand botanical motif; the stroke draws itself in on hover. -->
+                  <svg class="dx-bento-sprig" viewBox="0 0 64 64" fill="none"
+                       stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                    <path class="dx-sprig-stem" d="M32 60V16"/>
+                    <path class="dx-sprig-leaf" d="M32 32c0-8.5 6.4-15 15-15 0 8.5-6.4 15-15 15Z"/>
+                    <path class="dx-sprig-leaf" d="M32 47c0-8.5-6.4-15-15-15 0 8.5 6.4 15 15 15Z"/>
+                  </svg>
+
+                  <span class="dx-bento-text">
+                    <span class="dx-bento-name"><?php echo $dx_r->title; ?></span>
+                    <?php if (trim($dx_r->description)) { ?>
+                    <span class="dx-bento-desc"><?php echo $dx_r->description; ?></span>
+                    <?php } ?>
+                  </span>
+
+                  <span class="dx-bento-go" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+                         stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h13M12 5l7 7-7 7"/>
+                    </svg>
+                  </span>
+
+                </a>
+                <?php } ?>
+
+              <?php } ?>
+            </div>
+
+          </div>
+        </section>
+        <?php } ?>
+        <section class=" pt-8 dx-has-art dx-art-waves dx-bestsellers">
           <div class="container container-xl">
             <div class="row mb-md-6 mb-8">
               <div class="col-md-6">
@@ -96,19 +306,81 @@
             </div>
           </div>
         </section>
-        <section class="pt-2 pb-2">
-          <img src="<?php echo base_url('assets/front/') ?>images/ourimg/newbg1.jpg">
-        </section>
-        <?php $dx_ticker_dir = 'left'; $dx_ticker_tone = 'rose';
-              $this->load->view('front/dx_ticker'); ?>
+        <?php
+        /* "Stress Free" editorial block.
+           Replaces a flat 1920x725 JPEG (ourimg/newbg1.jpg) whose copy was
+           baked into the pixels and so could never be edited, translated or
+           read by a screen reader. The model is cut out of that same artwork.
 
-        <section class="py-8 dx-band dx-has-art dx-art-drops">
+           Newspaper typography - serif masthead, hairline rules, small caps -
+           on a bento, because the brand only has short benefit fragments to
+           work with and a true column layout with five fragments would read
+           as an empty broadsheet. All copy below is from DEXTE's own
+           packaging. */
+        ?>
+        <section class="dx-sf">
+          <div class="container container-xl">
+
+            <div class="dx-sf-masthead">
+              <span class="dx-sf-rule" aria-hidden="true"></span>
+              <span class="dx-sf-kicker">The Stress Free Range</span>
+              <span class="dx-sf-rule" aria-hidden="true"></span>
+            </div>
+
+            <h2 class="dx-sf-title">Pad&#8209;free,<br><em>stress&#8209;free</em> periods.</h2>
+
+            <span class="dx-sf-lily" aria-hidden="true"></span>
+            <span class="dx-sf-leaf" aria-hidden="true"></span>
+
+            <div class="dx-sf-grid">
+
+              <div class="dx-sf-figure">
+                <span class="dx-sf-badge">Max Absorb</span>
+                <img src="<?php echo base_url('assets/front/media/dx-stressfree-model.png'); ?>" alt="" aria-hidden="true">
+                <span class="dx-sf-bot" aria-hidden="true"></span>
+                <span class="dx-sf-frame" aria-hidden="true"></span>
+                <a class="dx-sf-shop" href="<?php echo base_url('shop'); ?>">
+                  Shop the range
+                  <span class="dx-sf-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+                  </span>
+                </a>
+              </div>
+
+              <a class="dx-sf-card dx-sf-card-wide" href="<?php echo base_url('shop'); ?>">
+                <span class="dx-sf-num">01</span>
+                <span class="dx-sf-ct">Four&#8209;layer protection</span>
+                <span class="dx-sf-cd">A leak&#8209;proof core that holds up through the heaviest day, with nothing to shift or show.</span>
+              </a>
+
+              <div class="dx-sf-card">
+                <span class="dx-sf-num">02</span>
+                <span class="dx-sf-ct">Reusable &amp; long lasting</span>
+                <span class="dx-sf-cd">Wear, wash, repeat &mdash; better for you and better for the environment.</span>
+              </div>
+
+              <div class="dx-sf-card">
+                <span class="dx-sf-num">03</span>
+                <span class="dx-sf-ct">Kind to skin</span>
+                <span class="dx-sf-cd">No rashes. Maintains pH balance. Soft and breathable, every single day.</span>
+              </div>
+
+            </div>
+          </div>
+        </section>
+        <section class="py-8 dx-band dx-style dx-has-art dx-art-drops">
             <div class="container container-xl">
                 <div class="row">
                     <div class="col-12 text-center mb-7">
-                        <span class="dx-eyebrow">Find your fit</span>
-                        <h2 class="fs-34" data-animate="fadeInUp">Shop By <strong>Style</strong></h2>
+                        <span class="dx-eyebrow">Loved by you</span>
+                        <h2 class="fs-34" data-animate="fadeInUp">Most <strong>Loved</strong></h2>
                     </div>
+                    <!-- Bamboo frame around the style grid. A col-12 holding its
+                         own row, so the Bootstrap row > col structure stays intact. -->
+                    <div class="col-12">
+                      <div class="dx-style-frame">
+                        <div class="row">
                     <div class="col-12 col-lg-6">
                         <?php $first  =  $this->category_model->get_category_by_id(4) ;   ?>
                         <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
@@ -168,72 +440,150 @@
                             </div>
                  
                         </div>
+                        </div>
+                      </div>
+                    </div>
                     </div>
                 </div>
             </div>
         </section>
         <?php include('flows_marquee.php'); ?>
-        <!-- Banner with a ticker crossing over it, as on the reference board. -->
-        <section class="py-8 dx-bleed-banner">
-            <a href="<?php echo base_url('shop') ?>">
-                 <img src="<?php echo base_url('assets/front/') ?>images/ourimg/newbg2.jpg">
-            </a>
-            <div class="dx-ticker-over">
-              <?php $dx_ticker_dir = 'right'; $dx_ticker_tone = 'ink';
-                    $this->load->view('front/dx_ticker'); ?>
-            </div>
-        </section>
 
-        <section class="pt-11 pb-md-7 pb-10 pb-lg-14 dx-has-art dx-art-waves" style="background: #f8f8f8;">
+        <section class="dx-benefits" aria-labelledby="dx-benefits-title">
+          <div class="dx-benefits-flora" aria-hidden="true">
+            <!-- Artwork supplied in the user's ZIPs. These blue blossoms and
+                 cream flower frame are exclusive to this section. -->
+            <span class="dx-benefit-art dx-benefit-art-blue"></span>
+            <span class="dx-benefit-art dx-benefit-art-frame"></span>
+          </div>
+
           <div class="container container-xl">
-            <div class="row">
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu1.avif" alt="comfortable">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Comfortable</h3>
-                    <p class="mb-0">In Our products you feel just as beautiful and cozy as in your favorite underwear. </p>
-                  </div>
-                </div>
+            <header class="dx-benefits-head">
+              <div>
+                <span class="dx-eyebrow">Care in every detail</span>
+                <h2 id="dx-benefits-title">Designed around <strong>real life</strong></h2>
               </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu2.avif" alt="sustainable">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Sustainable</h3>
-                    <p class="mb-0">With Our products you avoid tons of waste. </p>
-                  </div>
+              <p>Soft on your body, strong on protection and thoughtfully made for a lighter footprint.</p>
+            </header>
+
+            <div class="dx-benefits-grid">
+              <article class="dx-benefit-card dx-benefit-comfort">
+                <span class="dx-benefit-num">01</span>
+                <div class="dx-benefit-icon">
+                  <img src="<?php echo base_url('assets/front/') ?>images/qu1.avif" alt="" aria-hidden="true">
                 </div>
-              </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/qu3.avif" alt="leak-proof">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Leak-Proof</h3>
-                    <p class="mb-0">With Our products you don't have to worry about leakage. </p>
-                  </div>
+                <div class="dx-benefit-copy">
+                  <span class="dx-benefit-kicker">All-day softness</span>
+                  <h3>Comfortable</h3>
+                  <p>Feel just as beautiful and cozy as you do in your favorite underwear.</p>
                 </div>
-              </div>
-              <div class="col-md-3 mb-6 mb-md-0 px-xl-8">
-                <div class="card border-0 text-center">
-                  <div class="mw-102 mx-auto">
-                    <img src="<?php echo base_url('assets/front/') ?>images/ourimg/eco.png" alt="leak-proof">
-                  </div>
-                  <div class="card-body px-0 pt-6 mt-1 pb-0">
-                    <h3 class="fs-24 mb-3">Eco Friendly</h3>
-                    <p class="mb-0">With Our products you don't have to worry about harm earth. </p>
-                  </div>
+                <div class="dx-benefit-chips" aria-label="Comfort features">
+                  <span>Skin-kind</span><span>Flexible fit</span>
                 </div>
-              </div>
+              </article>
+
+              <article class="dx-benefit-card dx-benefit-sustainable">
+                <span class="dx-benefit-num">02</span>
+                <div class="dx-benefit-icon">
+                  <img src="<?php echo base_url('assets/front/') ?>images/qu2.avif" alt="" aria-hidden="true">
+                </div>
+                <div class="dx-benefit-copy">
+                  <span class="dx-benefit-kicker">Wear. Wash. Repeat.</span>
+                  <h3>Sustainable</h3>
+                  <p>Reusable protection that helps you avoid piles of single-use period waste.</p>
+                </div>
+              </article>
+
+              <article class="dx-benefit-card dx-benefit-leakproof">
+                <span class="dx-benefit-num">03</span>
+                <div class="dx-benefit-icon">
+                  <img src="<?php echo base_url('assets/front/') ?>images/qu3.avif" alt="" aria-hidden="true">
+                </div>
+                <div class="dx-benefit-copy">
+                  <span class="dx-benefit-kicker">Move with confidence</span>
+                  <h3>Leak-Proof</h3>
+                  <p>Reliable layered protection designed to keep leaks and worries away.</p>
+                </div>
+              </article>
+
+              <article class="dx-benefit-card dx-benefit-eco">
+                <span class="dx-benefit-num">04</span>
+                <div class="dx-benefit-icon">
+                  <img src="<?php echo base_url('assets/front/') ?>images/ourimg/eco.png" alt="" aria-hidden="true">
+                </div>
+                <div class="dx-benefit-copy">
+                  <span class="dx-benefit-kicker">A gentler choice</span>
+                  <h3>Eco Friendly</h3>
+                  <p>Made to protect your flow while reducing everyday impact on the earth.</p>
+                </div>
+              </article>
             </div>
           </div>
         </section>
+        <?php
+        $dx_absorbency_cards = array(
+          array("slug" => "light", "number" => "01", "name" => "Light", "range" => "10&ndash;20", "filled" => 2,
+                "use" => "Light period days, backup protection, spotting or everyday discharge."),
+          array("slug" => "moderate", "number" => "02", "name" => "Moderate", "range" => "20&ndash;30", "filled" => 3,
+                "use" => "Light to moderate period days, or dependable backup on moderate days."),
+          array("slug" => "heavy", "number" => "03", "name" => "Heavy", "range" => "30&ndash;40", "filled" => 4,
+                "use" => "Moderate period days, longer wear, or reliable backup on heavy days."),
+          array("slug" => "super", "number" => "04", "name" => "Super", "range" => "40&ndash;50", "filled" => 5,
+                "use" => "Extra-heavy days or whenever you want the highest absorbency protection.")
+        );
+        ?>
+        <section class="dx-absorbency" aria-labelledby="dx-absorbency-title">
+          <div class="dx-absorbency-flora" aria-hidden="true">
+            <!-- The pink lily arrangement is exclusive to this section so the
+                 background artwork never repeats across adjacent blocks. -->
+            <span class="dx-absorb-art dx-absorb-art-lily"></span>
+          </div>
+
+          <div class="container container-xl">
+            <header class="dx-absorbency-head">
+              <div>
+                <span class="dx-eyebrow">What&rsquo;s your flow?</span>
+                <h2 id="dx-absorbency-title">Find your <strong>perfect protection</strong></h2>
+              </div>
+              <p>From lighter days to maximum coverage, compare each absorbency level at a glance.</p>
+            </header>
+
+            <div class="dx-absorbency-grid">
+              <?php foreach ($dx_absorbency_cards as $dx_absorbency) { ?>
+                <article class="dx-abs-card dx-abs-<?php echo $dx_absorbency["slug"]; ?>">
+                  <span class="dx-abs-step"><?php echo $dx_absorbency["number"]; ?></span>
+                  <svg class="dx-abs-watermark" viewBox="0 0 120 150" aria-hidden="true">
+                    <path d="M60 6C60 6 15 62 15 91C15 119 35 140 60 140C85 140 105 119 105 91C105 62 60 6 60 6Z"></path>
+                  </svg>
+
+                  <div class="dx-abs-title">
+                    <span>Flow level</span>
+                    <h3><?php echo $dx_absorbency["name"]; ?></h3>
+                  </div>
+                  <div class="dx-abs-capacity">
+                    <strong><?php echo $dx_absorbency["range"]; ?></strong>
+                    <span>ml<br>regular</span>
+                  </div>
+                  <div class="dx-abs-use">
+                    <span>Best for</span>
+                    <p><?php echo $dx_absorbency["use"]; ?></p>
+                  </div>
+
+                  <div class="dx-abs-card-foot">
+                    <div class="dx-abs-meter" aria-label="<?php echo $dx_absorbency["filled"]; ?> out of 5 absorbency drops">
+                      <?php for ($dx_drop = 1; $dx_drop <= 5; $dx_drop++) { ?>
+                        <i class="<?php echo $dx_drop <= $dx_absorbency["filled"] ? "is-filled" : ""; ?>"></i>
+                      <?php } ?>
+                    </div>
+                    <a href="<?php echo base_url("shop"); ?>">Shop <?php echo $dx_absorbency["name"]; ?><span aria-hidden="true">&rarr;</span></a>
+                  </div>
+                </article>
+              <?php } ?>
+            </div>
+          </div>
+        </section>
+
+        <?php if (false) { /* Retained temporarily for content reference; not rendered. */ ?>
         <section class="pt-lg-11 pb-lg-10 py-5 dx-has-art dx-art-waves" style="background:#deb08e;">
           <div class="container container-xl">
             <div class="row justify-content-center mb-7">
@@ -481,7 +831,8 @@
             </div>
           </div>
         </section>
-        <section class="pt-10 pb-6 dx-has-art dx-art-waves">
+        <?php } ?>
+        <section class="pt-10 pb-6 dx-has-art dx-art-waves dx-membrane-section">
           <div class="container-fluid">
             <div class="row mb-md-6 mb-8">
               <div class="col-12">
@@ -492,251 +843,71 @@
             <img src="<?php echo base_url('assets/front/') ?>images/processdigram.webp">
           </div>
         </section>
-        <hr>
-        <section class="py-8 pt-lg-5 pb-lg-5 dx-has-art dx-art-drops" style="background-color:#F8F8F8" data-animated-id="10">
+        <section class="dx-life-section dx-has-art dx-art-waves" data-animated-id="10">
           <div class="container container-xl">
-            <div class="row mx-0">
-              <div class="col-lg-5 py-xl-6 py-lg-12 py-1">
-                <div class="mw-lg-695 ml-auto py-lg-7">
-                  <span class="dx-eyebrow">Why it works</span>
-                  <h2 class="fs-34 pb-4">
-                    How Period Panties
-                    <strong>Will Change Your Life</strong>
-                  </h2>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
-                
-                    They're
-                    <span class="spancolor">
-                      Reusable
-                    </span>
-                  </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
-                  
-                    360<sup class="fs-10 font-weight-600">o</sup> Anti-leak
-                    <span class="spancolor">
-                      Protection
-                    </span>
-                  </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
-               
-                    Made With Ultra-soft & Breathable
-                    <span class="spancolor">
-                      Material
-                    </span>
-                  </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
-                 
-                    Holds Up To 40ml
-                    <span class="spancolor">
-                      Of Blood
-                    </span>
-                  </p>
-                  <p class="text-gray-03 fs-15 mb-1 text-capitalize font-weight-600 dx-benefit">
-                    
-                    On Heavy Flow Change
-                    <span class="spancolor">
-                      In 4-6 hour.
-                    </span>
-                  </p>
-                  <!-- <p class="mb-0 fs-18 pt-1 text-body">Made using clean, non-toxic ingredients, our products <br /> are designed for everyone.</p>
-                        <a href="#" class="btn btn-md rounded btn-light mt-6">Discover Now</a> -->
-                </div>
+            <svg class="dx-life-nature" viewBox="0 0 260 320" fill="none" aria-hidden="true">
+              <path d="M225 304C171 247 139 190 123 127C113 87 113 48 118 13" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M126 144C78 128 47 99 34 61C78 62 111 84 126 144Z" fill="currentColor" fill-opacity=".34" stroke="currentColor" stroke-width="2"/>
+              <path d="M145 195C189 176 216 145 226 105C185 110 155 140 145 195Z" fill="currentColor" fill-opacity=".24" stroke="currentColor" stroke-width="2"/>
+              <path d="M165 240C121 231 90 209 72 175C113 169 148 192 165 240Z" fill="currentColor" fill-opacity=".28" stroke="currentColor" stroke-width="2"/>
+              <path d="M119 91C153 76 174 51 181 20C150 24 127 48 119 91Z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="120" cy="126" r="5" fill="currentColor"/>
+              <circle cx="145" cy="195" r="4" fill="currentColor"/>
+              <circle cx="164" cy="240" r="4" fill="currentColor"/>
+            </svg>
+
+            <header class="dx-life-head">
+              <span class="dx-eyebrow dx-eyebrow-center">Why it works</span>
+              <h2>How Period Panties <strong>Will Change Your Life</strong></h2>
+            </header>
+
+            <div class="dx-life-stage">
+              <article class="dx-life-card dx-life-card-1">
+                <span class="dx-life-number">01</span>
+                <p>They're <strong>Reusable</strong></p>
+              </article>
+
+              <article class="dx-life-card dx-life-card-2">
+                <span class="dx-life-number">02</span>
+                <p>360<sup>o</sup> Anti-leak <strong>Protection</strong></p>
+              </article>
+
+              <article class="dx-life-card dx-life-card-3">
+                <span class="dx-life-number">03</span>
+                <p>Made With Ultra-soft &amp; Breathable <strong>Material</strong></p>
+              </article>
+
+              <div class="dx-life-video" style="background-image: url('<?php echo base_url('assets/front/') ?>images/ourimg/videoimg.jpg');">
+                <a href="https://www.youtube.com/watch?v=F8S3SnAEE_0" data-gtf-mfp="true" data-mfp-options='{"type":"iframe","preloader":false}' class="dx-life-play" aria-label="Play the DEXTE period underwear video">
+                  <i class="fas fa-play" aria-hidden="true"></i>
+                </a>
+                <span class="dx-life-video-label">See how DEXTE works</span>
               </div>
-              <div class="col-lg-1 py-xl-1 py-lg-12 py-1">
-               
-              </div>
-              <div class="col-lg-6 d-flex align-items-center justify-content-center py-lg-0 py-md-17 py-13" style="background-image: url('<?php echo base_url('assets/front/') ?>images/ourimg/videoimg.jpg');background-position: center;background-size: cover;">
-                <a href="https://www.youtube.com/watch?v=F8S3SnAEE_0" data-gtf-mfp="true" data-mfp-options='{"type":"iframe","preloader":false}' class="btn btn-rounded btn-light w-115 h-115 d-flex justify-content-center align-items-center rounded-circle fs-30"><i class="fas fa-play"></i></a>
-              </div>
+
+              <article class="dx-life-card dx-life-card-4">
+                <span class="dx-life-number">04</span>
+                <p>Holds Up To 40ml <strong>Of Blood</strong></p>
+              </article>
+
+              <article class="dx-life-card dx-life-card-5">
+                <span class="dx-life-number">05</span>
+                <p>On Heavy Flow Change <strong>In 4-6 Hours</strong></p>
+              </article>
+
+              <article class="dx-life-card dx-life-card-6">
+                <span class="dx-life-number">06</span>
+                <p>Kind To You <strong>And The Planet</strong></p>
+              </article>
             </div>
           </div>
         </section>
-        <?php $dx_ticker_dir = 'right'; $dx_ticker_tone = 'ink';
-              $this->load->view('front/dx_ticker'); ?>
-
         <?php $this->load->view('front/dx_reviews'); ?>
         <div class="rg">
         <marquee width="100%" direction="left">
 For every Sustain purchase, 1% of the purchase goes towards the animal and plantation fund, which helps to support the planet. Products like period underwear are designed to minimize waste, reducing the amount of used tampons and pads that end up in landfills.
 </marquee>
 </div>
-        <section class="faqs py-8 dx-has-art dx-art-drops">
-          <div class="container">
-            <span class="dx-eyebrow dx-eyebrow-center">Good to know</span>
-            <h2 class="fs-34 pb-8 text-center">
-              Frequently Asked <strong>Questions</strong>
-            </h2>
-            <div class="row">
-              <div class="col-12 mt-7 mt-md-0">
-                <div id="accordion-style-01" class="accordion">
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header  border-0" id="headingOne">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          <span>
-                          What is the use of period panties?
-                          </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                        They look like regular underwear, 
-but they're designed to keep moisture away from your skin as they soak up menstrual blood. The fabric in period underwear contains a moisture-wicking fabric made up of thousands of small filaments. These fibers trap blood or other liquid to keep it from leaking onto your clothes.
-                          </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header border-0" id="headingTwo">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                          <span>
-                          Can you wear period panties all day?
-                          </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                          This will depend on your flow, but period underwear can be worn all day if it's the right level of absorbency for your needs. DEXTE suggest you changing when you feel wetness — this is a sign it has absorbed all it's able to. Also, as your period progresses, the absorbency you require will change but on heavy flow we DEXTE suggest you to change with in 8 hours.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header border-0" id="headingThree">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                          <span>
-                          How do I wash period panties?
-                          </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                        Wash – wash your period underwear in the hand or toss your period underwear into the washing machine at 30 degrees Celsius (or less) with a mild detergent on a delicate setting. Dry – then simply hang them to dry and you're done!
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header border-0" id="headingFour">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-                          <span>
-                          Why make the switch to period underwear?
-                          </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                        Beyond the comfort factor and leak-proofing, period panties are also gaining popularity as both an ecologically sustainable and economically smart choice. Try them if you’re looking for a solution less irritating than tampons, more comfortable than sanitary pads, and less messy than using a menstrual cup. And with period panties, you’re always ready: No more frantic late-night tampon runs to the corner store.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header border-0" id="headingFive">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
-                          <span>
-                          How to care for period underwear?
-                        </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                          <b>
-                          Step 1: Rinse 
-                          </b>
-                        </p>
-                        <p class="mb-0">
-                        After you remove your period panties, drop them in cold water to rinse them.
-                        </p>
-                        <p>
-                          <b>
-                          Step 2: Wash
-                          </b>
-                        </p>
-                        <p class="mb-0">
-                        If machine washing, first place them in a washable mesh bag and wash on the delicate or gentle cycle. To make your underwear last, consider hand-washing with a mild detergent.
-                        </p>
-                        <p>
-                          <b>
-                          Step 3: Dry
-                          </b>
-                        </p>
-                        <p class="mb-0">
-                        Do not put in dryer. Instead, lay underwear flat or hang dry to help maintain the fabric's integrity.
-                        </p>
-                        <p>
-                          <b>
-                          Step 4: Treat
-                          </b>
-                        </p>
-                        <p class="mb-0">
-                        Worried about stains or lingering smells? Period undies are designed to be stain-resistant and shouldn’t retain a scent if cared for properly, but you can soak them in vinegar/water mixture prior to laundering, too.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card border-1 mb-4 border-bottom-1">
-                    <div class="card-header border-0" id="headingsix">
-                      <h5 class="mb-0 fs-18 w-100">
-                        <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapsesix" aria-expanded="true" aria-controls="headingsix">
-                          <span>
-                          Is period underwear a solution for my leaky bladder?
-                          </span>
-                          <span class="icon d-inline-block ml-auto"></span>
-                        </a>
-                      </h5>
-                    </div>
-                    <div id="collapsesix" class="collapse" aria-labelledby="headingsix" data-parent="#accordion-style-01">
-                      <div class="card-body pt-4 pb-2 px-2">
-                        <p>
-                        Generally, no, although  DEXTE has developed Speax, a line specifically for bladder protection.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <!--<div class="card border-1 mb-4 border-bottom-1">-->
-                  <!--  <div class="card-header border-0" id="headingseven">-->
-                  <!--    <h5 class="mb-0 fs-18 w-100">-->
-                  <!--      <a href="#" class="d-flex align-items-center border-bottom pb-2 text-decoration-none collapsed" data-toggle="collapse" data-target="#collapseseven" aria-expanded="true" aria-controls="headingseven">-->
-                  <!--        <span>-->
-                  <!--        Helping  animals and plants while helping the planet-->
-                  <!--        </span>-->
-                  <!--        <span class="icon d-inline-block ml-auto"></span>-->
-                  <!--      </a>-->
-                  <!--    </h5>-->
-                  <!--  </div>-->
-                  <!--  <div id="collapseseven" class="collapse" aria-labelledby="headingseven" data-parent="#accordion-style-01">-->
-                  <!--    <div class="card-body pt-4 pb-2 px-2">-->
-                  <!--      <p>-->
-                  <!--      For every Sustain purchase, 1% of the purchase goes towards the animal and plantation fund, which helps to support the planet. Products like period underwear are designed to minimize waste, reducing the amount of used tampons and pads that end up in landfills.-->
-                  <!--      </p>-->
-                  <!--    </div>-->
-                  <!--  </div>-->
-                  <!--</div>-->
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <?php $this->load->view("front/home_faqs", array("FAQS" => $FAQS)); ?>
 
        
   <?php $this->load->view('front/layout/footer'); ?>

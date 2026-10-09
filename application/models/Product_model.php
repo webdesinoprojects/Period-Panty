@@ -39,7 +39,7 @@ class Product_model extends CI_Model
 	{
 
 
-        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+        $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.status','1');
@@ -156,7 +156,7 @@ class Product_model extends CI_Model
 	
 	public function get_product_by_category_id($cat_id , $limit=null )
 	{
-		$this->db->select("category.url_slug as cat_url,category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select("category.url_slug as cat_url,category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.cat_id',$cat_id);
@@ -201,7 +201,7 @@ class Product_model extends CI_Model
 
     public function get_product_by_category_id_order_by($cat_id,$low)
 	{
-		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.cat_id',$cat_id);
@@ -213,7 +213,7 @@ class Product_model extends CI_Model
 
 	public function get_product_by_mulit_category_id_order_by($cat_id_array,$low)
 	{
-		$this->db->select("category.url_slug as cat_url, category.title as cat_title,product.title,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select("category.url_slug as cat_url, category.title as cat_title,product.title,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where_in('product.cat_id',$cat_id_array);
@@ -224,7 +224,7 @@ class Product_model extends CI_Model
 	}
 	public function get_filter_products($filter_array , $categoryArray,$starting_price ,$ending_price, $color_array,$size,$size_cm , $age_group,$limit ,$order_by , $order_value  )
 	{
-		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		foreach($filter_array as $key=> $value){
@@ -253,7 +253,7 @@ class Product_model extends CI_Model
 	
 	public function get_home_products($filter_array,$limit ,$order_by , $order_value  )
 	{
-		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		foreach($filter_array as $key=> $value){
@@ -267,7 +267,7 @@ class Product_model extends CI_Model
 	
 	public function get_product_by_filter($categoryArray, $filter ,$limit,$order_by , $order_value )
 	{
-		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+		$this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.delete_flag','0');
@@ -321,7 +321,7 @@ class Product_model extends CI_Model
 	
 	function get_user_wishlist($user_id){
 	 
-	    $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate");
+	    $this->db->select(" category.url_slug as cat_url, category.title as cat_title,product.url_slug,product.title,product.special_price,product.price,product.discount,product.id,product.qty,product.absorbency_volume,product.absorbency_rate,product.color");
 		$this->db->from('tbl_wishlist as wishlist');
 		$this->db->join('tbl_products as product',"wishlist.product_id = product.id",'left');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');

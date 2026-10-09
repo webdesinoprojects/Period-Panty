@@ -12,6 +12,10 @@ class Welcome extends CI_Controller
 
 	public function index($parent = 0)
 	{	 
+		$this->load->model(array("home_content_model", "testimonials_model"));
+		$this->home_content_model->initialize();
+		$data["FAQS"] = $this->faq_model->get_all_active_faq();
+		$data["TESTIMONIALS"] = $this->testimonials_model->get_all_active_testimonials_home();
 	  	$limit = 8 ; 
 		$data['SLIDERDATA'] = $this->slider_model->get_all_active_slider();
 		$data['PRODUCTS'] = $this->product_model->get_home_products($filter_array_2 = ['is_featured'=>'yes','status'=>'1' ],12,'id','desc');
@@ -31,6 +35,8 @@ class Welcome extends CI_Controller
 	}	
 	function FAQs()
 	{
+		$this->load->model("home_content_model");
+		$this->home_content_model->initialize();
 		$data['RESULT'] = $this->page_model->get_page_by_id(33);
 		$data['faq'] = $this->faq_model->get_all_active_faq(); 
 		$this->load->view('front/faq',$data);

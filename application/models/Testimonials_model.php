@@ -8,7 +8,7 @@ class Testimonials_model extends CI_Model
 	}
 	public function get_all_testimonials()
 	{
-	    	$this->db->order_by('id', 'desc');
+		$this->db->order_by("sort_order", "asc")->order_by("id", "asc");
 		return $this->db->get($this->table)->result();
 	}
 	public function get_testimonials_by_id($id)
@@ -29,9 +29,8 @@ class Testimonials_model extends CI_Model
 	}
 	public function get_all_active_testimonials_home()
 	{
-		$this->db->where('status',1);
-		$this->db->limit(8);
-		$this->db->order_by('id', 'desc');
+		$this->db->where("status", "1");
+		$this->db->order_by("sort_order", "asc")->order_by("id", "asc");
 		return $this->db->get($this->table)->result();
 	}
 	

@@ -1,34 +1,4 @@
-<?php
-/**
- * Customer review wall - vertical video tiles and stall photographs mixed
- * with quote cards, in the manner of the reference site.
- *
- * Deliberate rule about attribution: the photographs are of real, identifiable
- * customers taken at DEXTE stalls, and nobody supplied a quote to go with
- * them. So no caption is attached to a face. The quote cards instead carry
- * testimonials that are already published on this site (front/flows_marquee),
- * with the names their authors gave. Nothing here is invented.
- *
- * Videos ship as H.264 MP4 with poster images, and
- * preload="none" so the page costs nothing until someone presses play. Native
- * controls, so there is no custom player script to break.
- *
- * WebM/VP9 was tried and dropped: encoded from the originals it beat H.264 on
- * only one of the three clips, and by 11%. Shipping both codecs would have
- * doubled the media weight to save 0.4MB on a single file.
- */
-$dx_media = base_url('assets/front/media/');
-
-$dx_quotes = array(
-    array('name' => 'Nikita Srivastav', 'flow' => 'Heavy flow',
-          'text' => 'My first two days are very heavy compared to the last two. I was searching for these panties and got them from Dexte at a very reasonable price. Now I don\'t have to think twice before going anywhere.'),
-    array('name' => 'Radhika Sharma', 'flow' => 'Moderate flow',
-          'text' => 'Being a working woman it is a heavy task to carry tampons, pads and cups. Dexte period panty is a game changer for me - lightweight, comfortable and the absorbency is up to the mark.'),
-    array('name' => 'Swati Verma', 'flow' => 'Moderate heavy flow',
-          'text' => 'The material quality is excellent and the fit is exceptional. The waistband is stretchy and doesn\'t dig into my skin, and the leg openings are snug without being too tight.'),
-);
-?>
-
+<?php if (!empty($TESTIMONIALS)) { ?>
 <section class="py-8 dx-has-art dx-art-drops dx-reviews">
   <div class="container container-xl">
     <div class="row">
@@ -38,63 +8,54 @@ $dx_quotes = array(
       </div>
     </div>
   </div>
-
-  <!-- Rail scrolls horizontally; it is a plain overflow container rather than
-       a carousel, so there is no slider library to initialise or break. -->
   <div class="dx-rail" tabindex="0" role="group" aria-label="Customer reviews">
     <div class="dx-rail-track">
-
-      <article class="dx-rev dx-rev-video">
-        <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-1.webp">
-          <source src="<?php echo $dx_media; ?>review-1.mp4" type="video/mp4">
+      <?php $quote_index = 0; foreach ($TESTIMONIALS as $review) {
+          $kind = $this->home_content_model->card_type($review);
+          $media = $this->home_content_model->media_url($review->image);
+          $poster = $this->home_content_model->media_url($review->poster);
+          $url = $this->home_content_model->video_url($review->youtube_link);
+          $iframe = $this->home_content_model->iframe_url($url);
+          $description = trim(strip_tags($review->description));
+      ?>
+      <?php if ($kind === "quote") { ?>
+      <article class="dx-rev dx-rev-quote<?php echo $quote_index++ % 2 ? " dx-rev-quote-alt" : ""; ?>" data-review-id="<?php echo (int) $review->id; ?>">
+        <?php $rating = max(0, min(5, (int) $review->rating)); if ($rating) { ?>
+        <div class="dx-rev-stars" aria-label="<?php echo $rating; ?> out of 5"><?php echo str_repeat("&#9733;", $rating); ?></div>
+        <?php } ?>
+        <?php if ($review->country) { ?><p class="dx-rev-flow"><?php echo html_escape($review->country); ?></p><?php } ?>
+        <p class="dx-rev-text"><?php echo nl2br(html_escape($description)); ?></p>
+        <p class="dx-rev-name"><?php echo html_escape($review->name); ?></p>
+      </article>
+      <?php } elseif ($kind === "photo" && $media) { ?>
+      <article class="dx-rev dx-rev-photo" data-review-id="<?php echo (int) $review->id; ?>">
+        <img src="<?php echo html_escape($media); ?>" alt="<?php echo html_escape($description ?: $review->name); ?>" loading="lazy">
+      </article>
+      <?php } elseif ($kind === "video" && ($media || $url)) {
+          // Older Image/Video records may store a video thumbnail in image.
+          if (!$poster && preg_match("~\\.(jpg|jpeg|png|webp)$~i", $review->image)) { $poster = $media; }
+      ?>
+      <article class="dx-rev dx-rev-video" data-review-id="<?php echo (int) $review->id; ?>">
+        <?php if ($iframe) { ?>
+        <a href="<?php echo html_escape($iframe); ?>" class="dx-rev-video-link" data-gtf-mfp="true" data-mfp-options='{"type":"iframe","preloader":false}' aria-label="<?php echo html_escape("Play " . $review->name); ?>">
+          <?php if ($poster) { ?><img src="<?php echo html_escape($poster); ?>" alt="" loading="lazy"><?php } ?>
+          <span class="dx-rev-play" aria-hidden="true"><i class="fas fa-play"></i></span>
+          <span class="dx-rev-video-caption"><?php echo html_escape($review->name); ?></span>
+        </a>
+        <?php } else {
+            $video = $url ?: $media;
+            $extension = strtolower(pathinfo((string) parse_url($video, PHP_URL_PATH), PATHINFO_EXTENSION));
+            $mime = $extension === "webm" ? "video/webm" : ($extension === "ogg" ? "video/ogg" : "video/mp4");
+        ?>
+        <video preload="none" playsinline controls<?php if ($poster) { ?> poster="<?php echo html_escape($poster); ?>"<?php } ?> aria-label="<?php echo html_escape($review->name); ?>">
+          <source src="<?php echo html_escape($video); ?>" type="<?php echo $mime; ?>">
+          <a href="<?php echo html_escape($video); ?>">Watch the customer review</a>
         </video>
+        <?php } ?>
       </article>
-
-      <article class="dx-rev dx-rev-quote">
-        <div class="dx-rev-stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="dx-rev-flow"><?php echo $dx_quotes[0]['flow']; ?></p>
-        <p class="dx-rev-text"><?php echo $dx_quotes[0]['text']; ?></p>
-        <p class="dx-rev-name"><?php echo $dx_quotes[0]['name']; ?></p>
-      </article>
-
-      <article class="dx-rev dx-rev-photo">
-        <img src="<?php echo $dx_media; ?>shot-3.webp" alt="A customer at a DEXTE stall holding a pack of period panties" loading="lazy">
-      </article>
-
-      <article class="dx-rev dx-rev-video">
-        <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-2.webp">
-          <source src="<?php echo $dx_media; ?>review-2.mp4" type="video/mp4">
-        </video>
-      </article>
-
-      <article class="dx-rev dx-rev-quote dx-rev-quote-alt">
-        <div class="dx-rev-stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="dx-rev-flow"><?php echo $dx_quotes[1]['flow']; ?></p>
-        <p class="dx-rev-text"><?php echo $dx_quotes[1]['text']; ?></p>
-        <p class="dx-rev-name"><?php echo $dx_quotes[1]['name']; ?></p>
-      </article>
-
-      <article class="dx-rev dx-rev-photo">
-        <img src="<?php echo $dx_media; ?>shot-4.webp" alt="DEXTE customers at a stall" loading="lazy">
-      </article>
-
-      <article class="dx-rev dx-rev-video">
-        <video preload="none" playsinline controls poster="<?php echo $dx_media; ?>review-3.webp">
-          <source src="<?php echo $dx_media; ?>review-3.mp4" type="video/mp4">
-        </video>
-      </article>
-
-      <article class="dx-rev dx-rev-quote">
-        <div class="dx-rev-stars" aria-label="5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="dx-rev-flow"><?php echo $dx_quotes[2]['flow']; ?></p>
-        <p class="dx-rev-text"><?php echo $dx_quotes[2]['text']; ?></p>
-        <p class="dx-rev-name"><?php echo $dx_quotes[2]['name']; ?></p>
-      </article>
-
-      <article class="dx-rev dx-rev-photo">
-        <img src="<?php echo $dx_media; ?>shot-6.webp" alt="DEXTE customers at a stall" loading="lazy">
-      </article>
-
+      <?php } ?>
+      <?php } ?>
     </div>
   </div>
 </section>
+<?php } ?>

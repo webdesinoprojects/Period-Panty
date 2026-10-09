@@ -1,75 +1,24 @@
-<?php $link = $this->setting_model->get_all_setting();?>
+<?php
+$page = !empty($RESULT) ? $RESULT[0] : null;
+$title = $page && $page->meta_title ? $page->meta_title : "Frequently Asked Questions | DEXTE";
+$description = $page && $page->meta_description ? $page->meta_description : "Answers to common questions about DEXTE period underwear.";
+?>
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?php  echo $RESULT[0]->meta_title ; ?></title>
-<meta name="description" content="<?php  echo $RESULT[0]->meta_description ; ?>">
-<meta name="keywords" content="<?php  echo $RESULT[0]->meta_keyword; ?>">
-<link rel="canonical" href="<?php  echo $RESULT[0]->canonical; ?>">
-<?php $this->load->view('front/layout/head'); ?>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><?php echo html_escape($title); ?></title>
+  <meta name="description" content="<?php echo html_escape($description); ?>">
+  <link rel="canonical" href="<?php echo html_escape($page && $page->canonical ? $page->canonical : base_url("FAQs")); ?>">
+  <?php $this->load->view("front/layout/head"); ?>
 </head>
 <body>
-<?php $this->load->view('front/layout/header-2'); ?>
-    <!-- about content start  -->
-      <div class="about-content margin-top-30">
-        <div class="container">
-             <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title-02 text-center">
-                        
-                        <h3> <?php echo $RESULT[0]->title; ?> </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="content-left">
-                     
-                        <?php echo $RESULT[0]->description; ?>
-                    </div>
-                </div> 
-            </div>
-        </div>
-    </div>
-    <!-- about content end  -->
-    <!-- faq start  -->
-    <div class="faq-content margin-top-10">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="accordion-area">
-                       
-                        <div class="accordion-style" id="accordionExample1">
-                            <?php if(count($faq)>0){ ?>
-                         
-                            <?php $no=0; foreach($faq as $key=> $record){ $no++; ?>
-                            <div class="card">
-                                <div class="card-header" id="heading<?php echo $record->id; ?>">
-                                    <p class="mb-0">
-                                        <a href="#" role="button" data-toggle="collapse" data-target="#collapse<?php echo $record->id; ?>" aria-expanded="<?php echo ($key == 0) ?"true" :"false" ; ?>" aria-controls="collapse<?php echo $record->id; ?>"> <?php echo $record->title; ?></a>
-                                    </p>
-                                </div>
-                                <div id="collapse<?php echo $record->id; ?>" class="collapse <?php echo ($key == 0) ?"show" :"" ; ?>" aria-labelledby="headingOne" data-parent="#accordionExample1">
-                                    <div class="card-body">
-                                         <?php echo $record->description; ?>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                             <?php } ?> 
-                            <?php } ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- faq end  -->
-
- 
-<?php $this->load->view('front/layout/footer-js'); ?>
+  <?php $this->load->view("front/layout/header"); ?>
+  <main>
+    <?php $this->load->view("front/home_faqs", array("FAQS" => $faq)); ?>
+  </main>
+  <?php $this->load->view("front/layout/footer"); ?>
+  <?php $this->load->view("front/layout/footer-js"); ?>
 </body>
 </html>

@@ -870,7 +870,7 @@ section.slider, .slider { margin-top: 0 !important; }
    stutter and vanish while scrolling. Letting CSS own the positioning removes
    the loop entirely. The .sticky class JS still toggles is used only to change
    the bar's appearance once docked. */
-body:has(section.slider) .main-header {
+body:has(section.slider, .dx-hero) .main-header {
     position: fixed !important;
     top: 0; left: 0; right: 0;
     width: 100% !important;
@@ -878,21 +878,21 @@ body:has(section.slider) .main-header {
     background: transparent !important;
 }
 
-body:has(section.slider) .main-header .sticky-area-wrap {
+body:has(section.slider, .dx-hero) .main-header .sticky-area-wrap {
     background: transparent !important;
     padding-bottom: 0 !important;
 }
 
-body:has(section.slider) .main-header .sticky-area {
+body:has(section.slider, .dx-hero) .main-header .sticky-area {
     margin-top: 18px !important;
 }
 
 /* The hero starts at the top of the document. */
-body:has(section.slider) section.slider { margin-top: 0 !important; }
+body:has(section.slider, .dx-hero) section.slider { margin-top: 0 !important; }
 
 /* Once the header sticks on scroll it must become fixed and opaque again,
    otherwise it would scroll away with the hero. */
-body:has(section.slider) .main-header .sticky-area-wrap.sticky {
+body:has(section.slider, .dx-hero) .main-header .sticky-area-wrap.sticky {
     position: fixed !important;
     top: 0; left: 0; right: 0;
     width: 100% !important;
@@ -901,7 +901,7 @@ body:has(section.slider) .main-header .sticky-area-wrap.sticky {
 
 /* Pages with no hero keep a normal header; just drop the extra gap now that
    the promo strip is gone. */
-body:not(:has(section.slider)) .main-header .sticky-area-wrap {
+body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area-wrap {
     padding-top: 10px !important;
     padding-bottom: 14px !important;
 }
@@ -1088,7 +1088,7 @@ section.slider .bg-img-cover-center {
 
 /* The wrap keeps the page from jumping when the bar leaves the flow. On hero
    pages the header is already out of flow, so no reserve is needed there. */
-body:not(:has(section.slider)) .main-header .sticky-area-wrap.sticky { min-height: 76px; }
+body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area-wrap.sticky { min-height: 76px; }
 
 /* ==========================================================================
    21. Stop the header spilling past the viewport
@@ -2396,6 +2396,16 @@ section:has(> a > img) > a > img { display: block; width: 100%; height: auto; }
 
 .dx-rev-name::before { content: "\2014"; display: block; opacity: .55; margin-bottom: .4rem; }
 
+/* CMS video links share the native-video card shape. */
+.dx-rev-video-link { position: relative; display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: var(--dx-plum); color: #fff; }
+.dx-rev-video-link img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dx-rev-play { position: relative; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,.92); color: var(--dx-rose); box-shadow: 0 4px 20px rgba(0,0,0,.16); }
+.dx-rev-video-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; overflow-wrap: anywhere; }
+.dx-rev-quote { overflow-y: auto; justify-content: flex-start; }
+.dx-rev-quote .dx-rev-stars { margin-top: auto; flex-shrink: 0; }
+.dx-rev-quote .dx-rev-name { margin-bottom: auto; }
+.dx-rev-text, .dx-rev-name { overflow-wrap: anywhere; flex-shrink: 0; }
+
 @media (max-width: 767.98px) {
     .dx-rev { width: 214px; }
     .dx-rail-track { padding-left: 15px; padding-right: 15px; gap: .8rem; }
@@ -2960,7 +2970,7 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
 /* ==========================================================================
    44. Sticky header on inner pages
    --------------------------------------------------------------------------
-   Section 17 fixed the header only under `body:has(section.slider)`, which is
+   Section 17 fixed the header only under `body:has(section.slider, .dx-hero)`, which is
    the home page. Every other page kept it in normal flow, so it scrolled away
    on /shop, on product detail and on the content pages.
 
@@ -2985,7 +2995,7 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
    own children. Verified failing at all nine widths before settling on fixed.
    ========================================================================== */
 
-body:not(:has(section.slider)) .main-header {
+body:not(:has(section.slider, .dx-hero)) .main-header {
     position: fixed !important;
     top: 0;
     left: 0;
@@ -3000,7 +3010,7 @@ body:not(:has(section.slider)) .main-header {
    against them. Inner pages therefore get a near-solid plum - same colour, so
    the bar still matches the home page, but it stops competing with whatever
    happens to be sliding underneath it. */
-body:not(:has(section.slider)) .main-header .sticky-area::before {
+body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area::before {
     background: rgba(67, 48, 58, .94) !important;
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);
@@ -3013,16 +3023,16 @@ body:not(:has(section.slider)) .main-header .sticky-area::before {
    page. Pushing the first section down instead lets THAT section's background
    run up behind the bar, and the seam disappears. */
 
-body:not(:has(section.slider)) .main-header + * {
+body:not(:has(section.slider, .dx-hero)) .main-header + * {
     padding-top: 130px !important;
 }
 
 @media (max-width: 1199.98px) {
-    body:not(:has(section.slider)) .main-header + * { padding-top: 140px !important; }
+    body:not(:has(section.slider, .dx-hero)) .main-header + * { padding-top: 140px !important; }
 }
 
 @media (max-width: 767.98px) {
-    body:not(:has(section.slider)) .main-header + * { padding-top: 131px !important; }
+    body:not(:has(section.slider, .dx-hero)) .main-header + * { padding-top: 131px !important; }
 }
 
 /* ==========================================================================
@@ -3527,3 +3537,4055 @@ a.dx-stat:hover {
 }
 
 .dx-acct .row[style*="e8e6e6"] h6 { font-size: 13.5px; color: var(--dx-plum); margin: 0; }
+
+/* ==========================================================================
+   47. Editorial hero
+   --------------------------------------------------------------------------
+   Replaces the tbl_slider carousel with the split-headline composition: the
+   type breaks either side of a cut-out figure who stands in the gap.
+
+   The figure MUST be a transparent PNG. A rectangular photo would mask the
+   headline and the whole effect collapses.
+
+   Colours come from the DEXTE brand deck rather than the rose palette used
+   elsewhere: Ivory Beige #F5F0E8, Champagne Gold #B59A72, Charcoal #393735.
+   The rest of the page is still rose, so this section will look separate
+   until the other sections follow.
+
+   Desktop places the parts absolutely so they can overlap the figure, which
+   is what the reference does. Below 992px that cannot work - the pieces would
+   collide - so it becomes an ordinary stack.
+   ========================================================================== */
+
+:root {
+    --dx-ivory-2: #f5f0e8;
+    --dx-gold: #b59a72;
+    --dx-gold-dark: #9d8259;
+    --dx-ink: #1f1d1b;
+}
+
+.dx-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--dx-ivory-2);
+}
+
+.dx-hero-track,
+.dx-hero .slick-list,
+.dx-hero .slick-track,
+.dx-hero-slide { height: 100vh; min-height: 620px; }
+
+.dx-hero-slide {
+    position: relative;
+    box-sizing: border-box;
+    /* clears the fixed header from section 44 */
+    padding-top: 132px;
+}
+
+.dx-hero-inner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 48px;
+}
+
+/* Until slick initialises every slide is in the flow, which would stack three
+   full viewports. Hide all but the first. */
+.dx-hero-track:not(.slick-initialized) .dx-hero-slide:not(:first-child) { display: none; }
+
+/* ---- carousel dots ---- */
+
+.dx-hero .slick-dots {
+    position: absolute;
+    left: 48px;
+    bottom: 26px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    z-index: 6;
+}
+
+.dx-hero .slick-dots li { width: auto; height: auto; margin: 0; }
+
+.dx-hero .slick-dots li button {
+    width: 26px;
+    height: 3px;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: #cdc2b1;
+    text-indent: -9999px;
+    overflow: hidden;
+    transition: background .25s var(--dx-ease), width .25s var(--dx-ease);
+}
+
+.dx-hero .slick-dots li button:before { display: none; }
+.dx-hero .slick-dots li.slick-active button { background: var(--dx-gold); width: 40px; }
+
+/* ---- scroll cue ---- */
+
+.dx-hero-scroll {
+    position: absolute;
+    right: 48px;
+    bottom: 24px;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none !important;
+    color: #8a8178 !important;
+}
+
+.dx-hero-scroll-track {
+    position: relative;
+    width: 23px;
+    height: 38px;
+    border: 1.5px solid #c4b9a8;
+    border-radius: 12px;
+    display: block;
+}
+
+.dx-hero-scroll-dot {
+    position: absolute;
+    left: 50%;
+    top: 7px;
+    width: 3px;
+    height: 7px;
+    margin-left: -1.5px;
+    border-radius: 2px;
+    background: var(--dx-gold);
+    animation: dxScrollDot 1.9s var(--dx-ease) infinite;
+}
+
+@keyframes dxScrollDot {
+    0%   { transform: translateY(0);    opacity: 0; }
+    22%  { opacity: 1; }
+    70%  { transform: translateY(15px); opacity: 0; }
+    100% { transform: translateY(15px); opacity: 0; }
+}
+
+.dx-hero-scroll-label {
+    font-size: 9.5px;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+}
+
+.dx-hero-scroll:hover { color: var(--dx-gold) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-hero-scroll-dot { animation: none; opacity: .9; }
+}
+
+/* ---- the oversized word sitting behind everything ---- */
+
+.dx-hero-ghost {
+    position: absolute;
+    right: 2%;
+    bottom: 11%;
+    z-index: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(64px, 9.5vw, 165px);
+    line-height: .86;
+    letter-spacing: .01em;
+    color: #e2d8c9;
+    opacity: .55;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ---- headline ---- */
+
+.dx-hero-title {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    right: 48px;
+    z-index: 1;
+    /* A centre column as wide as the figure. With flex the two words simply
+       met in the middle and the first letter of the second one disappeared
+       behind her head; the gap has to be reserved explicitly. */
+    display: grid;
+    grid-template-columns: 1fr 280px 1fr;
+    align-items: start;
+    margin: 0 !important;
+    font-family: "Anton", "Urbanist", sans-serif !important;
+    font-weight: 400 !important;
+    font-size: clamp(46px, 8.6vw, 134px);
+    line-height: .86;
+    letter-spacing: -.012em;
+    color: var(--dx-ink) !important;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.dx-hero-l { grid-column: 1; justify-self: start; white-space: nowrap; }
+.dx-hero-r { grid-column: 3; justify-self: end;   white-space: nowrap; }
+
+/* ---- the cut-out figure ---- */
+
+.dx-hero-figure {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    height: 100%;
+    /* themes.css:23545 sets a width on .slick-slider img, and the hero track
+       is a slick slider, so this needs to outrank it or she stretches to the
+       full width of the slide. */
+    width: auto !important;
+    max-width: none !important;
+    z-index: 2;
+    pointer-events: none;
+    filter: drop-shadow(0 26px 40px rgba(60, 48, 36, .13));
+}
+
+/* ---- small product card, lower left ---- */
+
+.dx-hero-card {
+    position: absolute;
+    left: 48px;
+    top: 40%;
+    z-index: 3;
+    width: 232px;
+    height: 196px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 13px 15px 14px;
+    text-decoration: none !important;
+    color: #fff !important;
+    box-shadow: 0 16px 36px rgba(60, 48, 36, .2);
+    transition: transform .25s var(--dx-ease), box-shadow .25s var(--dx-ease);
+}
+
+.dx-hero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 46px rgba(60, 48, 36, .27);
+}
+
+.dx-hero-card-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 28%;
+    z-index: -2;
+}
+
+/* The photo underneath varies, so a fixed scrim keeps the label legible
+   whatever product lands in the card. */
+.dx-hero-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(31, 25, 20, .52) 0%, rgba(31, 25, 20, .18) 42%, rgba(31, 25, 20, .72) 100%);
+}
+
+.dx-hero-card-eyebrow {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: .9;
+}
+
+.dx-hero-card-title {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 52px;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 23px;
+    line-height: 1.12;
+    padding-bottom: 9px;
+    border-bottom: 1px solid rgba(255, 255, 255, .42);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.dx-hero-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+}
+
+.dx-hero-card-arrow {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 27px;
+}
+
+/* ---- strapline, upper right ---- */
+
+.dx-hero-desc {
+    position: absolute;
+    right: 48px;
+    top: 33%;
+    z-index: 3;
+    margin: 0 !important;
+    text-align: right;
+    font-size: 13px;
+    line-height: 1.85;
+    letter-spacing: .085em;
+    text-transform: uppercase;
+    color: #514b44;
+    max-width: 290px;
+}
+
+/* ---- proof badge, right ---- */
+
+.dx-hero-proof {
+    position: absolute;
+    right: 48px;
+    top: 56%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dx-hero-layers {
+    display: flex;
+    align-items: center;
+}
+
+.dx-hero-layers i {
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    border: 2px solid var(--dx-ivory-2);
+    margin-left: -10px;
+}
+
+.dx-hero-layers i:first-child { margin-left: 0; background: #efe6d8; }
+.dx-hero-layers i:nth-child(2) { background: #d8e4d2; }
+.dx-hero-layers i:nth-child(3) { background: #dce7ec; }
+.dx-hero-layers i:nth-child(4) { background: var(--dx-gold); }
+
+.dx-hero-proof-text {
+    font-size: 10.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: #6b645c;
+    line-height: 1.35;
+}
+
+.dx-hero-proof-text strong {
+    display: block;
+    font-size: 17px;
+    letter-spacing: .01em;
+    color: var(--dx-gold);
+    font-weight: 700;
+}
+
+/* ---- call to action, lower left ---- */
+
+.dx-hero-actions {
+    position: absolute;
+    left: 48px;
+    bottom: 8%;
+    z-index: 3;
+    padding-left: 16px;
+    border-left: 2px solid var(--dx-gold);
+}
+
+.dx-hero-kicker {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #8a8178;
+    margin-bottom: 9px;
+}
+
+.dx-hero-btn {
+    display: inline-block;
+    background: var(--dx-gold);
+    color: #fff !important;
+    font-size: 12.5px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 14px 26px;
+    text-decoration: none !important;
+    transition: background .2s var(--dx-ease);
+}
+
+.dx-hero-btn:hover { background: var(--dx-gold-dark); }
+
+/* ==========================================================================
+   Narrower desktops: pull the absolute pieces in before they collide.
+   ========================================================================== */
+
+@media (max-width: 1399.98px) {
+    .dx-hero-card { width: 206px; height: 178px; top: 42%; }
+    .dx-hero-card-title { font-size: 20px; bottom: 48px; }
+    .dx-hero-desc { max-width: 240px; font-size: 12px; }
+}
+
+@media (max-width: 1199.98px) {
+    .dx-hero-inner { padding: 0 28px; }
+    .dx-hero-title { left: 28px; right: 28px; }
+    .dx-hero-card,
+    .dx-hero-actions { left: 28px; }
+    .dx-hero-desc,
+    .dx-hero-proof { right: 28px; }
+    .dx-hero-card { width: 178px; height: 156px; }
+    .dx-hero-card-title { font-size: 17px; bottom: 44px; }
+    .dx-hero-desc { max-width: 200px; font-size: 11px; letter-spacing: .07em; }
+}
+
+/* ==========================================================================
+   Tablet and phone: the overlap cannot survive, so stack it.
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+    .dx-hero-track,
+    .dx-hero .slick-list,
+    .dx-hero .slick-track,
+    .dx-hero-slide { height: auto; min-height: 0; }
+
+    .dx-hero-slide { padding: 150px 0 60px; }
+
+    .dx-hero .slick-dots { left: 50%; transform: translateX(-50%); bottom: 16px; }
+    .dx-hero-scroll { display: none; }
+
+    .dx-hero {
+        min-height: 0;
+        padding: 0;
+    }
+
+    .dx-hero-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .dx-hero-ghost { display: none; }
+
+    .dx-hero-title {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: .22em;
+        text-align: center;
+        font-size: clamp(40px, 11.5vw, 82px);
+        line-height: .92;
+        margin-bottom: 18px !important;
+    }
+
+
+
+    .dx-hero-figure {
+        position: static;
+        transform: none;
+        height: auto !important;
+        width: auto !important;
+        max-height: 52vh;
+        margin: 4px auto 22px;
+    }
+
+    .dx-hero-desc {
+        position: static;
+        text-align: center;
+        max-width: 340px;
+        margin: 0 auto 22px !important;
+        font-size: 12px;
+        letter-spacing: .08em;
+    }
+
+    .dx-hero-proof {
+        position: static;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+
+    .dx-hero-card {
+        /* relative, NOT static: .dx-hero-card-img and ::after are inset:0, so
+           making the card unpositioned hands them .dx-hero as their containing
+           block and the product photo covers the whole viewport. */
+        position: relative;
+        /* and it must keep a stacking context. Without z-index the card is not
+           one, so its z-index:-2 image paints behind .dx-hero's background and
+           the card renders as an empty gap. */
+        z-index: 1;
+        width: 100%;
+        max-width: 320px;
+        height: 170px;
+        margin: 0 auto 24px;
+    }
+
+    .dx-hero-actions {
+        position: static;
+        border-left: 0;
+        padding-left: 0;
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dx-hero { padding-top: 140px; }
+    .dx-hero-figure { max-height: 44vh; }
+    .dx-hero-btn { padding: 13px 22px; font-size: 11.5px; }
+}
+
+/* --------------------------------------------------------------------------
+   47b. The navigation over the editorial hero
+   --------------------------------------------------------------------------
+   Section 19's frosted plum bar was tuned to float over dark hero artwork.
+   Over this ivory hero it reads as a grey smudge, and the reference has the
+   nav sitting plainly on the background with dark text.
+
+   Only while the bar is at rest: theme.js adds .sticky to the wrap once it
+   docks, and from there it passes over product photography where the solid
+   treatment is still needed for contrast.
+   -------------------------------------------------------------------------- */
+
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area::before {
+    background: transparent !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: transparent;
+}
+
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area .navbar-nav > li > a,
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area .navbar .nav-link,
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area .nav-right-part a,
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area .navbar-toggler {
+    color: var(--dx-ink) !important;
+    text-shadow: none !important;
+}
+
+body:has(.dx-hero) .main-header .sticky-area-wrap:not(.sticky) .sticky-area svg {
+    color: var(--dx-ink) !important;
+    fill: currentColor;
+}
+
+/* ==========================================================================
+   48. "Made for different needs" row
+   --------------------------------------------------------------------------
+   The seven needs from DEXTE's own stall banner, as a row of rounded cards
+   directly under the hero - the position the Mahina reference uses.
+
+   Each card is a Footer-type row in tbl_slider, which was the one unused
+   value in that enum, so the whole row is admin-editable through the existing
+   CMS > Sliders form with no schema change and no new fields.
+
+   The row scrolls horizontally rather than wrapping. Seven items will not sit
+   on one line on a laptop, and wrapping leaves a ragged orphan on the second
+   row; a scroll strip keeps it deliberate and matches how the reference and
+   most mobile commerce handle this.
+   ========================================================================== */
+
+.dx-made {
+    background: var(--dx-ivory-2);
+    padding: 62px 0 54px;
+    /* The scroll cue jumps to this section by anchor. Without a scroll margin
+       the browser aligns its top with the viewport top, which is behind the
+       fixed header, and the heading disappears under the nav. */
+    scroll-margin-top: 132px;
+}
+
+@media (max-width: 1199.98px) { .dx-made { scroll-margin-top: 142px; } }
+@media (max-width: 767.98px)  { .dx-made { scroll-margin-top: 132px; } }
+
+.dx-made-head {
+    font-size: clamp(21px, 2.5vw, 31px) !important;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--dx-ink) !important;
+    margin: 0 0 38px !important;
+    font-weight: 400 !important;
+}
+
+.dx-made-head strong {
+    font-weight: 700;
+    color: var(--dx-gold);
+}
+
+.dx-made-row {
+    display: flex;
+    gap: 26px;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 4px 14px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #d8cdbb transparent;
+}
+
+.dx-made-row::-webkit-scrollbar { height: 5px; }
+.dx-made-row::-webkit-scrollbar-track { background: transparent; }
+.dx-made-row::-webkit-scrollbar-thumb { background: #d8cdbb; border-radius: 3px; }
+
+.dx-made-item {
+    flex: 0 0 auto;
+    width: 136px;
+    text-align: center;
+    text-decoration: none !important;
+    scroll-snap-align: center;
+    color: var(--dx-ink) !important;
+}
+
+.dx-made-img {
+    display: block;
+    width: 136px;
+    height: 136px;
+    border-radius: 22px;
+    background-size: cover;
+    background-position: center 32%;
+    background-color: #ece3d6;
+    margin-bottom: 13px;
+    box-shadow: 0 6px 20px rgba(60, 48, 36, .09);
+    transition: transform .25s var(--dx-ease), box-shadow .25s var(--dx-ease);
+}
+
+.dx-made-item:hover .dx-made-img {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(60, 48, 36, .17);
+}
+
+.dx-made-label {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--dx-ink);
+}
+
+.dx-made-sub {
+    display: block;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #8a8178;
+    margin-top: 4px;
+}
+
+.dx-made-item:hover .dx-made-label { color: var(--dx-gold); }
+
+@media (max-width: 991.98px) {
+    .dx-made { padding: 46px 0 38px; }
+    .dx-made-head { margin-bottom: 28px !important; }
+    /* flex-start so the strip starts at the left edge once it overflows,
+       instead of centring and hiding the first card off-screen */
+    .dx-made-row { justify-content: flex-start; gap: 18px; }
+    .dx-made-item { width: 116px; }
+    .dx-made-img { width: 116px; height: 116px; border-radius: 18px; }
+    .dx-made-label { font-size: 13px; }
+    .dx-made-sub { font-size: 10.5px; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-made-item { width: 104px; }
+    .dx-made-img { width: 104px; height: 104px; border-radius: 16px; }
+}
+
+/* ==========================================================================
+   49. Category bento grid
+   --------------------------------------------------------------------------
+   Replaces the two Middle-slider banners with a bento of shop categories,
+   following the Givingli reference: one tall tile, one wide tile, two small,
+   one wide, one small.
+
+   Cards come from the categories flagged Home Display, so the count can
+   change. Sizes are assigned by nth-child and the grid is dense-packed, so
+   toggling a category off reflows rather than leaving a hole.
+
+   Background is the same ivory as the hero and the Made-For row, so the three
+   read as one stretch of page rather than three separate designs. Tile fills
+   are the DEXTE brand pastels - lavender, pistachio, soft blue - from the
+   brand deck, not invented colours.
+   ========================================================================== */
+
+.dx-bento {
+    background: var(--dx-ivory-2);
+    padding: 70px 0 76px;
+}
+
+.dx-bento-head {
+    text-align: center;
+    margin-bottom: 38px;
+}
+
+.dx-bento-eyebrow {
+    display: block;
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--dx-gold);
+    margin-bottom: 10px;
+}
+
+.dx-bento-title {
+    font-size: clamp(24px, 3vw, 36px) !important;
+    color: var(--dx-ink) !important;
+    margin: 0 !important;
+    font-weight: 400 !important;
+}
+
+.dx-bento-title strong { font-weight: 700; }
+
+.dx-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 300px;
+    grid-auto-flow: dense;
+    gap: 16px;
+    /* A bento is a contained block, not a full-bleed band - capped so the
+       tiles stay small and legible on wide screens. */
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* The Givingli rhythm: tall, wide, small, small, wide, small. */
+.dx-bento-card:nth-child(1),
+.dx-bento-card:nth-child(4) { grid-column: span 2; }
+
+.dx-bento-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-decoration: none !important;
+    color: var(--dx-ink) !important;
+    background: #ece4d6;
+    transition: transform .3s var(--dx-ease), box-shadow .3s var(--dx-ease);
+}
+
+.dx-bento-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(60, 48, 36, .14);
+}
+
+/* Brand pastels, cycling so any number of cards stays varied. */
+.dx-bento-card:nth-child(6n + 1) { --dx-tile: #ebdff0; }   /* lavender   */
+.dx-bento-card:nth-child(6n + 2) { --dx-tile: #d8e4d2; }   /* pistachio  */
+.dx-bento-card:nth-child(6n + 3) { --dx-tile: #dce7ec; }   /* soft blue  */
+.dx-bento-card:nth-child(6n + 4) { --dx-tile: #f0e3d4; }   /* warm sand  */
+.dx-bento-card:nth-child(6n + 5) { --dx-tile: #e6e0ec; }   /* lilac      */
+.dx-bento-card:nth-child(6n + 6) { --dx-tile: #dde6dc; }   /* sage       */
+
+.dx-bento-card { background: var(--dx-tile, #ece4d6); }
+
+/* The figure runs the full height of the tile, which on the wider cutouts
+   reaches most of the way across, so the label needs something to sit on.
+   A gradient in the tile's own colour keeps it readable without reading as
+   a separate panel. Banners are excluded - their art is full-bleed. */
+.dx-bento-card:not(.dx-bento-banner)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    /* Bottom-up, not left-to-right: a horizontal gradient had to reach most of
+       the way across to clear the label and washed the figure out to a haze.
+       Fading up from the base only dims the legs, which reads naturally. */
+    background: linear-gradient(0deg, var(--dx-tile) 4%, rgba(255, 255, 255, 0) 46%);
+    pointer-events: none;
+}
+
+/* ---- category artwork ---- */
+
+.dx-bento-art {
+    position: absolute;
+    right: -2%;
+    top: 0;
+    bottom: 0;
+    width: 78%;
+    height: 100%;
+    z-index: 0;
+    background-size: contain;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    transition: transform .45s var(--dx-ease);
+    pointer-events: none;
+}
+
+/* These three category assets are rectangular photographs, not transparent
+   cutouts. Let them crop against every card edge so no pastel gutter remains.
+   Mid Waist (card 5) deliberately keeps the cutout treatment above. */
+.dx-bento-card:nth-child(2) .dx-bento-art,
+.dx-bento-card:nth-child(3) .dx-bento-art,
+.dx-bento-card:nth-child(6) .dx-bento-art {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+}
+
+.dx-bento-card:nth-child(2) .dx-bento-art { background-position: 52% center; }
+.dx-bento-card:nth-child(3) .dx-bento-art { background-position: 48% center; }
+.dx-bento-card:nth-child(6) .dx-bento-art { background-position: 54% center; }
+
+
+
+.dx-bento-card:hover .dx-bento-art { transform: scale(1.05) translateY(-4px); }
+
+/* ---- botanical motif, drawn in on hover ---- */
+
+.dx-bento-sprig {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    color: var(--dx-gold);
+    opacity: .55;
+    pointer-events: none;
+}
+
+.dx-bento-sprig path {
+    stroke-dasharray: 130;
+    stroke-dashoffset: 130;
+    transition: stroke-dashoffset .75s var(--dx-ease);
+}
+
+.dx-bento-card:hover .dx-bento-sprig path { stroke-dashoffset: 0; }
+.dx-bento-card:hover .dx-bento-sprig .dx-sprig-leaf:nth-of-type(2) { transition-delay: .12s; }
+.dx-bento-card:hover .dx-bento-sprig .dx-sprig-leaf:nth-of-type(3) { transition-delay: .24s; }
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-bento-sprig path { stroke-dashoffset: 0; transition: none; }
+    .dx-bento-card,
+    .dx-bento-art { transition: none; }
+}
+
+/* ---- label ---- */
+
+.dx-bento-text {
+    position: relative;
+    z-index: 2;
+    max-width: 62%;
+}
+
+.dx-bento-name {
+    display: block;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--dx-ink);
+}
+
+
+
+.dx-bento-desc {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b645c;
+    margin-top: 6px;
+}
+
+.dx-bento-go {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .72);
+    color: var(--dx-ink);
+    transition: background .25s var(--dx-ease), transform .25s var(--dx-ease);
+}
+
+.dx-bento-card:hover .dx-bento-go {
+    background: var(--dx-gold);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+/* ==========================================================================
+   The bento spans only make sense with room for four columns. Below that the
+   tiles are re-sized rather than left to overflow their track.
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+    .dx-bento { padding: 50px 0 56px; }
+    .dx-bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 190px; gap: 14px; }
+    .dx-bento-card:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+    .dx-bento-card:nth-child(2) { grid-column: span 1; }
+    .dx-bento-card:nth-child(5) { grid-column: span 2; }
+    .dx-bento-card:nth-child(1) .dx-bento-name { font-size: 22px; }
+    .dx-bento-name { font-size: 18px; }
+    .dx-bento-art { width: 56%; height: 78%; }
+    .dx-bento-card:nth-child(1) .dx-bento-art { width: 46%; height: 86%; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-bento-grid { grid-template-columns: 1fr; grid-auto-rows: 168px; }
+    .dx-bento-card:nth-child(1),
+    .dx-bento-card:nth-child(2),
+    .dx-bento-card:nth-child(5) { grid-column: span 1; grid-row: span 1; }
+    .dx-bento-card { padding: 18px 20px; border-radius: 18px; }
+    .dx-bento-text { max-width: 58%; }
+    .dx-bento-sprig { width: 32px; height: 32px; top: 14px; left: 16px; }
+}
+
+/* --------------------------------------------------------------------------
+   The two Middle sliders kept as feature tiles. Their artwork has its own
+   baked-in typography, so they carry no label, no pastel fill and no sprig -
+   anything overlaid would collide with the text already in the image.
+   -------------------------------------------------------------------------- */
+
+.dx-bento-banner {
+    background: #ece4d6;
+    padding: 0;
+}
+
+.dx-bento-banner .dx-bento-banner-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    /* Anchored to the top: the artwork carries its heading up there, and a
+       centred crop sliced it off. Cropping the bottom costs only background. */
+    background-position: center top;
+    transition: transform .45s var(--dx-ease);
+}
+
+.dx-bento-banner:hover .dx-bento-banner-img { transform: scale(1.04); }
+
+
+
+@media (max-width: 575.98px) {
+    .dx-bento-banner { grid-column: span 1; grid-row: span 1; }
+}
+
+
+/* ==========================================================================
+   50. Product card
+   --------------------------------------------------------------------------
+   Ribbon hanging from the top-right, photo in an outlined frame, title, a row
+   pairing the large price with the absorbency drops, and a full-bleed Add to
+   Cart bar - the reference layout.
+
+   --dx-tint and --dx-acc are written inline per card by listing-view.php from
+   that product's own colour, which is now sampled from its photograph.
+
+   Several of these carry .card.product in the selector on purpose. Section 21
+   styles .card.product .dx-card-foot with !important, and a plain .dx-pcard
+   selector loses to it on specificity - which is what put the price behind
+   the button.
+   ========================================================================== */
+
+.card.product.dx-pcard {
+    position: relative;
+    background: #fff !important;
+    border-radius: 16px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    box-shadow: 0 2px 12px rgba(60, 48, 36, .07);
+    transition: box-shadow .3s var(--dx-ease), transform .3s var(--dx-ease);
+}
+
+.card.product.dx-pcard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(60, 48, 36, .16);
+}
+
+/* ---- ribbon ---- */
+
+.dx-pcard-ribbon {
+    position: absolute;
+    top: -7px;
+    right: 24px;
+    z-index: 5;
+    width: 30px;
+    height: 62px;
+    background: var(--dx-acc, #b59a72);
+    border-radius: 3px 3px 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+    pointer-events: none;
+    transition: height .3s var(--dx-ease);
+}
+
+.card.product.dx-pcard:hover .dx-pcard-ribbon { height: 72px; }
+
+/* ---- framed photo ---- */
+
+.card.product.dx-pcard > .position-relative {
+    margin: 14px 14px 0;
+    background: var(--dx-tint, #ece4d6);
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 13px;
+    overflow: hidden;
+    padding: 10px;
+    perspective: 900px;
+}
+
+.card.product.dx-pcard .main-image {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    transform-origin: center 70%;
+    transition: transform .45s var(--dx-ease), box-shadow .45s var(--dx-ease);
+}
+
+.card.product.dx-pcard:hover .main-image {
+    transform: perspective(900px) rotateX(5deg) scale(1.06) translateY(-4px);
+    box-shadow: 0 16px 26px rgba(40, 30, 22, .22);
+}
+
+/* ---- body ---- */
+
+.card.product.dx-pcard .card-body {
+    position: relative;
+    padding: 16px 16px 14px !important;
+    text-align: left !important;
+}
+
+.card.product.dx-pcard .card-title {
+    font-size: 16px !important;
+    line-height: 1.34 !important;
+    margin: 0 0 14px !important;
+    min-height: 2.68em;           /* two lines, so the price rows line up */
+}
+
+.card.product.dx-pcard .card-title a { color: var(--dx-ink, #1f1d1b) !important; }
+.card.product.dx-pcard:hover .card-title a { color: var(--dx-acc) !important; }
+
+/* motif watermark - in the body, where it reads against the plain background
+   rather than disappearing into the photograph */
+.dx-pcard-motif {
+    position: absolute;
+    right: 8px;
+    top: 10px;
+    z-index: 0;
+    width: 48px;
+    height: 48px;
+    color: var(--dx-acc, #b59a72);
+    opacity: .16;
+    pointer-events: none;
+}
+
+.dx-pcard-motif path,
+.dx-pcard-motif circle {
+    stroke-dasharray: 150;
+    stroke-dashoffset: 150;
+    transition: stroke-dashoffset .8s var(--dx-ease);
+}
+
+.card.product.dx-pcard:hover .dx-pcard-motif path,
+.card.product.dx-pcard:hover .dx-pcard-motif circle { stroke-dashoffset: 0; }
+
+/* ---- price + absorbency row ---- */
+
+.card.product.dx-pcard .dx-card-foot {
+    position: relative;
+    z-index: 1;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    gap: 10px;
+    margin: 0 !important;
+}
+
+.card.product.dx-pcard .dx-card-foot .card-text {
+    margin: 0 !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+    display: block !important;
+}
+
+.card.product.dx-pcard .dx-card-foot .text-decoration-through {
+    display: block;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-bottom: 2px;
+}
+
+.card.product.dx-pcard .dx-card-spec {
+    justify-content: flex-end !important;
+    margin: 0 0 3px !important;
+    flex: 0 0 auto;
+}
+
+/* ---- full-bleed action bar ---- */
+
+.card.product.dx-pcard .dx-pcard-cta {
+    display: block !important;
+    position: relative;
+    z-index: 2;
+    width: 100% !important;
+    margin: 14px 0 0 !important;
+    background: var(--dx-acc, #b59a72) !important;
+    border: 0 !important;
+    color: #fff !important;
+    border-radius: 0 0 16px 16px !important;
+    padding: 15px 10px !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    transition: filter .2s var(--dx-ease);
+}
+
+.card.product.dx-pcard .dx-pcard-cta:hover { filter: brightness(.86); }
+
+@media (prefers-reduced-motion: reduce) {
+    .card.product.dx-pcard,
+    .card.product.dx-pcard .main-image { transition: none; }
+    .card.product.dx-pcard:hover { transform: none; }
+    .card.product.dx-pcard:hover .main-image { transform: scale(1.02); }
+    .dx-pcard-motif path,
+    .dx-pcard-motif circle { stroke-dashoffset: 0; transition: none; }
+}
+
+@media (max-width: 575.98px) {
+    .card.product.dx-pcard > .position-relative { margin: 10px 10px 0; padding: 8px; }
+    .card.product.dx-pcard .card-body { padding: 13px 13px 12px !important; }
+    .card.product.dx-pcard .card-title { font-size: 14.5px !important; margin-bottom: 11px !important; }
+    .card.product.dx-pcard .dx-card-foot .card-text { font-size: 21px !important; }
+    .card.product.dx-pcard .dx-pcard-cta { padding: 13px 8px !important; font-size: 12px !important; }
+    .dx-pcard-motif { width: 38px; height: 38px; }
+}
+
+/* ==========================================================================
+   51. Botanicals
+   --------------------------------------------------------------------------
+   Bamboo and lily artwork supplied as stock EPS/JPG. There is no EPS-to-SVG
+   tooling on this machine, so the JPGs were keyed off their white background
+   into transparent PNGs; the leaf frame already shipped with an alpha channel.
+
+   Every one is also written out as a *-soft variant: desaturated toward its
+   own luminance and pulled toward champagne. At full strength the originals
+   are bright clipart green and hot pink, which fights the ivory and muted
+   palette the rest of the page is built on. Only the soft set is used.
+
+   All of it is decoration - empty spans, aria-hidden, pointer-events none.
+   ========================================================================== */
+
+.dx-bestsellers { background: var(--dx-ivory-2, #f5f0e8) !important; }
+
+.dx-bot {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+    opacity: .72;
+}
+
+/* ---- either side of the bento heading ---- */
+
+.dx-bento-head { position: relative; }
+
+.dx-bento-head .dx-bot-left,
+.dx-bento-head .dx-bot-right {
+    top: 50%;
+    width: 186px;
+    height: 126px;
+    transform: translateY(-50%);
+}
+
+.dx-bento-head .dx-bot-left {
+    left: 2%;
+    background-image: url('../media/dx-bamboo-stems-soft.png');
+    background-position: left center;
+}
+
+.dx-bento-head .dx-bot-right {
+    right: 2%;
+    background-image: url('../media/dx-lily-soft.png');
+    background-position: right center;
+    transform: translateY(-50%) scaleX(-1);
+}
+
+/* Below a certain width the heading needs the whole line, and the artwork
+   would sit on top of the words. */
+@media (max-width: 1199.98px) {
+    .dx-bento-head .dx-bot-left,
+    .dx-bento-head .dx-bot-right { width: 124px; height: 86px; opacity: .5; }
+}
+
+@media (max-width: 991.98px) {
+    .dx-bento-head .dx-bot-left,
+    .dx-bento-head .dx-bot-right { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .dx-bot { transition: none; } }
+
+/* ==========================================================================
+   52. Stress Free editorial block
+   --------------------------------------------------------------------------
+   Replaces a flat JPEG banner. Newspaper typography - serif masthead between
+   hairline rules, small caps, numbered entries - laid over a bento, because
+   the brand's copy here is five short fragments and a true multi-column
+   newspaper with that little text reads as an empty page.
+   ========================================================================== */
+
+.dx-sf {
+    background: var(--dx-ivory-2, #f5f0e8);
+    padding: 74px 0 80px;
+}
+
+/* ---- masthead ---- */
+
+.dx-sf-masthead {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.dx-sf-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: #cdbfa9;
+}
+
+.dx-sf-kicker {
+    flex: 0 0 auto;
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--dx-gold, #b59a72);
+}
+
+.dx-sf-title {
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(34px, 5.2vw, 68px) !important;
+    line-height: 1.04 !important;
+    text-align: center;
+    color: var(--dx-ink, #1f1d1b) !important;
+    margin: 0 0 40px !important;
+    font-weight: 500 !important;
+}
+
+.dx-sf-title em { font-style: italic; color: var(--dx-gold, #b59a72); }
+
+/* ---- bento ---- */
+
+.dx-sf-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 168px;
+    gap: 16px;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.dx-sf-figure {
+    position: relative;
+    grid-column: span 2;
+    grid-row: span 2;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #efe2e4;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.dx-sf-figure img {
+    display: block;
+    height: 100%;
+    width: auto !important;
+    max-width: none !important;
+    object-fit: contain;
+    object-position: bottom;
+}
+
+.dx-sf-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 2;
+    background: #a8243c;
+    color: #fff;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 17px;
+    font-style: italic;
+    padding: 6px 18px;
+    border-radius: 999px;
+}
+
+/* bamboo tucked into the corner of the portrait */
+.dx-sf-bot {
+    position: absolute;
+    right: -14px;
+    bottom: -10px;
+    width: 150px;
+    height: 180px;
+    background: url('../media/dx-bamboo-cluster-soft.png') no-repeat right bottom / contain;
+    opacity: .55;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ---- entries ---- */
+
+.dx-sf-card {
+    position: relative;
+    grid-column: span 1;
+    background: #fff;
+    border: 1px solid var(--dx-line, #efe4e6);
+    border-radius: 20px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-decoration: none !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+    transition: transform .25s var(--dx-ease), box-shadow .25s var(--dx-ease);
+}
+
+a.dx-sf-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgba(60, 48, 36, .13);
+}
+
+.dx-sf-card-wide { grid-column: span 2; }
+
+.dx-sf-num {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 34px;
+    line-height: 1;
+    color: var(--dx-gold, #b59a72);
+    opacity: .4;
+}
+
+.dx-sf-ct {
+    display: block;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 7px;
+}
+
+.dx-sf-cd {
+    display: block;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #6b645c;
+}
+
+/* ---- call to action, on the portrait ----
+   As its own tile it sat alone on a third row, because four entries do not
+   divide evenly beside a 2x2 portrait. On the portrait the grid closes into
+   two rows with nothing left over. */
+
+.dx-sf-shop {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 13px 11px 22px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .93);
+    color: var(--dx-ink, #1f1d1b) !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-shadow: 0 8px 22px rgba(60, 48, 36, .16);
+    transition: background .22s var(--dx-ease), transform .22s var(--dx-ease);
+}
+
+.dx-sf-shop:hover {
+    background: #fff;
+    transform: translateY(-2px);
+}
+
+.dx-sf-arrow {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border-radius: 50%;
+    background: var(--dx-gold, #b59a72);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .25s var(--dx-ease);
+}
+
+.dx-sf-shop:hover .dx-sf-arrow { transform: translateX(3px); }
+
+/* ---- bamboo on the portrait ----
+   A full frame stretched to the tile put its top cane straight across the
+   model's face, and the artwork's margins are too irregular for border-image
+   without per-asset slice tuning. Canes down the left edge instead: it reads
+   as framing, scales with any tile aspect, and never crosses the subject. */
+
+.dx-sf-frame {
+    position: absolute;
+    left: -10px;
+    top: 0;
+    bottom: 0;
+    width: 132px;
+    z-index: 1;
+    background: url('../media/dx-bamboo-stems-soft.png') no-repeat left bottom / auto 112%;
+    opacity: .75;
+    pointer-events: none;
+}
+
+/* the figure sits in front of the planting */
+.dx-sf-figure img { position: relative; z-index: 2; }
+.dx-sf-badge { z-index: 4; }
+.dx-sf-shop  { z-index: 4; }
+
+/* ---- florals in the open space ---- */
+
+.dx-sf { position: relative; overflow: hidden; }
+
+.dx-sf-lily,
+.dx-sf-leaf {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dx-sf-lily {
+    right: -36px;
+    bottom: 26px;
+    width: 260px;
+    height: 240px;
+    background-image: url('../media/dx-lily-soft.png');
+    background-position: right bottom;
+    opacity: .6;
+}
+
+.dx-sf-leaf {
+    left: -40px;
+    top: 42px;
+    width: 220px;
+    height: 200px;
+    background-image: url('../media/dx-leaf-frame-soft.png');
+    background-position: left top;
+    opacity: .42;
+    transform: scaleX(-1);
+}
+
+@media (max-width: 1199.98px) {
+    .dx-sf-lily { width: 180px; height: 170px; opacity: .45; }
+    .dx-sf-leaf { display: none; }
+}
+
+@media (max-width: 767.98px) {
+    .dx-sf-lily { display: none; }
+}
+
+/* ---- responsive ---- */
+
+@media (max-width: 991.98px) {
+    .dx-sf { padding: 52px 0 56px; }
+    .dx-sf-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 158px; }
+    .dx-sf-figure { grid-column: span 2; grid-row: span 2; }
+    .dx-sf-card-wide { grid-column: span 2; }
+    .dx-sf-title { margin-bottom: 28px !important; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-sf-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+    .dx-sf-figure { grid-column: span 1; grid-row: span 1; height: 380px; }
+    .dx-sf-card,
+    .dx-sf-card-wide { grid-column: span 1; min-height: 136px; }
+    .dx-sf-bot { width: 104px; height: 128px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-sf-card, .dx-sf-arrow { transition: none; }
+    a.dx-sf-card:hover { transform: none; }
+}
+
+/* ==========================================================================
+   53. Shop By Style - framed grid
+   --------------------------------------------------------------------------
+   The cards here were running to full viewport height, so the section took
+   three screens to scroll past. They are capped, and the whole grid sits
+   inside a bamboo frame.
+
+   Deliberately a different asset from section 52: that one uses the vertical
+   canes, this one the rectangular frame, so the two sections do not read as
+   the same decoration repeated.
+
+   The frame is a background on a padded wrapper rather than border-image -
+   the artwork's bars sit at irregular insets (41px left against 112px top),
+   so slice values would have to be hand-tuned per asset and would still
+   fight the panel's aspect ratio. The padding is what keeps the cards inside
+   the opening.
+   ========================================================================== */
+
+/* The artwork's opening - found by flood-filling its transparent interior -
+   sits 14.3% in from the left, 23.7% from the top, 10.6% from the right and
+   19.9% from the bottom. Two ways to reconcile that with the grid: shrink the
+   cards into the opening, or grow the frame around them. Growing it keeps the
+   cards a usable size, so the frame is drawn larger than this box by exactly
+   the inverse of those insets, which lands its opening on the content edges.
+
+       left   14.3 / (100 - 14.3 - 10.6) = 19.0%
+       right  10.6 / 75.1                = 14.1%
+       top    23.7 / (100 - 23.7 - 19.9) = 42.0%
+       bottom 19.9 / 56.4                = 35.3%
+*/
+.dx-style-frame {
+    position: relative;
+    margin: 0 auto;
+    max-width: 880px;
+    padding: 0;
+}
+
+.dx-style-frame::before {
+    content: "";
+    position: absolute;
+    left: -19%;
+    right: -14.1%;
+    top: -42%;
+    bottom: -35.3%;
+    z-index: 0;
+    background: url('../media/dx-bamboo-frame-soft.png') no-repeat center / 100% 100%;
+    pointer-events: none;
+}
+
+/* the frame now reaches past the grid, so the section has to make room for it
+   and clip whatever still runs wide */
+/* The frame reaches 42% of the panel height above it, which was far enough
+   to cover the section heading. The wrapper is pushed down by more than that
+   overflow so the heading stays clear, and the section is padded to contain
+   what still hangs below. */
+/* .dx-band paints this blush with !important, so the override carries both
+   classes to outrank it. The droplet texture is a separate ::after carrying
+   its own inline SVG, so it survives the background change untouched. */
+.dx-band.dx-style,
+.dx-style {
+    background-color: var(--dx-ivory-2, #f5f0e8) !important;
+    background: var(--dx-ivory-2, #f5f0e8) !important;
+}
+
+.dx-style { overflow: hidden; padding-top: 48px !important; padding-bottom: 158px !important; }
+.dx-style-frame { margin-top: 74px; }
+
+.dx-style-frame > .row {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---- the cards themselves ---- */
+
+/* Sized to the frame's opening rather than the other way round. The artwork
+   is 1.88:1 landscape, so a tall grid either overflows the canes or stretches
+   them out of shape; the cards come down to meet it instead. */
+.dx-style .card-img,
+.dx-style .card > img {
+    height: 188px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 12px;
+}
+
+/* the feature card on the left runs the height of the two rows beside it */
+.dx-style .col-lg-6:first-child .card-img,
+.dx-style .col-lg-6:first-child .card > img {
+    height: 392px;
+}
+
+.dx-style .card { border-radius: 12px; overflow: hidden; }
+
+.dx-style .col-md-6 { margin-top: 0 !important; margin-bottom: 14px !important; }
+.dx-style .col-md-6:nth-last-child(-n+2) { margin-bottom: 0 !important; }
+
+@media (max-width: 1199.98px) {
+    .dx-style { padding-top: 40px !important; padding-bottom: 134px !important; }
+    .dx-style-frame { margin-top: 60px; max-width: 720px; }
+    .dx-style .card-img,
+    .dx-style .card > img { height: 158px; }
+    .dx-style .col-lg-6:first-child .card-img,
+    .dx-style .col-lg-6:first-child .card > img { height: 330px; }
+}
+
+@media (max-width: 991.98px) {
+    /* the frame needs a landscape panel to sit on; once the grid stacks it
+       would stretch into a tall rectangle the artwork cannot carry */
+    .dx-style { padding-top: 48px !important; padding-bottom: 48px !important; }
+    .dx-style-frame { margin-top: 0; }
+    .dx-style-frame::before { display: none; }
+    .dx-style .col-lg-6:first-child .card-img,
+    .dx-style .col-lg-6:first-child .card > img { height: 340px; }
+    .dx-style .card-img,
+    .dx-style .card > img { height: 260px; }
+}
+
+/* ==========================================================================
+   54. Every flow has a story - editorial testimonial wall
+   --------------------------------------------------------------------------
+   A moving version of the scattered paper-card reference: varied card shapes
+   share one two-row grid, and two identical sets form a seamless loop. The
+   duplicate set is hidden from assistive technology in the markup.
+   ========================================================================== */
+
+.dx-flow-stories {
+    position: relative;
+    overflow: hidden;
+    padding: 86px 0 54px;
+    background: var(--dx-ivory-2, #f5f0e8);
+    isolation: isolate;
+}
+
+.dx-flow-stories::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Cg fill='%23b04a63' fill-opacity='.05'%3E%3Cpath d='M34 22c0 0-8 10-8 14a8 8 0 0 0 16 0c0-4-8-14-8-14Z'/%3E%3Cpath d='M146 62c0 0-6 7-6 10a6 6 0 0 0 12 0c0-3-6-10-6-10Z'/%3E%3Cpath d='M84 118c0 0-9 11-9 15a9 9 0 0 0 18 0c0-4-9-15-9-15Z'/%3E%3Cpath d='M176 162c0 0-7 8-7 11a7 7 0 0 0 14 0c0-3-7-11-7-11Z'/%3E%3Cpath d='M24 176c0 0-5 6-5 8a5 5 0 0 0 10 0c0-2-5-8-5-8Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dx-flow-lily {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: .42;
+    filter: saturate(.7);
+}
+
+.dx-flow-lily {
+    right: -54px;
+    bottom: -84px;
+    width: 310px;
+    height: 300px;
+    background-image: url("../media/dx-lily-soft.png");
+    background-position: right bottom;
+    animation: dx-flow-float 7s ease-in-out infinite;
+}
+
+.dx-flow-symbols { position: absolute; overflow: hidden; }
+
+.dx-flow-head {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin-bottom: 42px;
+    text-align: center;
+}
+
+.dx-flow-head .dx-eyebrow { margin-bottom: 9px; }
+
+.dx-flow-head h2 {
+    margin: 0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(42px, 5vw, 66px) !important;
+    font-weight: 400 !important;
+    line-height: 1.02 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-flow-head h2 strong {
+    color: var(--dx-rose, #b04a63);
+    font-weight: 600 !important;
+    font-style: italic;
+}
+
+.dx-flow-head > p {
+    max-width: 580px;
+    margin: 17px auto 0;
+    color: #6c605b;
+    font-size: 15px;
+}
+
+.dx-flow-viewport {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    overflow: hidden;
+    padding: 10px 0 32px;
+    outline: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+
+.dx-flow-track {
+    --dx-flow-gap: 20px;
+    display: flex;
+    align-items: stretch;
+    gap: var(--dx-flow-gap);
+    width: max-content;
+    will-change: transform;
+    animation: dx-flow-scroll 52s linear infinite;
+}
+
+.dx-flow-viewport:hover .dx-flow-track,
+.dx-flow-viewport:focus .dx-flow-track,
+.dx-flow-viewport:focus-within .dx-flow-track { animation-play-state: paused; }
+
+.dx-flow-set {
+    display: grid;
+    flex: 0 0 1786px;
+    width: 1786px;
+    height: 410px;
+    padding: 0 12px;
+    grid-template-columns: 238px 320px 242px 316px 240px 306px;
+    grid-template-rows: 190px 190px;
+    grid-auto-flow: column;
+    gap: 20px;
+}
+
+.dx-flow-card {
+    --dx-flow-accent: #b04a63;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 22px 24px 19px;
+    overflow: hidden;
+    border: 1px solid rgba(111, 87, 75, .16);
+    border-radius: 16px;
+    background: rgba(255, 253, 250, .94);
+    color: #443b37;
+    box-shadow: 0 12px 28px rgba(75, 57, 46, .11);
+    transition: transform .28s var(--dx-ease), box-shadow .28s var(--dx-ease), border-color .28s var(--dx-ease);
+}
+
+.dx-flow-card:hover {
+    z-index: 4;
+    border-color: rgba(176, 74, 99, .3);
+    box-shadow: 0 22px 44px rgba(75, 57, 46, .17);
+    transform: translateY(-7px) rotate(0deg) !important;
+}
+
+.dx-flow-note { grid-column: 1; grid-row: 1; transform: rotate(-1.5deg); }
+.dx-flow-bubble { grid-column: 1; grid-row: 2; transform: rotate(1deg); }
+.dx-flow-feature { grid-column: 2; grid-row: 1 / span 2; justify-content: center; text-align: center; transform: rotate(-.5deg); }
+.dx-flow-post { grid-column: 3; grid-row: 1; transform: rotate(1.5deg); }
+.dx-flow-mini { grid-column: 3; grid-row: 2; transform: rotate(-1deg); }
+.dx-flow-quote { grid-column: 4; grid-row: 1 / span 2; justify-content: center; transform: rotate(.6deg); }
+.dx-flow-recommend { grid-column: 5 / span 2; grid-row: 1; transform: rotate(-.5deg); }
+.dx-flow-profile { grid-column: 5 / span 2; grid-row: 2; transform: rotate(.7deg); }
+
+.dx-flow-feature,
+.dx-flow-quote { padding: 30px; }
+
+.dx-flow-bubble::after {
+    content: "";
+    position: absolute;
+    left: 38px;
+    bottom: -16px;
+    border: 18px solid transparent;
+    border-top-color: rgba(255, 253, 250, .96);
+    border-left: 0;
+    transform: rotate(9deg);
+}
+
+.dx-flow-recommend,
+.dx-flow-mini { background: rgba(253, 244, 245, .95); }
+
+.dx-flow-feature {
+    background: #fffdfa;
+    border: 7px solid rgba(255, 253, 250, .96);
+    outline: 1px solid rgba(111, 87, 75, .18);
+}
+
+.dx-flow-quote { background: linear-gradient(145deg, #fffdfa 0%, #f7e9eb 100%); }
+
+.dx-flow-card-top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 10px;
+}
+
+.dx-flow-feature .dx-flow-card-top,
+.dx-flow-quote .dx-flow-card-top {
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.dx-flow-meta {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    text-align: left;
+}
+
+.dx-flow-feature .dx-flow-meta,
+.dx-flow-quote .dx-flow-meta { text-align: center; }
+
+.dx-flow-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+.dx-flow-feature .dx-flow-name,
+.dx-flow-quote .dx-flow-name { justify-content: center; }
+
+.dx-flow-name svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    overflow: visible;
+}
+
+.dx-flow-name svg circle { fill: #1d9bf0; }
+.dx-flow-name svg path {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.dx-flow-meta strong {
+    overflow: hidden;
+    color: #312a27;
+    font-size: 13px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dx-flow-meta span {
+    margin-top: 2px;
+    color: #8a7970;
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.dx-flow-quote-mark {
+    margin-left: auto;
+    color: var(--dx-flow-accent);
+    font-family: Georgia, serif;
+    font-size: 52px;
+    line-height: .62;
+    opacity: .65;
+}
+
+.dx-flow-feature .dx-flow-quote-mark,
+.dx-flow-quote .dx-flow-quote-mark {
+    position: absolute;
+    top: -5px;
+    right: 7px;
+}
+
+.dx-flow-stars {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 7px;
+    color: #b08b4f;
+    font-size: 11px;
+    letter-spacing: .13em;
+}
+
+.dx-flow-feature .dx-flow-stars,
+.dx-flow-quote .dx-flow-stars { text-align: center; }
+
+.dx-flow-card h3 {
+    position: relative;
+    z-index: 2;
+    margin: 0 0 7px !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 19px !important;
+    font-weight: 600 !important;
+    line-height: 1.08 !important;
+    color: #302825 !important;
+}
+
+.dx-flow-feature h3,
+.dx-flow-quote h3 {
+    font-size: 27px !important;
+    text-align: center;
+}
+
+.dx-flow-card > p {
+    position: relative;
+    z-index: 2;
+    display: -webkit-box;
+    margin: 0 !important;
+    overflow: hidden;
+    color: #655954;
+    font-size: 11.5px;
+    line-height: 1.48 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.dx-flow-feature > p,
+.dx-flow-quote > p {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 16px;
+    line-height: 1.55 !important;
+    text-align: center;
+    -webkit-line-clamp: 6;
+}
+
+/* The six short cards share a 190px row. Keep their hierarchy compact so the
+   verified-customer footer never sits on top of the review copy. The two tall
+   feature cards retain the more generous editorial type above. */
+.dx-flow-card:not(.dx-flow-feature):not(.dx-flow-quote) {
+    padding: 15px 20px 13px;
+}
+
+.dx-flow-card:not(.dx-flow-feature):not(.dx-flow-quote) .dx-flow-card-top {
+    margin-bottom: 5px;
+}
+
+.dx-flow-card:not(.dx-flow-feature):not(.dx-flow-quote) .dx-flow-stars {
+    margin-bottom: 4px;
+    font-size: 10px;
+}
+
+.dx-flow-card:not(.dx-flow-feature):not(.dx-flow-quote) h3 {
+    display: -webkit-box;
+    margin-bottom: 5px !important;
+    overflow: hidden;
+    font-size: 17px !important;
+    line-height: 1.02 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.dx-flow-card:not(.dx-flow-feature):not(.dx-flow-quote) > p {
+    font-size: 10px;
+    line-height: 1.32 !important;
+    -webkit-line-clamp: 2;
+}
+
+.dx-flow-card-flower,
+.dx-flow-card-sprig {
+    position: absolute;
+    z-index: 1;
+    fill: none;
+    stroke: var(--dx-flow-accent);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.3;
+    pointer-events: none;
+}
+
+.dx-flow-card-flower {
+    right: -12px;
+    bottom: -12px;
+    width: 82px;
+    height: 82px;
+    opacity: .09;
+    transition: transform .7s var(--dx-ease), opacity .4s var(--dx-ease);
+}
+
+.dx-flow-card-sprig {
+    left: -13px;
+    bottom: -8px;
+    width: 74px;
+    height: 74px;
+    opacity: .08;
+    transform: rotate(-15deg);
+    transition: transform .7s var(--dx-ease), opacity .4s var(--dx-ease);
+}
+
+.dx-flow-card:hover .dx-flow-card-flower {
+    opacity: .22;
+    transform: rotate(25deg) scale(1.08);
+}
+
+.dx-flow-card:hover .dx-flow-card-sprig {
+    opacity: .2;
+    transform: rotate(-5deg) translateY(-3px);
+}
+
+.dx-flow-card:nth-child(2),
+.dx-flow-card:nth-child(7) { --dx-flow-accent: #9c6d58; }
+.dx-flow-card:nth-child(3),
+.dx-flow-card:nth-child(8) { --dx-flow-accent: #8b7853; }
+.dx-flow-card:nth-child(4) { --dx-flow-accent: #a85268; }
+.dx-flow-card:nth-child(5) { --dx-flow-accent: #7f7761; }
+.dx-flow-card:nth-child(6) { --dx-flow-accent: #965267; }
+
+.dx-flow-pause {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin: 1px 0 0 !important;
+    color: #8a7970;
+    font-size: 10px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.dx-flow-pause span {
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--dx-rose, #b04a63);
+}
+
+@keyframes dx-flow-scroll {
+    to { transform: translate3d(calc(-50% - (var(--dx-flow-gap) / 2)), 0, 0); }
+}
+
+@keyframes dx-flow-float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-3deg); }
+    50% { transform: translate3d(-5px, -10px, 0) rotate(1deg); }
+}
+
+@media (max-width: 767.98px) {
+    .dx-flow-stories { padding: 62px 0 40px; }
+    .dx-flow-head { margin-bottom: 28px; padding: 0 25px; }
+    .dx-flow-head h2 { font-size: clamp(38px, 12vw, 50px) !important; }
+    .dx-flow-head > p { font-size: 13px; }
+    .dx-flow-set {
+        flex-basis: 1604px;
+        width: 1604px;
+        height: 384px;
+        grid-template-columns: 214px 286px 218px 282px 216px 274px;
+        grid-template-rows: 177px 177px;
+        gap: 18px;
+    }
+    .dx-flow-track { --dx-flow-gap: 18px; }
+    .dx-flow-card { padding: 18px 19px 16px; }
+    .dx-flow-card h3 { font-size: 17px !important; }
+    .dx-flow-feature h3,
+    .dx-flow-quote h3 { font-size: 23px !important; }
+    .dx-flow-feature > p,
+    .dx-flow-quote > p { font-size: 14.5px; }
+    .dx-flow-lily { width: 190px; height: 190px; opacity: .3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-flow-track,
+    .dx-flow-lily { animation: none; }
+    .dx-flow-viewport { overflow-x: auto; mask-image: none; -webkit-mask-image: none; }
+    .dx-flow-card { transition: none; }
+}
+
+/* ==========================================================================
+   55. Product benefits - botanical bento
+   --------------------------------------------------------------------------
+   The original four identical Bootstrap cards are now an asymmetric bento.
+   Four distinct SVG botanicals sit behind it: a five-petal blossom, an
+   eight-petal daisy, a lily and a leafy sprig. They intentionally do not reuse
+   the flower motif from the testimonial cards above.
+   ========================================================================== */
+
+.dx-benefits {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0 112px;
+    background: var(--dx-ivory-2, #f5f0e8);
+    isolation: isolate;
+}
+
+.dx-benefits::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Cg fill='%23b04a63' fill-opacity='.05'%3E%3Cpath d='M34 22c0 0-8 10-8 14a8 8 0 0 0 16 0c0-4-8-14-8-14Z'/%3E%3Cpath d='M146 62c0 0-6 7-6 10a6 6 0 0 0 12 0c0-3-6-10-6-10Z'/%3E%3Cpath d='M84 118c0 0-9 11-9 15a9 9 0 0 0 18 0c0-4-9-15-9-15Z'/%3E%3Cpath d='M176 162c0 0-7 8-7 11a7 7 0 0 0 14 0c0-3-7-11-7-11Z'/%3E%3Cpath d='M24 176c0 0-5 6-5 8a5 5 0 0 0 10 0c0-2-5-8-5-8Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dx-benefits > .container {
+    position: relative;
+    z-index: 2;
+}
+
+.dx-benefits-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 42px;
+    max-width: 1180px;
+    margin: 0 auto 42px;
+}
+
+.dx-benefits-head h2 {
+    margin: 5px 0 0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(42px, 4.6vw, 64px) !important;
+    font-weight: 400 !important;
+    line-height: 1.02 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-benefits-head h2 strong {
+    color: var(--dx-rose, #b04a63);
+    font-weight: 600 !important;
+    font-style: italic;
+}
+
+.dx-benefits-head > p {
+    max-width: 420px;
+    margin: 0 0 5px !important;
+    color: #70635e;
+    font-size: 15px;
+    line-height: 1.65 !important;
+}
+
+.dx-benefits-grid {
+    display: grid;
+    max-width: 1180px;
+    margin: 0 auto;
+    grid-template-columns: .92fr 1.08fr 1fr;
+    grid-template-rows: 228px 228px;
+    gap: 20px;
+}
+
+.dx-benefit-card {
+    --dx-benefit-accent: #b04a63;
+    --dx-benefit-tint: #f9e8eb;
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-width: 0;
+    padding: 28px 30px;
+    overflow: hidden;
+    border: 1px solid rgba(99, 77, 68, .12);
+    border-radius: 28px;
+    background: rgba(255, 253, 250, .94);
+    box-shadow: 0 14px 36px rgba(73, 54, 44, .09);
+    transition: transform .32s var(--dx-ease), box-shadow .32s var(--dx-ease), border-color .32s var(--dx-ease);
+}
+
+.dx-benefit-card::before {
+    content: "";
+    position: absolute;
+    right: -50px;
+    bottom: -70px;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: var(--dx-benefit-tint);
+    opacity: .7;
+    transition: transform .5s var(--dx-ease);
+}
+
+.dx-benefit-card:hover {
+    z-index: 3;
+    border-color: color-mix(in srgb, var(--dx-benefit-accent) 32%, transparent);
+    box-shadow: 0 24px 52px rgba(73, 54, 44, .15);
+    transform: translateY(-7px);
+}
+
+.dx-benefit-card:hover::before { transform: scale(1.18); }
+
+.dx-benefit-comfort {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    grid-template-rows: auto auto 1fr auto;
+    align-items: start;
+    padding: 34px;
+    background: linear-gradient(155deg, #fffdfb 0%, #f7e7e9 100%);
+}
+
+.dx-benefit-sustainable {
+    --dx-benefit-accent: #778063;
+    --dx-benefit-tint: #e7eadf;
+    grid-column: 2 / span 2;
+    grid-row: 1;
+    grid-template-columns: 130px 1fr;
+    gap: 28px;
+}
+
+.dx-benefit-leakproof {
+    --dx-benefit-accent: #996174;
+    --dx-benefit-tint: #f2e2e7;
+    grid-column: 2;
+    grid-row: 2;
+    grid-template-columns: 92px 1fr;
+    gap: 20px;
+}
+
+.dx-benefit-eco {
+    --dx-benefit-accent: #8a7755;
+    --dx-benefit-tint: #eee8dc;
+    grid-column: 3;
+    grid-row: 2;
+    grid-template-columns: 92px 1fr;
+    gap: 20px;
+}
+
+.dx-benefit-num {
+    position: absolute;
+    top: 22px;
+    right: 25px;
+    z-index: 2;
+    color: var(--dx-benefit-accent);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 22px;
+    font-style: italic;
+    opacity: .55;
+}
+
+.dx-benefit-icon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 25px;
+    background: var(--dx-benefit-tint);
+    transition: transform .42s var(--dx-ease), border-radius .42s var(--dx-ease);
+}
+
+.dx-benefit-icon img {
+    display: block;
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.dx-benefit-comfort .dx-benefit-icon {
+    width: 148px;
+    height: 148px;
+    margin: 28px auto 25px;
+    border-radius: 50%;
+}
+
+.dx-benefit-comfort .dx-benefit-icon img {
+    width: 112px;
+    height: 112px;
+}
+
+.dx-benefit-sustainable .dx-benefit-icon {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+}
+
+.dx-benefit-sustainable .dx-benefit-icon img {
+    width: 86px;
+    height: 86px;
+}
+
+.dx-benefit-card:hover .dx-benefit-icon {
+    border-radius: 50%;
+    transform: translateY(-3px) rotate(-3deg);
+}
+
+.dx-benefit-copy {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+}
+
+.dx-benefit-kicker {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--dx-benefit-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.dx-benefit-copy h3 {
+    margin: 0 0 8px !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 31px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-benefit-comfort .dx-benefit-copy { text-align: center; }
+.dx-benefit-comfort .dx-benefit-copy h3 { font-size: 42px !important; }
+
+.dx-benefit-copy p {
+    margin: 0 !important;
+    color: #6d615c;
+    font-size: 13px;
+    line-height: 1.55 !important;
+}
+
+.dx-benefit-chips {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.dx-benefit-chips span {
+    padding: 7px 12px;
+    border: 1px solid rgba(176, 74, 99, .16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .72);
+    color: #7e5962;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ---- four different animated botanicals ---- */
+
+.dx-benefits-flora {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.dx-benefit-bot {
+    position: absolute;
+    overflow: visible;
+    fill: rgba(176, 74, 99, .055);
+    stroke: rgba(176, 74, 99, .18);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+}
+
+.dx-benefit-blossom {
+    left: -34px;
+    top: 132px;
+    width: 230px;
+    height: 230px;
+    animation: dx-botanical-turn 28s linear infinite;
+}
+
+.dx-benefit-daisy {
+    right: 4%;
+    top: 26px;
+    width: 155px;
+    height: 155px;
+    fill: rgba(181, 154, 114, .07);
+    stroke: rgba(150, 117, 71, .2);
+    animation: dx-botanical-float 7s ease-in-out infinite;
+}
+
+.dx-benefit-lily-mark {
+    right: -22px;
+    bottom: -12px;
+    width: 270px;
+    height: 270px;
+    fill: rgba(197, 106, 132, .055);
+    stroke: rgba(176, 74, 99, .2);
+    transform-origin: 52% 100%;
+    animation: dx-botanical-sway 6.5s ease-in-out infinite;
+}
+
+.dx-benefit-sprig-mark {
+    left: 3%;
+    bottom: -34px;
+    width: 190px;
+    height: 225px;
+    fill: rgba(102, 120, 87, .055);
+    stroke: rgba(91, 107, 79, .2);
+    transform-origin: 20% 100%;
+    animation: dx-botanical-sway-reverse 8s ease-in-out infinite;
+}
+
+@keyframes dx-botanical-turn {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes dx-botanical-float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+    50% { transform: translate3d(0, -13px, 0) rotate(4deg); }
+}
+
+@keyframes dx-botanical-sway {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(5deg); }
+}
+
+@keyframes dx-botanical-sway-reverse {
+    0%, 100% { transform: rotate(4deg); }
+    50% { transform: rotate(-5deg); }
+}
+
+@media (max-width: 991.98px) {
+    .dx-benefits { padding: 78px 0 86px; }
+    .dx-benefits-head { align-items: flex-start; flex-direction: column; gap: 16px; }
+    .dx-benefits-head > p { max-width: 570px; }
+    .dx-benefits-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, 250px);
+    }
+    .dx-benefit-comfort,
+    .dx-benefit-sustainable,
+    .dx-benefit-leakproof,
+    .dx-benefit-eco {
+        grid-column: auto;
+        grid-row: auto;
+        grid-template-columns: 96px 1fr;
+        grid-template-rows: auto;
+        gap: 20px;
+        align-items: center;
+        padding: 28px;
+    }
+    .dx-benefit-comfort .dx-benefit-icon,
+    .dx-benefit-sustainable .dx-benefit-icon {
+        width: 96px;
+        height: 96px;
+        margin: 0;
+        border-radius: 25px;
+    }
+    .dx-benefit-comfort .dx-benefit-icon img,
+    .dx-benefit-sustainable .dx-benefit-icon img { width: 72px; height: 72px; }
+    .dx-benefit-comfort .dx-benefit-copy { text-align: left; }
+    .dx-benefit-comfort .dx-benefit-copy h3 { font-size: 32px !important; }
+    .dx-benefit-chips { grid-column: 1 / span 2; justify-content: flex-start; margin-top: 0; }
+    .dx-benefit-blossom { width: 160px; height: 160px; opacity: .7; }
+    .dx-benefit-lily-mark { width: 200px; height: 200px; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-benefits { padding: 62px 0 70px; }
+    .dx-benefits-head { margin-bottom: 28px; }
+    .dx-benefits-head h2 { font-size: 42px !important; }
+    .dx-benefits-grid { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; }
+    .dx-benefit-comfort,
+    .dx-benefit-sustainable,
+    .dx-benefit-leakproof,
+    .dx-benefit-eco {
+        min-height: 190px;
+        grid-template-columns: 72px 1fr;
+        gap: 16px;
+        padding: 24px 21px;
+        border-radius: 22px;
+    }
+    .dx-benefit-icon,
+    .dx-benefit-comfort .dx-benefit-icon,
+    .dx-benefit-sustainable .dx-benefit-icon { width: 72px; height: 72px; border-radius: 20px; }
+    .dx-benefit-icon img,
+    .dx-benefit-comfort .dx-benefit-icon img,
+    .dx-benefit-sustainable .dx-benefit-icon img { width: 54px; height: 54px; }
+    .dx-benefit-copy h3,
+    .dx-benefit-comfort .dx-benefit-copy h3 { font-size: 28px !important; }
+    .dx-benefit-copy p { font-size: 12px; }
+    .dx-benefit-num { top: 16px; right: 18px; }
+    .dx-benefit-chips { display: none; }
+    .dx-benefit-daisy { right: -25px; width: 110px; height: 110px; }
+    .dx-benefit-sprig-mark { left: -20px; width: 130px; height: 165px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-benefit-bot { animation: none; }
+    .dx-benefit-card,
+    .dx-benefit-card::before,
+    .dx-benefit-icon { transition: none; }
+}
+
+/* The final botanical pass uses the actual artwork supplied in the ZIP files,
+   not generated lookalikes: pink lilies, blue blossoms and a cream flower
+   frame. Opacity and motion keep them behind the content rather than turning
+   them into another card illustration. */
+.dx-benefit-art,
+.dx-absorb-art {
+    position: absolute;
+    display: block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+}
+
+.dx-benefit-art-lily {
+    right: -46px;
+    bottom: -38px;
+    width: 330px;
+    height: 320px;
+    background-image: url("../media/dx-lily-soft.png");
+    background-position: right bottom;
+    opacity: .28;
+    transform-origin: 65% 100%;
+    animation: dx-zip-lily-sway 7s ease-in-out infinite;
+}
+
+.dx-benefit-art-blue {
+    left: -76px;
+    top: 70px;
+    width: 320px;
+    height: 320px;
+    background-image: url("../media/dx-blue-flowers.png");
+    background-position: left center;
+    opacity: .12;
+    animation: dx-zip-blue-float 9s ease-in-out infinite;
+}
+
+.dx-benefit-art-frame {
+    right: 6%;
+    top: -46px;
+    width: 360px;
+    height: 260px;
+    background-image: url("../media/dx-leaf-frame-soft.png");
+    background-position: right top;
+    opacity: .1;
+    animation: dx-zip-frame-breathe 10s ease-in-out infinite;
+}
+
+@keyframes dx-zip-lily-sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(3deg) translateY(-5px); }
+}
+
+@keyframes dx-zip-blue-float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+    50% { transform: translate3d(10px, -12px, 0) rotate(2deg); }
+}
+
+@keyframes dx-zip-frame-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.035); }
+}
+
+/* ==========================================================================
+   56. Absorbency guide - progressive bento
+   ========================================================================== */
+
+.dx-absorbency {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0 112px;
+    background: var(--dx-ivory-2, #f5f0e8);
+    isolation: isolate;
+}
+
+.dx-absorbency::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Cg fill='%23b04a63' fill-opacity='.05'%3E%3Cpath d='M34 22c0 0-8 10-8 14a8 8 0 0 0 16 0c0-4-8-14-8-14Z'/%3E%3Cpath d='M146 62c0 0-6 7-6 10a6 6 0 0 0 12 0c0-3-6-10-6-10Z'/%3E%3Cpath d='M84 118c0 0-9 11-9 15a9 9 0 0 0 18 0c0-4-9-15-9-15Z'/%3E%3Cpath d='M176 162c0 0-7 8-7 11a7 7 0 0 0 14 0c0-3-7-11-7-11Z'/%3E%3Cpath d='M24 176c0 0-5 6-5 8a5 5 0 0 0 10 0c0-2-5-8-5-8Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dx-absorbency > .container {
+    position: relative;
+    z-index: 2;
+}
+
+.dx-absorbency-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 42px;
+    max-width: 1180px;
+    margin: 0 auto 42px;
+}
+
+.dx-absorbency-head h2 {
+    margin: 5px 0 0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(42px, 4.6vw, 64px) !important;
+    font-weight: 400 !important;
+    line-height: 1.02 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-absorbency-head h2 strong {
+    color: var(--dx-rose, #b04a63);
+    font-weight: 600 !important;
+    font-style: italic;
+}
+
+.dx-absorbency-head > p {
+    max-width: 420px;
+    margin: 0 0 5px !important;
+    color: #70635e;
+    font-size: 15px;
+    line-height: 1.65 !important;
+}
+
+.dx-absorbency-grid {
+    display: grid;
+    max-width: 1180px;
+    margin: 0 auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, 264px);
+    gap: 20px;
+}
+
+.dx-abs-card {
+    --dx-abs-accent: #bd7183;
+    --dx-abs-tint: #f6e6ea;
+    position: relative;
+    display: grid;
+    min-width: 0;
+    padding: 28px 30px 24px;
+    overflow: hidden;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "title capacity"
+        "use use"
+        "foot foot";
+    column-gap: 30px;
+    border: 1px solid rgba(99, 77, 68, .12);
+    border-radius: 28px;
+    background: rgba(255, 253, 250, .95);
+    box-shadow: 0 14px 36px rgba(73, 54, 44, .09);
+    transition: transform .3s var(--dx-ease), box-shadow .3s var(--dx-ease), border-color .3s var(--dx-ease);
+}
+
+.dx-abs-card:hover {
+    z-index: 3;
+    border-color: rgba(176, 74, 99, .28);
+    box-shadow: 0 24px 52px rgba(73, 54, 44, .15);
+    transform: translateY(-6px);
+}
+
+.dx-abs-light { grid-column: 1; grid-row: 1; }
+.dx-abs-moderate {
+    --dx-abs-accent: #8a8b68;
+    --dx-abs-tint: #e9eadf;
+    grid-column: 2 / span 2;
+    grid-row: 1;
+    background: linear-gradient(135deg, #fffdfa 0%, #f1f1e8 100%);
+}
+.dx-abs-heavy {
+    --dx-abs-accent: #a65067;
+    --dx-abs-tint: #f2dfe4;
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    background: linear-gradient(135deg, #fffdfa 0%, #f8e8eb 100%);
+}
+.dx-abs-super {
+    --dx-abs-accent: #e0b9c4;
+    --dx-abs-tint: #6c4b5a;
+    grid-column: 3;
+    grid-row: 2;
+    border-color: rgba(255, 255, 255, .09);
+    background: #49343e;
+    box-shadow: 0 18px 40px rgba(57, 36, 46, .2);
+}
+
+.dx-abs-step {
+    position: absolute;
+    top: 21px;
+    right: 24px;
+    z-index: 2;
+    color: var(--dx-abs-accent);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 20px;
+    font-style: italic;
+    opacity: .58;
+}
+
+.dx-abs-watermark {
+    position: absolute;
+    right: 38px;
+    top: 34px;
+    width: 92px;
+    height: 116px;
+    fill: var(--dx-abs-tint);
+    stroke: var(--dx-abs-accent);
+    stroke-width: 2;
+    opacity: .36;
+    transition: transform .5s var(--dx-ease);
+}
+
+.dx-abs-card:hover .dx-abs-watermark { transform: translateY(-5px) scale(1.05); }
+
+.dx-abs-title {
+    position: relative;
+    z-index: 2;
+    grid-area: title;
+}
+
+.dx-abs-title > span,
+.dx-abs-use > span {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--dx-abs-accent);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+
+.dx-abs-title h3 {
+    margin: 0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 40px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-abs-capacity {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    align-self: start;
+    gap: 7px;
+    grid-area: capacity;
+    margin: 21px 58px 0 0;
+}
+
+.dx-abs-capacity strong {
+    color: var(--dx-abs-accent);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 31px;
+    font-weight: 600;
+    line-height: .9;
+}
+
+.dx-abs-capacity span {
+    color: #8b7d76;
+    font-size: 9px;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.dx-abs-use {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    max-width: 470px;
+    grid-area: use;
+    margin-top: 10px;
+}
+
+.dx-abs-use p {
+    margin: 0 !important;
+    color: #6d615c;
+    font-size: 13px;
+    line-height: 1.5 !important;
+}
+
+.dx-abs-card-foot {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    grid-area: foot;
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(99, 77, 68, .1);
+}
+
+.dx-abs-meter {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.dx-abs-meter i {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--dx-abs-accent);
+    border-radius: 70% 0 70% 70%;
+    background: transparent;
+    transform: rotate(-45deg);
+}
+
+.dx-abs-meter i.is-filled { background: var(--dx-abs-accent); }
+
+.dx-abs-card-foot a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dx-ink, #1f1d1b) !important;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none !important;
+}
+
+.dx-abs-card-foot a span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--dx-abs-accent);
+    color: #fff;
+    transition: transform .25s var(--dx-ease);
+}
+
+.dx-abs-card-foot a:hover span { transform: translateX(4px); }
+
+.dx-abs-super .dx-abs-title h3,
+.dx-abs-super .dx-abs-use p,
+.dx-abs-super .dx-abs-card-foot a { color: #fff !important; }
+.dx-abs-super .dx-abs-capacity span { color: rgba(255, 255, 255, .66); }
+.dx-abs-super .dx-abs-card-foot { border-top-color: rgba(255, 255, 255, .14); }
+.dx-abs-super .dx-abs-watermark { opacity: .2; }
+
+.dx-absorbency-flora {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.dx-absorb-art-blue {
+    left: -80px;
+    bottom: -100px;
+    width: 380px;
+    height: 380px;
+    background-image: url("../media/dx-blue-flowers.png");
+    opacity: .11;
+    animation: dx-zip-blue-float 9s ease-in-out infinite;
+}
+
+.dx-absorb-art-lily {
+    right: -55px;
+    top: 10px;
+    width: 300px;
+    height: 300px;
+    background-image: url("../media/dx-lily-soft.png");
+    background-position: right top;
+    opacity: .22;
+    transform-origin: 65% 100%;
+    animation: dx-zip-lily-sway 7s ease-in-out infinite;
+}
+
+.dx-absorb-art-frame {
+    left: 26%;
+    top: -80px;
+    width: 420px;
+    height: 260px;
+    background-image: url("../media/dx-leaf-frame-soft.png");
+    opacity: .08;
+    animation: dx-zip-frame-breathe 10s ease-in-out infinite;
+}
+
+@media (max-width: 991.98px) {
+    .dx-benefit-art-frame { display: none; }
+    .dx-benefit-art-blue { width: 230px; height: 230px; }
+    .dx-benefit-art-lily { width: 240px; height: 230px; }
+    .dx-absorbency { padding: 78px 0 86px; }
+    .dx-absorbency-head { align-items: flex-start; flex-direction: column; gap: 16px; }
+    .dx-absorbency-head > p { max-width: 570px; }
+    .dx-absorbency-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: repeat(2, 270px);
+    }
+    .dx-abs-light,
+    .dx-abs-moderate,
+    .dx-abs-heavy,
+    .dx-abs-super { grid-column: auto; grid-row: auto; }
+    .dx-abs-watermark { width: 78px; height: 98px; right: 27px; }
+    .dx-abs-capacity { margin-right: 46px; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-benefit-art-blue { left: -100px; opacity: .08; }
+    .dx-benefit-art-lily { right: -90px; opacity: .2; }
+    .dx-absorbency { padding: 62px 0 70px; }
+    .dx-absorbency-head { margin-bottom: 28px; }
+    .dx-absorbency-head h2 { font-size: 42px !important; }
+    .dx-absorbency-grid { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; }
+    .dx-abs-card { min-height: 245px; padding: 25px 22px 21px; border-radius: 22px; }
+    .dx-abs-title h3 { font-size: 34px !important; }
+    .dx-abs-capacity { margin-right: 34px; }
+    .dx-abs-capacity strong { font-size: 27px; }
+    .dx-abs-step { top: 16px; right: 18px; }
+    .dx-abs-watermark { right: 18px; top: 43px; width: 68px; height: 84px; }
+    .dx-absorb-art-blue { width: 250px; height: 250px; }
+    .dx-absorb-art-lily { width: 210px; height: 210px; right: -90px; }
+    .dx-absorb-art-frame { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-benefit-art,
+    .dx-absorb-art { animation: none; }
+    .dx-abs-card,
+    .dx-abs-watermark,
+    .dx-abs-card-foot a span { transition: none; }
+}
+
+/* Magic membrane diagram: use the same ivory surface as the section above;
+   the existing dx-art-waves SVG remains layered over this colour. */
+.dx-membrane-section {
+    overflow: hidden;
+    background: var(--dx-ivory-2, #f5f0e8);
+}
+
+/* ========================================================================== 
+   57. Why it works - video with orbiting benefit cards
+   ========================================================================== */
+
+.dx-life-section {
+    overflow: hidden;
+    padding: 92px 0 104px;
+    background: var(--dx-ivory-2, #f5f0e8);
+}
+
+.dx-life-head {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto 48px;
+    text-align: center;
+}
+
+.dx-life-head h2 {
+    margin: 14px 0 0;
+    color: var(--dx-ink);
+    font-size: clamp(32px, 4vw, 54px) !important;
+    font-weight: 400 !important;
+    line-height: 1.08;
+}
+
+.dx-life-head h2 strong { font-weight: 700; }
+
+.dx-life-nature {
+    position: absolute;
+    z-index: 1;
+    right: -66px;
+    bottom: -58px;
+    width: 280px;
+    height: 345px;
+    color: #71835f;
+    opacity: .28;
+    pointer-events: none;
+    transform-origin: 70% 100%;
+    animation: dx-life-nature-sway 8s ease-in-out infinite;
+}
+
+@keyframes dx-life-nature-sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(3deg) translateY(-6px); }
+}
+
+.dx-life-stage {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(190px, 1fr) minmax(420px, 1.75fr) minmax(190px, 1fr);
+    grid-template-rows: repeat(3, minmax(108px, auto));
+    align-items: center;
+    gap: 20px 24px;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.dx-life-video {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / 4;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 8px solid rgba(255, 255, 255, .82);
+    border-radius: 30px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0 24px 60px rgba(74, 57, 48, .16);
+}
+
+.dx-life-video::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 56%, rgba(0, 0, 0, .52) 100%);
+    pointer-events: none;
+}
+
+.dx-life-play {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 78px;
+    height: 78px;
+    border: 1px solid rgba(255, 255, 255, .75);
+    border-radius: 50%;
+    color: var(--dx-rose) !important;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .2);
+    transform: translate(-50%, -50%);
+    transition: transform .3s var(--dx-ease), background-color .3s var(--dx-ease);
+}
+
+.dx-life-play i { margin-left: 4px; font-size: 22px; }
+.dx-life-play:hover { background: #fff; transform: translate(-50%, -50%) scale(1.08); }
+
+.dx-life-video-label {
+    position: absolute;
+    z-index: 2;
+    left: 26px;
+    bottom: 21px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.dx-life-card {
+    position: relative;
+    min-height: 108px;
+    padding: 26px 24px 22px;
+    overflow: hidden;
+    border: 1px solid rgba(176, 74, 99, .12);
+    border-radius: 22px;
+    background: rgba(255, 253, 250, .88);
+    box-shadow: 0 12px 32px rgba(71, 55, 44, .07);
+    backdrop-filter: blur(6px);
+    transition: transform .3s var(--dx-ease), box-shadow .3s var(--dx-ease);
+}
+
+.dx-life-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(71, 55, 44, .12);
+}
+
+.dx-life-card::after {
+    content: "";
+    position: absolute;
+    right: -28px;
+    bottom: -34px;
+    width: 86px;
+    height: 86px;
+    border: 1px solid rgba(176, 74, 99, .12);
+    border-radius: 50% 50% 48% 52%;
+}
+
+.dx-life-number {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--dx-gold);
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: .1em;
+}
+
+.dx-life-card p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #696058;
+    font-size: 16px;
+    line-height: 1.35;
+}
+
+.dx-life-card p strong {
+    display: block;
+    margin-top: 2px;
+    color: var(--dx-ink);
+    font-family: Georgia, serif;
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1.12;
+}
+
+.dx-life-card p sup { font-size: .62em; }
+.dx-life-card-1 { grid-column: 1; grid-row: 1; }
+.dx-life-card-2 { grid-column: 3; grid-row: 1; }
+.dx-life-card-3 { grid-column: 1; grid-row: 2; }
+.dx-life-card-4 { grid-column: 3; grid-row: 2; }
+.dx-life-card-5 { grid-column: 1; grid-row: 3; }
+.dx-life-card-6 { grid-column: 3; grid-row: 3; }
+
+@media (max-width: 991.98px) {
+    .dx-life-section { padding: 76px 0 84px; }
+    .dx-life-stage { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+    .dx-life-video { grid-column: 1 / 3; grid-row: 1; max-width: 720px; margin: 0 auto 10px; }
+    .dx-life-card-1,
+    .dx-life-card-2,
+    .dx-life-card-3,
+    .dx-life-card-4,
+    .dx-life-card-5,
+    .dx-life-card-6 { grid-column: auto; grid-row: auto; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-life-section { padding: 62px 0 70px; }
+    .dx-life-head { margin-bottom: 32px; }
+    .dx-life-stage { display: flex; flex-direction: column; gap: 14px; }
+    .dx-life-video { order: -1; aspect-ratio: 4 / 3; border-width: 5px; border-radius: 23px; }
+    .dx-life-card,
+    .dx-life-card-5,
+    .dx-life-card-6 { width: 100%; min-height: 0; padding: 21px 20px; }
+    .dx-life-card p strong { font-size: 21px; }
+    .dx-life-play { width: 66px; height: 66px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-life-nature { animation: none; }
+    .dx-life-card,
+    .dx-life-play { transition: none; }
+}
+
+/* ========================================================================== 
+   58. Phone layout pass
+   --------------------------------------------------------------------------
+   Desktop remains untouched. On phones the hero uses one header offset, and
+   the editorial grids retain their bento rhythm instead of becoming long
+   one-card stacks.
+   ========================================================================== */
+
+@media (max-width: 575.98px) {
+    html,
+    body { overflow-x: hidden; }
+
+    /* Hero: the old rules padded both the section and every slide, creating a
+       large empty area and pushing the CTA below the first screen. */
+    .dx-hero {
+        min-height: 100svh;
+        padding-top: 0;
+    }
+
+    .dx-hero-track,
+    .dx-hero .slick-list,
+    .dx-hero .slick-track,
+    .dx-hero-slide {
+        min-height: 100svh;
+        height: auto;
+    }
+
+    .dx-hero-slide { padding: 118px 0 48px; }
+
+    .dx-hero-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        align-content: start;
+        width: 100%;
+        padding: 0 18px;
+    }
+
+    .dx-hero-title {
+        width: 100%;
+        column-gap: .18em;
+        margin-bottom: 12px !important;
+        font-size: clamp(34px, 10.4vw, 46px);
+        line-height: .94;
+    }
+
+    .dx-hero-figure {
+        width: auto !important;
+        max-width: 86vw !important;
+        max-height: 38svh;
+        margin: 0 auto 14px;
+        object-fit: contain;
+    }
+
+    .dx-hero-desc {
+        max-width: 315px;
+        margin: 0 auto 14px !important;
+        font-size: 10.5px;
+        line-height: 1.55;
+        letter-spacing: .055em;
+    }
+
+    .dx-hero-proof {
+        margin-bottom: 16px;
+        gap: 9px;
+    }
+
+    .dx-hero-layers i { width: 24px; height: 24px; }
+    .dx-hero-proof-text { font-size: 8.5px; }
+    .dx-hero-proof-text strong { font-size: 14px; }
+
+    /* The desktop product teaser is useful beside the model, but becomes a
+       second hero on a narrow screen. The main CTA remains visible. */
+    .dx-hero-card { display: none; }
+    .dx-hero-actions { margin-top: 0; }
+    .dx-hero-kicker { display: none; }
+    .dx-hero-btn { padding: 12px 22px; font-size: 10.5px; border-radius: 999px; }
+    .dx-hero .slick-dots { bottom: 14px; }
+
+    /* Category bento: wide campaign art, paired product tiles, wide campaign
+       art, then the final paired product tiles. */
+    .dx-bento { padding: 46px 0 52px; }
+    .dx-bento .container { padding-right: 14px; padding-left: 14px; }
+    .dx-bento-head { margin-bottom: 26px; }
+    .dx-bento-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 205px;
+        gap: 10px;
+    }
+
+    .dx-bento-card:nth-child(1),
+    .dx-bento-card:nth-child(4) {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+
+    .dx-bento-card:nth-child(2),
+    .dx-bento-card:nth-child(3),
+    .dx-bento-card:nth-child(5),
+    .dx-bento-card:nth-child(6) {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .dx-bento-card { padding: 13px; border-radius: 17px; }
+    .dx-bento-banner { padding: 0; }
+    .dx-bento-card:not(.dx-bento-banner) .dx-bento-art {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-position: center center;
+        background-size: cover;
+    }
+
+    .dx-bento-card:not(.dx-bento-banner)::after {
+        background: linear-gradient(0deg, rgba(29, 25, 22, .42) 0%, rgba(29, 25, 22, 0) 58%);
+    }
+
+    .dx-bento-text {
+        width: fit-content;
+        max-width: calc(100% - 34px);
+        padding: 8px 11px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: 0 5px 14px rgba(35, 28, 23, .12);
+    }
+
+    .dx-bento-name { font-size: 11.5px; line-height: 1; }
+    .dx-bento-desc,
+    .dx-bento-sprig { display: none; }
+    .dx-bento-go { right: 12px; bottom: 13px; width: 29px; height: 29px; }
+
+    /* Stress-free block: retain one large visual, one wide story, then two
+       compact supporting cards beside each other. */
+    .dx-sf-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: auto;
+        gap: 10px;
+    }
+
+    .dx-sf-figure {
+        grid-column: span 2;
+        grid-row: span 1;
+        height: 340px;
+        border-radius: 24px;
+    }
+
+    .dx-sf-card-wide { grid-column: span 2; }
+    .dx-sf-card:not(.dx-sf-card-wide) { grid-column: span 1; }
+    .dx-sf-card,
+    .dx-sf-card-wide { min-height: 144px; padding: 20px 17px; }
+    .dx-sf-ct { font-size: 20px; }
+    .dx-sf-cd { font-size: 11px; line-height: 1.45; }
+
+    /* Benefits bento: wide / paired / wide. */
+    .dx-benefits { padding: 58px 0 66px; }
+    .dx-benefits-head { margin-bottom: 26px; }
+    .dx-benefits-head h2 { font-size: 36px !important; }
+    .dx-benefits-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        gap: 10px;
+    }
+
+    .dx-benefit-comfort,
+    .dx-benefit-eco {
+        grid-column: span 2;
+        min-height: 150px;
+        grid-template-columns: 62px minmax(0, 1fr);
+        gap: 15px;
+        padding: 22px 19px;
+    }
+
+    .dx-benefit-sustainable,
+    .dx-benefit-leakproof {
+        grid-column: span 1;
+        min-height: 218px;
+        grid-template-columns: 1fr;
+        align-content: start;
+        gap: 12px;
+        padding: 18px 15px;
+    }
+
+    .dx-benefit-icon,
+    .dx-benefit-comfort .dx-benefit-icon,
+    .dx-benefit-sustainable .dx-benefit-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0;
+        border-radius: 17px;
+    }
+
+    .dx-benefit-icon img,
+    .dx-benefit-comfort .dx-benefit-icon img,
+    .dx-benefit-sustainable .dx-benefit-icon img { width: 44px; height: 44px; }
+    .dx-benefit-comfort .dx-benefit-copy { text-align: left; }
+    .dx-benefit-copy h3,
+    .dx-benefit-comfort .dx-benefit-copy h3 { font-size: 24px !important; }
+    .dx-benefit-copy p { font-size: 10.5px; line-height: 1.45 !important; }
+    .dx-benefit-kicker { font-size: 8px; letter-spacing: .1em; }
+    .dx-benefit-num { top: 13px; right: 14px; font-size: 17px; }
+
+    /* Absorbency stays a real two-column bento. Card internals switch to one
+       narrow column so no copy or buttons overflow. */
+    .dx-absorbency { padding: 58px 0 66px; }
+    .dx-absorbency-head { margin-bottom: 26px; }
+    .dx-absorbency-head h2 { font-size: 36px !important; }
+    .dx-absorbency-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: none;
+        grid-auto-rows: minmax(268px, auto);
+        gap: 10px;
+    }
+
+    .dx-abs-light,
+    .dx-abs-moderate,
+    .dx-abs-heavy,
+    .dx-abs-super { grid-column: span 1; grid-row: auto; }
+
+    .dx-abs-card {
+        min-height: 268px;
+        padding: 20px 15px 16px;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-areas: "title" "capacity" "use" "foot";
+        row-gap: 9px;
+        border-radius: 20px;
+    }
+
+    .dx-abs-title h3 { font-size: 29px !important; }
+    .dx-abs-capacity { margin: 0; gap: 5px; }
+    .dx-abs-capacity strong { font-size: 23px; }
+    .dx-abs-use { margin-top: 0; align-self: start; }
+    .dx-abs-use p { font-size: 10.5px; line-height: 1.4 !important; }
+    .dx-abs-watermark { top: 17px; right: 11px; width: 45px; height: 58px; }
+    .dx-abs-step { top: 10px; right: 12px; font-size: 14px; }
+    .dx-abs-card-foot { align-items: flex-start; flex-direction: column; gap: 8px; margin-top: 0; padding-top: 10px; }
+    .dx-abs-meter { gap: 4px; }
+    .dx-abs-meter i { width: 8px; height: 8px; }
+    .dx-abs-card-foot a { width: 100%; justify-content: space-between; font-size: 10px; }
+    .dx-abs-card-foot a span { width: 26px; height: 26px; }
+
+    /* Diagram and video/benefit section. */
+    .dx-membrane-section { padding-top: 58px !important; padding-bottom: 36px !important; }
+    .dx-membrane-section h2 { padding: 0 10px; font-size: 29px !important; line-height: 1.15; }
+    .dx-membrane-section .row { margin-bottom: 24px !important; }
+    .dx-membrane-section img { display: block; width: 100%; height: auto; }
+
+    .dx-life-section { padding: 58px 0 66px; }
+    .dx-life-head { margin-bottom: 28px; }
+    .dx-life-head h2 { font-size: 36px !important; }
+    .dx-life-stage {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        gap: 10px;
+    }
+
+    .dx-life-video {
+        grid-column: 1 / 3;
+        grid-row: auto;
+        order: initial;
+        aspect-ratio: 16 / 10;
+        margin-bottom: 2px;
+    }
+
+    .dx-life-card,
+    .dx-life-card-1,
+    .dx-life-card-2,
+    .dx-life-card-3,
+    .dx-life-card-4,
+    .dx-life-card-5,
+    .dx-life-card-6 {
+        grid-column: span 1;
+        grid-row: auto;
+        width: auto;
+        min-height: 132px;
+        padding: 17px 14px;
+        border-radius: 18px;
+    }
+
+    .dx-life-number { margin-bottom: 8px; font-size: 10px; }
+    .dx-life-card p { font-size: 11.5px; }
+    .dx-life-card p strong { font-size: 18px; }
+    .dx-life-video-label { left: 17px; bottom: 14px; font-size: 9px; }
+    .dx-life-nature { right: -110px; width: 220px; opacity: .2; }
+
+    /* Keep the persistent contact shortcut useful without covering card copy. */
+    a.float {
+        left: 13px;
+        bottom: 16px;
+        width: 46px;
+        height: 46px;
+        line-height: 46px;
+        box-shadow: 0 7px 18px rgba(34, 91, 55, .22);
+    }
+
+    a.float img { display: block; width: 46px; height: 46px; }
+}
+
+/* Final phone refinements from device review: use the tall viewport instead
+   of leaving it empty, and keep Most Loved as a compact image bento. */
+@media (max-width: 575.98px) {
+    .dx-hero-inner {
+        min-height: calc(100svh - 198px);
+        align-content: space-between;
+        row-gap: 8px;
+    }
+
+    .dx-hero-title { margin-bottom: 0 !important; }
+    .dx-hero-figure {
+        max-height: 40svh;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .dx-hero-desc { margin: 0 auto !important; }
+    .dx-hero-proof { margin-bottom: 0; }
+    .dx-hero .slick-dots { bottom: 32px; z-index: 10; }
+
+    .dx-style {
+        padding-top: 46px !important;
+        padding-bottom: 58px !important;
+    }
+
+    .dx-style .col-12.text-center { margin-bottom: 28px !important; }
+    .dx-style-frame { width: 100%; margin-top: 0; }
+
+    .dx-style-frame > .row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0;
+    }
+
+    .dx-style-frame > .row > .col-lg-6 {
+        width: auto;
+        max-width: none;
+        padding: 0;
+    }
+
+    .dx-style-frame > .row > .col-lg-6:first-child,
+    .dx-style-frame > .row > .col-lg-6:last-child { grid-column: 1 / 3; }
+
+    .dx-style-frame > .row > .col-lg-6:last-child > .row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0;
+    }
+
+    .dx-style-frame > .row > .col-lg-6:last-child > .row > .col-md-6 {
+        width: auto;
+        max-width: none;
+        margin: 0 !important;
+        padding: 0;
+    }
+
+    .dx-style .card {
+        height: 100%;
+        min-width: 0;
+        border-radius: 17px;
+    }
+
+    .dx-style .col-lg-6:first-child .card-img,
+    .dx-style .col-lg-6:first-child .card > img {
+        height: 260px;
+    }
+
+    .dx-style .card-img,
+    .dx-style .card > img {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
+        object-position: center top;
+        border-radius: 17px;
+    }
+
+    .dx-style .card-img-overlay {
+        align-items: flex-start;
+        padding: 13px !important;
+    }
+
+    .dx-style .card-img-overlay .btn {
+        padding: 9px 12px !important;
+        border-radius: 999px !important;
+        font-size: 10.5px !important;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .dx-life-card-3,
+    .dx-life-card-6 {
+        grid-column: 1 / 3;
+    }
+}
+
+/* ========================================================================== 
+   60. About DEXTE
+   ========================================================================== */
+
+.dx-about {
+    overflow: hidden;
+    color: var(--dx-ink, #1f1d1b);
+    background: var(--dx-ivory-2, #f5f0e8);
+}
+
+.dx-about-hero {
+    position: relative;
+    display: flex;
+    min-height: 760px;
+    align-items: center;
+    overflow: hidden;
+    padding-bottom: 78px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    isolation: isolate;
+}
+
+.dx-about-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg, rgba(245, 240, 232, .96) 0%, rgba(245, 240, 232, .82) 39%, rgba(245, 240, 232, .08) 68%, rgba(245, 240, 232, 0) 100%);
+}
+
+.dx-about-hero-copy {
+    position: relative;
+    z-index: 2;
+    width: min(570px, 52vw);
+    padding: 44px 46px 47px;
+    border: 1px solid rgba(255, 255, 255, .72);
+    border-radius: 34px;
+    background: rgba(255, 252, 247, .7);
+    box-shadow: 0 24px 60px rgba(68, 54, 45, .11);
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(9px);
+}
+
+.dx-about-hero-copy h1 {
+    margin: 13px 0 20px !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(56px, 6vw, 86px) !important;
+    font-weight: 500 !important;
+    line-height: .92 !important;
+    letter-spacing: -.035em;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-about-hero-copy h1 em {
+    color: var(--dx-rose, #b04a63);
+    font-weight: 600;
+}
+
+.dx-about-hero-copy p {
+    max-width: 460px;
+    margin: 0 0 27px !important;
+    color: #5f5751;
+    font-size: 16px;
+    line-height: 1.7 !important;
+}
+
+.dx-about-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 51px;
+    padding: 0 23px;
+    border-radius: 999px;
+    background: var(--dx-ink, #1f1d1b);
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    transition: transform .25s var(--dx-ease), background-color .25s var(--dx-ease);
+}
+
+.dx-about-button span {
+    display: grid;
+    width: 29px;
+    height: 29px;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .14);
+    font-size: 16px;
+}
+
+.dx-about-button:hover { background: var(--dx-rose, #b04a63); transform: translateY(-2px); }
+
+.dx-about-hero-word {
+    position: absolute;
+    left: 4%;
+    bottom: -20px;
+    z-index: 0;
+    color: rgba(181, 154, 114, .15);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(92px, 15vw, 230px);
+    font-style: italic;
+    font-weight: 600;
+    line-height: .7;
+    pointer-events: none;
+}
+
+.dx-about-story,
+.dx-about-values,
+.dx-about-voices { position: relative; isolation: isolate; }
+
+.dx-about-story {
+    padding: 110px 0 118px;
+    background: var(--dx-ivory-2, #f5f0e8);
+}
+
+.dx-about-sprig {
+    position: absolute;
+    right: -48px;
+    bottom: -35px;
+    z-index: 1;
+    width: 280px;
+    color: #71835f;
+    opacity: .18;
+    pointer-events: none;
+    transform-origin: 70% 100%;
+    animation: dx-about-sprig 9s ease-in-out infinite;
+}
+
+@keyframes dx-about-sprig {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(3deg) translateY(-7px); }
+}
+
+.dx-about-section-head {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 48px;
+    margin-bottom: 48px;
+}
+
+.dx-about-section-head > div { max-width: 720px; }
+
+.dx-about-section-head h2,
+.dx-about-values-head h2,
+.dx-about-cta h2 {
+    margin: 12px 0 0 !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(46px, 5vw, 70px) !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    letter-spacing: -.025em;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-about-section-head h2 strong,
+.dx-about-values-head h2 strong,
+.dx-about-cta h2 strong { color: var(--dx-rose, #b04a63); font-style: italic; font-weight: 600; }
+
+.dx-about-section-head > p {
+    max-width: 385px;
+    margin: 0 0 5px !important;
+    color: #6d625c;
+    font-size: 15px;
+    line-height: 1.65 !important;
+}
+
+.dx-about-story-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: 300px 190px;
+    gap: 18px;
+}
+
+.dx-about-story-copy,
+.dx-about-story-image,
+.dx-about-story-note {
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+}
+
+.dx-about-story-copy {
+    grid-column: 1 / 8;
+    grid-row: 1 / 3;
+    padding: 52px 55px;
+    border: 1px solid rgba(176, 74, 99, .11);
+    background: rgba(255, 253, 250, .94);
+    box-shadow: 0 18px 46px rgba(70, 52, 43, .08);
+}
+
+.dx-about-index {
+    display: block;
+    margin-bottom: 38px;
+    color: var(--dx-gold, #b59a72);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.dx-about-story-copy h3 {
+    max-width: 570px;
+    margin: 0 0 24px !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(35px, 3.5vw, 52px) !important;
+    font-weight: 500 !important;
+    line-height: 1.02 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-about-story-copy p {
+    max-width: 620px;
+    margin: 0 0 14px !important;
+    color: #675d57;
+    font-size: 14px;
+    line-height: 1.7 !important;
+}
+
+.dx-about-story-copy > strong {
+    display: block;
+    margin-top: 30px;
+    color: var(--dx-rose, #b04a63);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 25px;
+    font-style: italic;
+    font-weight: 600;
+}
+
+.dx-about-story-image {
+    grid-column: 8 / 13;
+    grid-row: 1;
+    margin: 0;
+    background: #ddd;
+}
+
+.dx-about-story-image img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+
+.dx-about-story-image::after {
+    content: "";
+    position: absolute;
+    inset: 45% 0 0;
+    background: linear-gradient(180deg, transparent, rgba(28, 24, 22, .72));
+}
+
+.dx-about-story-image figcaption {
+    position: absolute;
+    left: 25px;
+    bottom: 21px;
+    z-index: 2;
+    color: #fff;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 24px;
+}
+
+.dx-about-story-note {
+    display: flex;
+    grid-column: 8 / 13;
+    grid-row: 2;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 27px 30px;
+    background: #dfe6d8;
+}
+
+.dx-about-story-note::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    bottom: -32px;
+    width: 115px;
+    height: 115px;
+    border: 1px solid rgba(83, 104, 69, .22);
+    border-radius: 70% 0 70% 70%;
+    transform: rotate(-35deg);
+}
+
+.dx-about-story-note span {
+    color: #71835f;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.dx-about-story-note p {
+    position: relative;
+    z-index: 1;
+    max-width: 390px;
+    margin: 0 !important;
+    color: #34402f;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 28px;
+    line-height: 1.08 !important;
+}
+
+.dx-about-values {
+    padding: 102px 0 112px;
+    background: #eee7de;
+}
+
+.dx-about-values::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Cg fill='%23b04a63' fill-opacity='.035'%3E%3Cpath d='M34 22c0 0-8 10-8 14a8 8 0 0 0 16 0c0-4-8-14-8-14Z'/%3E%3Cpath d='M146 62c0 0-6 7-6 10a6 6 0 0 0 12 0c0-3-6-10-6-10Z'/%3E%3Cpath d='M84 118c0 0-9 11-9 15a9 9 0 0 0 18 0c0-4-9-15-9-15Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dx-about-values-head { max-width: 720px; margin: 0 auto 48px; text-align: center; }
+
+.dx-about-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, 242px);
+    gap: 18px;
+}
+
+.dx-about-value {
+    --about-accent: #a75d71;
+    --about-tint: #f3e1e6;
+    position: relative;
+    display: grid;
+    align-items: center;
+    gap: 22px;
+    overflow: hidden;
+    padding: 30px;
+    border: 1px solid rgba(92, 68, 59, .1);
+    border-radius: 28px;
+    background: rgba(255, 253, 250, .94);
+    box-shadow: 0 14px 36px rgba(72, 54, 45, .07);
+    transition: transform .3s var(--dx-ease), box-shadow .3s var(--dx-ease);
+}
+
+.dx-about-value:hover { transform: translateY(-5px); box-shadow: 0 22px 48px rgba(72, 54, 45, .12); }
+.dx-about-value-comfort { grid-column: 1; grid-row: 1 / 3; align-content: center; text-align: center; }
+.dx-about-value-sustainable { --about-accent: #71835f; --about-tint: #e4eadf; grid-column: 2 / 4; grid-row: 1; grid-template-columns: 100px 1fr; }
+.dx-about-value-leakproof { grid-column: 2; grid-row: 2; grid-template-columns: 80px 1fr; }
+.dx-about-value-eco { --about-accent: #8d7853; --about-tint: #eee8db; grid-column: 3; grid-row: 2; grid-template-columns: 80px 1fr; }
+
+.dx-about-value-number {
+    position: absolute;
+    top: 20px;
+    right: 23px;
+    color: var(--about-accent);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 19px;
+    font-style: italic;
+    opacity: .55;
+}
+
+.dx-about-value-icon {
+    display: grid;
+    width: 80px;
+    height: 80px;
+    place-items: center;
+    border-radius: 22px;
+    background: var(--about-tint);
+}
+
+.dx-about-value-comfort .dx-about-value-icon { width: 132px; height: 132px; margin: 24px auto 5px; border-radius: 50%; }
+.dx-about-value-sustainable .dx-about-value-icon { width: 100px; height: 100px; border-radius: 50%; }
+.dx-about-value-icon img { width: 72%; height: 72%; object-fit: contain; mix-blend-mode: multiply; }
+
+.dx-about-value-kicker {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--about-accent);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.dx-about-value h3 {
+    margin: 0 0 8px !important;
+    font-family: "Cormorant Garamond", Georgia, serif !important;
+    font-size: 34px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    color: var(--dx-ink, #1f1d1b) !important;
+}
+
+.dx-about-value-comfort h3 { font-size: 43px !important; }
+.dx-about-value p { margin: 0 !important; color: #6e625c; font-size: 12px; line-height: 1.55 !important; }
+
+.dx-about-manifesto {
+    position: relative;
+    overflow: hidden;
+    padding: 112px 0;
+    background: #4a3740;
+    color: #fff;
+    text-align: center;
+}
+
+.dx-about-manifesto .container { position: relative; z-index: 2; max-width: 1040px; }
+.dx-about-manifesto-label { display: block; margin-bottom: 26px; color: #d9c49f; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.dx-about-manifesto blockquote { margin: 0 !important; color: #fff; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(35px, 4.2vw, 61px); font-weight: 400; line-height: 1.08; }
+.dx-about-manifesto p { margin: 28px 0 0 !important; color: rgba(255, 255, 255, .68); font-size: 13px; letter-spacing: .04em; }
+.dx-about-manifesto-flower { position: absolute; right: -45px; bottom: -64px; width: 290px; color: rgba(217, 196, 159, .16); animation: dx-botanical-turn 36s linear infinite; }
+
+.dx-about-voices { padding: 108px 0 118px; background: var(--dx-ivory-2, #f5f0e8); }
+.dx-about-voices-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+
+.dx-about-voice {
+    position: relative;
+    display: flex;
+    min-height: 310px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 34px 32px 29px;
+    overflow: hidden;
+    border: 1px solid rgba(176, 74, 99, .12);
+    border-radius: 28px;
+    background: rgba(255, 253, 250, .95);
+    box-shadow: 0 14px 34px rgba(72, 54, 45, .07);
+}
+
+.dx-about-voice::after { content: "\201C"; position: absolute; top: 17px; right: 24px; color: rgba(176, 74, 99, .13); font-family: Georgia, serif; font-size: 86px; line-height: 1; }
+.dx-about-voice-featured { transform: translateY(24px); background: #f4e5e9; }
+.dx-about-stars { position: relative; z-index: 1; color: var(--dx-gold, #b59a72); font-size: 13px; letter-spacing: .12em; }
+.dx-about-voice > p { position: relative; z-index: 1; margin: 0 !important; color: var(--dx-ink, #1f1d1b); font-family: "Cormorant Garamond", Georgia, serif; font-size: 31px; line-height: 1.1 !important; }
+.dx-about-voice footer { display: flex; align-items: center; gap: 8px; color: #5e554f; font-size: 13px; }
+.dx-about-verified { display: grid; width: 17px; height: 17px; place-items: center; border-radius: 50%; background: #3f8fd2; color: #fff; font-size: 10px; }
+
+.dx-about-cta { position: relative; overflow: hidden; padding: 84px 0; background: #dfe6d8; }
+.dx-about-cta .container { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.dx-about-cta h2 { max-width: 780px; font-size: clamp(43px, 5vw, 68px) !important; }
+.dx-about-cta .dx-about-button { flex: 0 0 auto; }
+.dx-about-cta-art { position: absolute; right: -48px; top: -75px; width: 330px; height: 330px; background: url("../media/dx-leaf-frame-soft.png") no-repeat right top / contain; opacity: .2; }
+
+@media (max-width: 991.98px) {
+    .dx-about-hero { min-height: 680px; background-position: 58% center; }
+    .dx-about-hero-copy { width: min(540px, 68vw); }
+    .dx-about-story,
+    .dx-about-values,
+    .dx-about-voices { padding-top: 82px; padding-bottom: 90px; }
+    .dx-about-section-head { align-items: flex-start; flex-direction: column; gap: 18px; }
+    .dx-about-section-head > p { max-width: 600px; }
+    .dx-about-story-grid { grid-template-rows: 330px 210px; }
+    .dx-about-story-copy { grid-column: 1 / 8; padding: 36px 34px; }
+    .dx-about-story-image,
+    .dx-about-story-note { grid-column: 8 / 13; }
+    .dx-about-values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, 245px); }
+    .dx-about-value-comfort,
+    .dx-about-value-sustainable,
+    .dx-about-value-leakproof,
+    .dx-about-value-eco { grid-column: auto; grid-row: auto; grid-template-columns: 78px 1fr; align-content: center; text-align: left; }
+    .dx-about-value-comfort .dx-about-value-icon,
+    .dx-about-value-sustainable .dx-about-value-icon { width: 78px; height: 78px; margin: 0; border-radius: 22px; }
+    .dx-about-value-comfort h3 { font-size: 34px !important; }
+    .dx-about-voices-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dx-about-voice:last-child { grid-column: 1 / 3; width: calc(50% - 9px); justify-self: center; }
+    .dx-about-voice-featured { transform: none; }
+}
+
+@media (max-width: 575.98px) {
+    .dx-about-hero {
+        min-height: 700px;
+        padding-right: 14px;
+        padding-bottom: 34px;
+        padding-left: 14px;
+        align-items: flex-end;
+        background-position: 65% center;
+    }
+
+    .dx-about-hero::before { background: linear-gradient(180deg, rgba(245, 240, 232, .18) 0%, rgba(245, 240, 232, .35) 42%, rgba(245, 240, 232, .96) 72%, var(--dx-ivory-2, #f5f0e8) 100%); }
+    .dx-about-hero .container { padding: 0; }
+    .dx-about-hero-copy { width: 100%; padding: 25px 22px 27px; border-radius: 25px; background: rgba(255, 252, 247, .86); }
+    .dx-about-hero-copy h1 { margin: 9px 0 14px !important; font-size: 49px !important; }
+    .dx-about-hero-copy p { margin-bottom: 20px !important; font-size: 13px; line-height: 1.55 !important; }
+    .dx-about-button { min-height: 46px; padding: 0 17px; gap: 13px; font-size: 10px; }
+    .dx-about-button span { width: 25px; height: 25px; }
+    .dx-about-hero-word { display: none; }
+
+    .dx-about-story,
+    .dx-about-values,
+    .dx-about-voices { padding-top: 62px; padding-bottom: 70px; }
+    .dx-about-section-head { margin-bottom: 30px; gap: 14px; }
+    .dx-about-section-head h2,
+    .dx-about-values-head h2,
+    .dx-about-cta h2 { font-size: 39px !important; }
+    .dx-about-section-head > p { font-size: 12.5px; }
+
+    .dx-about-story-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto 220px; gap: 10px; }
+    .dx-about-story-copy { grid-column: 1 / 3; grid-row: auto; padding: 27px 23px 30px; border-radius: 23px; }
+    .dx-about-index { margin-bottom: 20px; }
+    .dx-about-story-copy h3 { font-size: 34px !important; }
+    .dx-about-story-copy p { font-size: 12px; line-height: 1.55 !important; }
+    .dx-about-story-copy > strong { margin-top: 21px; font-size: 22px; }
+    .dx-about-story-image { grid-column: 1; grid-row: 2; border-radius: 20px; }
+    .dx-about-story-image figcaption { left: 14px; bottom: 13px; font-size: 17px; }
+    .dx-about-story-note { grid-column: 2; grid-row: 2; padding: 20px 17px; border-radius: 20px; }
+    .dx-about-story-note p { font-size: 20px; }
+    .dx-about-sprig { right: -120px; width: 220px; }
+
+    .dx-about-values-head { margin-bottom: 30px; }
+    .dx-about-values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: 10px; }
+    .dx-about-value-comfort,
+    .dx-about-value-eco { grid-column: 1 / 3; min-height: 150px; }
+    .dx-about-value-sustainable,
+    .dx-about-value-leakproof { grid-column: span 1; min-height: 220px; grid-template-columns: 1fr; align-content: start; gap: 12px; }
+    .dx-about-value { padding: 20px 17px; border-radius: 21px; }
+    .dx-about-value-icon,
+    .dx-about-value-comfort .dx-about-value-icon,
+    .dx-about-value-sustainable .dx-about-value-icon { width: 58px; height: 58px; margin: 0; border-radius: 17px; }
+    .dx-about-value h3,
+    .dx-about-value-comfort h3 { font-size: 25px !important; }
+    .dx-about-value p { font-size: 10.5px; line-height: 1.4 !important; }
+    .dx-about-value-kicker { font-size: 7.5px; }
+    .dx-about-value-number { top: 12px; right: 13px; font-size: 15px; }
+
+    .dx-about-manifesto { padding: 76px 0 82px; }
+    .dx-about-manifesto blockquote { font-size: 34px; }
+    .dx-about-manifesto p { font-size: 11px; line-height: 1.5; }
+    .dx-about-manifesto-flower { right: -90px; width: 220px; }
+
+    .dx-about-voices-head { margin-bottom: 27px; }
+    .dx-about-voices-grid { display: flex; gap: 12px; margin-right: -15px; margin-left: -15px; padding: 2px 15px 18px; overflow-x: auto; scroll-snap-type: x mandatory; }
+    .dx-about-voice,
+    .dx-about-voice:last-child { flex: 0 0 82vw; width: auto; min-height: 255px; padding: 27px 23px 23px; scroll-snap-align: center; }
+    .dx-about-voice > p { font-size: 27px; }
+
+    .dx-about-cta { padding: 65px 0 70px; }
+    .dx-about-cta .container { align-items: flex-start; flex-direction: column; gap: 27px; }
+    .dx-about-cta-art { right: -110px; top: -35px; width: 260px; height: 260px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dx-about-sprig,
+    .dx-about-manifesto-flower { animation: none; }
+    .dx-about-button,
+    .dx-about-value { transition: none; }
+}

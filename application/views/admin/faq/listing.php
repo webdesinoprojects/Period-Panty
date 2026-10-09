@@ -1,77 +1,61 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> FAQ'S </title>
-    <?php $this->load->view('admin/layout/head_css'); ?>
-    <link rel="stylesheet" href="<?php echo base_url('assets/admin/plugins/datatables/dataTables.bootstrap.css'); ?>"> 
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Homepage FAQs</title>
+  <?php $this->load->view("admin/layout/head_css"); ?>
+  <link rel="stylesheet" href="<?php echo base_url("assets/admin/plugins/datatables/dataTables.bootstrap.css"); ?>">
 </head>
-
 <body class="hold-transition skin-blue sidebar-mini">
-    <div class="wrapper">
-        <?php $this->load->view('admin/layout/header'); ?>
-        <!-- Left side column. contains the logo and sidebar -->
-        <?php $this->load->view('admin/layout/sidebar'); ?>
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <div class="box-footer">
-                <a href="add">
-                    <button type="submit" class="btn btn-primary">Add Frequently Asked Questions </button>
-                </a>
-            </div>
-            <section class="content-header">
-                <h1>All Frequently Asked Questions  </h1>
-                <ol class="breadcrumb">
-                    <li><a href="<?php echo base_url('admin/dashboard'); ?>"><i class="fa fa-dashboard"></i> Home</a>
-                    </li>
-                    <li class="active">All Frequently Asked Questions  </li>
-                </ol>
-            </section>
-            <!-- Main content -->
-            <section class="content">
-                <!-- Info boxes -->
-                <div class="box">
-                    <div class="box-body">
-                        <?php echo $this->session->flashdata('msg'); ?>
-                        <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>SNo.</th>
-                                    <th  data-orderable="false" >Title</th>
-                                    <th  data-orderable="false" >Status</th>
-                                    <th  data-orderable="false" >Action</th>
-                                </tr>
-                            </thead>
-                            <?php if(count($RESULT)>0){ ?>
-                            <tbody>
-                                <?php $no=0; foreach($RESULT as $record){ $no++; ?>
-                                <tr>
-                                    <td width="7%">
-                                        <?php echo $no; ?>
-                                    </td>
-                                    <td>
-                                        <?php echo $record->title; ?></td>
-                                    <td width="15%">
-                                        <?php if($record->status==1){ ?> <span class="label label-success">Active</span>
-                                        <?php }else{ ?> <span class="label label-danger">Inactive</span>
-                                        <?php }?> </td>
-                                    <td width="15%"> <a href="<?php echo base_url('admin/faq/edit/'.$record->id); ?>" class="btn  btn-success btn-xs"><i class="fa fa-fw fa-edit"></i>Edit</a> </td>
-                                </tr>
-                                <?php } ?> </tbody>
-                            <?php } ?> </table>
-                    </div>
-                </div>
-            </section>
-            <!-- /.content -->
+<div class="wrapper">
+  <?php $this->load->view("admin/layout/header"); ?>
+  <?php $this->load->view("admin/layout/sidebar"); ?>
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>Homepage FAQs</h1>
+      <p>Only active entries are shown on the homepage. Lower display-order numbers appear first.</p>
+      <a href="<?php echo base_url("admin/faq/add"); ?>" class="btn btn-primary">Add FAQ</a>
+      <a href="<?php echo base_url(); ?>" class="btn btn-default" target="_blank" rel="noopener">View homepage</a>
+    </section>
+    <section class="content">
+      <div class="box"><div class="box-body">
+        <?php echo $this->session->flashdata("msg"); ?>
+        <div class="table-responsive">
+          <table id="example1" class="table table-bordered table-striped">
+            <thead><tr><th>ID</th><th>Question</th><th>Display order</th><th>Status</th><th data-orderable="false">Actions</th></tr></thead>
+            <tbody>
+              <?php foreach ($RESULT as $record) { ?>
+              <tr>
+                <td><?php echo (int) $record->id; ?></td>
+                <td><?php echo html_escape($record->title); ?></td>
+                <td><?php echo (int) $record->sort_order; ?></td>
+                <td><span class="label <?php echo $record->status == "1" ? "label-success" : "label-default"; ?>"><?php echo $record->status == "1" ? "Active" : "Inactive"; ?></span></td>
+                <td>
+                  <a href="<?php echo base_url("admin/faq/edit/" . $record->id); ?>" class="btn btn-success btn-xs">Edit</a>
+                  <form method="post" action="<?php echo base_url("admin/faq/delete/" . $record->id); ?>" style="display:inline-block" onsubmit="return confirm('Delete this FAQ?');">
+                    <input type="hidden" name="home_content_token" value="<?php echo html_escape($this->home_content_model->form_token()); ?>">
+                    <?php if ($this->config->item("csrf_protection")) { ?>
+                    <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+                    <?php } ?>
+                    <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              <?php } ?>
+            </tbody>
+          </table>
         </div>
-        <!-- /.content-wrapper -->
-        <?php $this->load->view('admin/layout/footer'); ?> </div>
-    <!-- ./wrapper -->
-    <?php $this->load->view('admin/layout/footer_js'); ?>
-  <?php $this->load->view('admin/layout/data-table-js'); ?>
+      </div></div>
+    </section>
+  </div>
+  <?php $this->load->view("admin/layout/footer"); ?>
+</div>
+<?php $this->load->view("admin/layout/footer_js"); ?>
+<script src="<?php echo base_url("assets/admin/plugins/datatables/jquery.dataTables.min.js"); ?>"></script>
+<script src="<?php echo base_url("assets/admin/plugins/datatables/dataTables.bootstrap.min.js"); ?>"></script>
+<script>
+$(function () { $("#example1").DataTable({order: [[2, "asc"], [0, "asc"]]}); });
+</script>
 </body>
-
 </html>

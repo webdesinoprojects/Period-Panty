@@ -130,6 +130,20 @@
                                         <input type="color" class="form-control" name="color" placeholder="Enter color" value="<?php echo $RESULT[0]->color;?>">
                                     </div>
                                     <div class="form-group col-sm-4">
+                                        <!-- Hero card, Upper sliders only. See the note in add.php. -->
+                                        <label for="card_product_id">Hero Card Product <small>(Upper only)</small></label>
+                                        <select class="form-control" name="card_product_id">
+                                            <option value="">Automatic &mdash; first bestseller</option>
+                                            <?php foreach ($this->product_model->get_all_product() as $dx_p) { ?>
+                                            <option value="<?php echo $dx_p->id; ?>"<?php echo ($RESULT[0]->card_product_id == $dx_p->id) ? ' selected' : ''; ?>><?php echo $dx_p->title; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label for="card_label">Hero Card Label</label>
+                                        <input type="text" class="form-control" name="card_label" placeholder="e.g. New Collection" value="<?php echo $RESULT[0]->card_label; ?>">
+                                    </div>
+                                    <div class="form-group col-sm-4">
                                         <label for="exampleInputPassword1">Status</label>
                                         <select class="form-control" name="status" required>
                                             <option value='1' <?php echo($RESULT[0]->status==1)?'selected':''; ?> >Active</option>

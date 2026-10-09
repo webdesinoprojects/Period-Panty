@@ -9,7 +9,7 @@ class Faq_model extends CI_Model
 
 	public function get_all_faq()
 	{
-		$this->db->where('status',1);
+		$this->db->order_by("sort_order", "asc")->order_by("id", "asc");
 		return $this->db->get('tbl_faq')->result();
 	}
 	public function get_faq_by_id($id)
@@ -26,7 +26,8 @@ class Faq_model extends CI_Model
      
      	public function get_all_active_faq()
 	{
-		$this->db->where('status',1);
+		$this->db->where("status", "1");
+		$this->db->order_by("sort_order", "asc")->order_by("id", "asc");
 		
 		return $this->db->get('tbl_faq')->result();
 
@@ -35,7 +36,7 @@ class Faq_model extends CI_Model
 	function delete_faq($id)
 	{
 		$this->db->where('id',$id);
-		$this->db->delete('$id');
+		$this->db->delete($this->table);
 	}
 
 

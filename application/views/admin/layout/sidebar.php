@@ -32,6 +32,8 @@
                 <ul class="treeview-menu">
                     <li><a href="<?php echo base_url('admin/page/listing'); ?>"><i class="fa fa-angle-right"></i>Page </a> </li>
                     <li><a href="<?php echo base_url('admin/slider/listing'); ?>"><i class="fa fa-angle-right"></i>Sliders</a> </li>
+                    <li><a href="<?php echo base_url("admin/faq/listing"); ?>"><i class="fa fa-angle-right"></i>Homepage FAQs</a></li>
+                    <li><a href="<?php echo base_url("admin/testimonials/listing"); ?>"><i class="fa fa-angle-right"></i>Customer Review Rail</a></li>
                 </ul>
             </li>
             <li class="treeview">
