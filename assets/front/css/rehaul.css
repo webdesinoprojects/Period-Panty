@@ -7059,16 +7059,19 @@ a.dx-sf-card:hover {
 .dx-about-hero {
     position: relative;
     display: flex;
-    /* The artwork is 1919x600. At 760px tall, cover had to scale it up 27%,
-       which is what made it look stretched; 660 keeps the upscale under 10%.
-       The top padding is the fixed header's own height - the image now runs
-       underneath it rather than starting below it. */
-    min-height: 660px;
+    /* Full viewport, with a floor so a short laptop window still has room for
+       the copy card. The top padding is the fixed header's own height - the
+       image runs underneath it rather than starting below it.
+
+       The artwork is only 1919x600, so at this height cover enlarges it by
+       roughly half. That softness is the source file, not the CSS; a 1920x1080
+       original would render at native size. */
+    min-height: 100vh;
     padding-top: 132px;
     align-items: center;
     overflow: hidden;
     padding-bottom: 78px;
-    background-position: center;
+    background-position: right center;
     background-repeat: no-repeat;
     background-size: cover;
     isolation: isolate;
