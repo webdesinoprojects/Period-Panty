@@ -870,7 +870,7 @@ section.slider, .slider { margin-top: 0 !important; }
    stutter and vanish while scrolling. Letting CSS own the positioning removes
    the loop entirely. The .sticky class JS still toggles is used only to change
    the bar's appearance once docked. */
-body:has(section.slider, .dx-hero) .main-header {
+body:has(section.slider, .dx-hero, .dx-about-hero) .main-header {
     position: fixed !important;
     top: 0; left: 0; right: 0;
     width: 100% !important;
@@ -878,21 +878,21 @@ body:has(section.slider, .dx-hero) .main-header {
     background: transparent !important;
 }
 
-body:has(section.slider, .dx-hero) .main-header .sticky-area-wrap {
+body:has(section.slider, .dx-hero, .dx-about-hero) .main-header .sticky-area-wrap {
     background: transparent !important;
     padding-bottom: 0 !important;
 }
 
-body:has(section.slider, .dx-hero) .main-header .sticky-area {
+body:has(section.slider, .dx-hero, .dx-about-hero) .main-header .sticky-area {
     margin-top: 18px !important;
 }
 
 /* The hero starts at the top of the document. */
-body:has(section.slider, .dx-hero) section.slider { margin-top: 0 !important; }
+body:has(section.slider, .dx-hero, .dx-about-hero) section.slider { margin-top: 0 !important; }
 
 /* Once the header sticks on scroll it must become fixed and opaque again,
    otherwise it would scroll away with the hero. */
-body:has(section.slider, .dx-hero) .main-header .sticky-area-wrap.sticky {
+body:has(section.slider, .dx-hero, .dx-about-hero) .main-header .sticky-area-wrap.sticky {
     position: fixed !important;
     top: 0; left: 0; right: 0;
     width: 100% !important;
@@ -901,7 +901,7 @@ body:has(section.slider, .dx-hero) .main-header .sticky-area-wrap.sticky {
 
 /* Pages with no hero keep a normal header; just drop the extra gap now that
    the promo strip is gone. */
-body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area-wrap {
+body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header .sticky-area-wrap {
     padding-top: 10px !important;
     padding-bottom: 14px !important;
 }
@@ -1088,7 +1088,7 @@ section.slider .bg-img-cover-center {
 
 /* The wrap keeps the page from jumping when the bar leaves the flow. On hero
    pages the header is already out of flow, so no reserve is needed there. */
-body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area-wrap.sticky { min-height: 76px; }
+body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header .sticky-area-wrap.sticky { min-height: 76px; }
 
 /* ==========================================================================
    21. Stop the header spilling past the viewport
@@ -2970,7 +2970,7 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
 /* ==========================================================================
    44. Sticky header on inner pages
    --------------------------------------------------------------------------
-   Section 17 fixed the header only under `body:has(section.slider, .dx-hero)`, which is
+   Section 17 fixed the header only under `body:has(section.slider, .dx-hero, .dx-about-hero)`, which is
    the home page. Every other page kept it in normal flow, so it scrolled away
    on /shop, on product detail and on the content pages.
 
@@ -2995,7 +2995,7 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
    own children. Verified failing at all nine widths before settling on fixed.
    ========================================================================== */
 
-body:not(:has(section.slider, .dx-hero)) .main-header {
+body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header {
     position: fixed !important;
     top: 0;
     left: 0;
@@ -3010,7 +3010,7 @@ body:not(:has(section.slider, .dx-hero)) .main-header {
    against them. Inner pages therefore get a near-solid plum - same colour, so
    the bar still matches the home page, but it stops competing with whatever
    happens to be sliding underneath it. */
-body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area::before {
+body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header .sticky-area::before {
     background: rgba(67, 48, 58, .94) !important;
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     backdrop-filter: blur(20px) saturate(140%);
@@ -3023,16 +3023,16 @@ body:not(:has(section.slider, .dx-hero)) .main-header .sticky-area::before {
    page. Pushing the first section down instead lets THAT section's background
    run up behind the bar, and the seam disappears. */
 
-body:not(:has(section.slider, .dx-hero)) .main-header + * {
+body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header + * {
     padding-top: 130px !important;
 }
 
 @media (max-width: 1199.98px) {
-    body:not(:has(section.slider, .dx-hero)) .main-header + * { padding-top: 140px !important; }
+    body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header + * { padding-top: 140px !important; }
 }
 
 @media (max-width: 767.98px) {
-    body:not(:has(section.slider, .dx-hero)) .main-header + * { padding-top: 131px !important; }
+    body:not(:has(section.slider, .dx-hero, .dx-about-hero)) .main-header + * { padding-top: 131px !important; }
 }
 
 /* ==========================================================================
@@ -7059,7 +7059,12 @@ a.dx-sf-card:hover {
 .dx-about-hero {
     position: relative;
     display: flex;
-    min-height: 760px;
+    /* The artwork is 1919x600. At 760px tall, cover had to scale it up 27%,
+       which is what made it look stretched; 660 keeps the upscale under 10%.
+       The top padding is the fixed header's own height - the image now runs
+       underneath it rather than starting below it. */
+    min-height: 660px;
+    padding-top: 132px;
     align-items: center;
     overflow: hidden;
     padding-bottom: 78px;
