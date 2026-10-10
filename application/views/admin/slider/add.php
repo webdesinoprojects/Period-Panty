@@ -54,6 +54,11 @@
                                         <textarea class="form-control" name="description" placeholder="Enter description"></textarea>
                                     </div>
 
+                                    <div class="form-group col-sm-12">
+                                        <label for="hero_note">Hero right-side tagline (Upper slides)</label>
+                                        <textarea id="hero_note" class="form-control" name="hero_note" rows="3"><?php echo html_escape(set_value("hero_note", "Your period.\nYour comfort.\nYour choice.")); ?></textarea>
+                                        <p class="help-block">Use a new line or | for each line. Leave empty to hide the tagline. Title, Description, Button Title and Button Link control the other hero text.</p>
+                                    </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Button Title</label>
                                         <input type="text" class="form-control" name="button_title" placeholder="Enter Button Title" value="">
@@ -61,6 +66,7 @@
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Button Link</label>
                                         <input type="text" class="form-control" name="button_link" placeholder="Enter Button Link" value="">
+                                        <p class="help-block">Use a site path such as shop or a complete https:// URL.</p>
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <label for="exampleInputEmail1">Color Code</label>

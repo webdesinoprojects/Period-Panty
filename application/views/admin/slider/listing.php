@@ -55,7 +55,7 @@
                                     <td>
                                         <?php echo $record->title; ?></td>
                                     <td>
-                                        <?php if(!empty($record->image)){ ?> <img src="<?php echo base_url('uploads/slider/').$record->image; ?>" width="150px">
+                                        <?php if(!empty($record->image)){ ?> <img src="<?php echo html_escape($this->slider_model->get_image_url($record->image)); ?>" width="150px">
                                         <?php } ?>
                                     </td>
                                      <td>

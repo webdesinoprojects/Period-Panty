@@ -24,6 +24,7 @@
      <?php $this->load->view('front/layout/header'); ?>
 <?php
 // Upper slider rows remain fully managed through CMS > Sliders.
+$this->slider_model->initialize_hero_fields();
 $slider = $this->slider_model->get_all_active_slider();
 $dx_slides = array();
 foreach ($slider as $dx_s) {

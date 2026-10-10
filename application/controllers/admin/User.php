@@ -30,6 +30,8 @@ class User extends CI_Controller
 	
 	public function all_mail()
 	{
+	    $this->load->model("contact_model");
+	    $this->contact_model->initialize();
 	    if((isset($_POST['submit']) ) && (isset($_POST['mail_id'])  )){
 	        $user_array = $_POST['mail_id'] ; 
 	        foreach($user_array as $key=>$value){

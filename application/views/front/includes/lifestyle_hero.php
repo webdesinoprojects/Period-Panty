@@ -6,11 +6,19 @@
             $hero_heading = $hero_index === 0 ? "h1" : "h2";
             $hero_title = str_replace("|", "\n", $hero_slide->title);
             $hero_button = !empty($hero_slide->button_title) ? $hero_slide->button_title : "Shop Now";
-            $hero_href = !empty($hero_slide->button_link) ? base_url($hero_slide->button_link) : base_url("shop");
+            $hero_link = trim((string) $hero_slide->button_link);
+            if (preg_match("~^https?://~i", $hero_link) && filter_var($hero_link, FILTER_VALIDATE_URL)) {
+                $hero_href = $hero_link;
+            } elseif ($hero_link !== "" && !preg_match("~^(?:[a-z][a-z0-9+.-]*:|//)~i", $hero_link)) {
+                $hero_href = base_url($hero_link);
+            } else {
+                $hero_href = base_url("shop");
+            }
+            $hero_note = isset($hero_slide->hero_note) ? $hero_slide->hero_note : "Your period.\nYour comfort.\nYour choice.";
         ?>
         <div class="dx-hero-slide">
             <img class="dx-lifestyle-photo"
-                 src="<?php echo html_escape(base_url("uploads/slider/" . $hero_slide->image)); ?>"
+                 src="<?php echo html_escape($this->slider_model->get_image_url($hero_slide->image)); ?>"
                  alt="" width="1860" height="845"
                  <?php if ($hero_index === 0) { ?>fetchpriority="high"<?php } else { ?>loading="lazy"<?php } ?>>
             <div class="dx-lifestyle-content">
@@ -24,7 +32,9 @@
                     <?php } ?>
                     <a class="dx-lifestyle-button" href="<?php echo html_escape($hero_href); ?>"><?php echo html_escape($hero_button); ?><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15m-5-5 5 5-5 5"/></svg></a>
                 </div>
-                <p class="dx-lifestyle-note">Your period.<br>Your comfort.<br>Your choice.</p>
+                <?php if (trim($hero_note) !== "") { ?>
+                <p class="dx-lifestyle-note"><?php echo nl2br(html_escape(str_replace("|", "\n", $hero_note))); ?></p>
+                <?php } ?>
             </div>
         </div>
         <?php } ?>

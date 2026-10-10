@@ -15,6 +15,7 @@ class Slider extends CI_Controller
 		$this->load->library('upload');
 		 $this->load->library('image_lib');
 		$this->load->model('slider_model');
+		$this->slider_model->initialize_hero_fields();
 	}
 	
 	public function listing()

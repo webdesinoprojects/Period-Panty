@@ -46,6 +46,7 @@
                                     <th data-orderable="false" >Mobile</th>
                                     <th data-orderable="false" >Message</th>
                                     <th data-orderable="false" > Date</th>
+                                    <th data-orderable="false">Email notification</th>
                                     <th data-orderable="false"></th>
                                 </tr>
                             </thead>
@@ -60,18 +61,23 @@
                                         <?php echo $no; ?>
                                     </td>
                                     <td>
-                                        <?php echo $record->subject ?></td> 
+                                        <?php echo html_escape($record->subject); ?></td>
                                     <td>
-                                        <?php echo $record->email ?></td>
+                                        <?php echo html_escape($record->email); ?></td>
                                     <td>
-                                        <?php echo ucwords($record->name) ?></td>
+                                        <?php echo html_escape(ucwords($record->name)); ?></td>
                                     <td>
-                                        <?php echo $record->mobile; ?></td> 
+                                        <?php echo html_escape($record->mobile); ?></td>
                                      
                                     <td>
-                                        <?php echo $record->message; ?></td>
+                                        <?php echo nl2br(html_escape($record->message)); ?></td>
                                     <td>
                                         <?php echo date('d/M/Y', strtotime($record->create_date)); ?></td>
+                                    <td><?php
+                                        $delivery = isset($record->delivery_status) ? $record->delivery_status : "";
+                                        $delivery_labels = array("accepted" => "Accepted by mail service", "failed" => "Email failed; enquiry saved", "pending" => "Pending notification");
+                                        echo html_escape(isset($delivery_labels[$delivery]) ? $delivery_labels[$delivery] : "Not tracked (older enquiry)");
+                                    ?></td>
                                     <td>
                                         
                                         	<a href="<?php echo base_url('admin/user/delete_mail/'.$record->id); ?>" onclick="return confirm('Are you sure you want to delete this item?');" class="btn btn-danger btn-xs"><i class="fa fa-fw fa-trash"></i></a>
