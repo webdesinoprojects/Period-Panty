@@ -23,146 +23,17 @@
 <body>
      <?php $this->load->view('front/layout/header'); ?>
 <?php
-/**
- * Editorial hero carousel.
- *
- * Slides are the Upper rows of tbl_slider, so CMS > Sliders still owns the
- * content: image, headline, strapline, button text and link. The headline is
- * split on a pipe - "MAKE YOUR | OWN RULES" - because the composition needs
- * two halves to sit either side of the figure.
- *
- * The image MUST be a transparent PNG. A normal JPEG is a rectangle and would
- * cover the headline, which collapses the whole layout.
- *
- * The small card follows the first bestseller rather than a pinned filename,
- * so it does not go stale. Its label, the ghost word and "Discover Best" are
- * fixed - tbl_slider has nowhere to put them.
- */
+// Upper slider rows remain fully managed through CMS > Sliders.
 $slider = $this->slider_model->get_all_active_slider();
-
 $dx_slides = array();
 foreach ($slider as $dx_s) {
-    if ($dx_s->type === 'Upper') { $dx_slides[] = $dx_s; }
+    if ($dx_s->type === "Upper") { $dx_slides[] = $dx_s; }
 }
-
-
+$this->load->view("front/includes/lifestyle_hero", array(
+    "hero_slides" => $dx_slides,
+    "hero_logo" => !empty($link[0]->logo) ? $link[0]->logo : ""
+));
 ?>
-        <section class="dx-hero">
-
-          <div class="dx-hero-track slick-slider" data-slick-options='{"slidesToShow":1,"infinite":true,"autoplay":true,"autoplaySpeed":6000,"dots":true,"arrows":false,"fade":true,"cssEase":"ease-in-out","speed":900,"pauseOnHover":true}'>
-          <?php foreach ($dx_slides as $dx_s) {
-                $dx_bits = explode('|', $dx_s->title);
-                $dx_left  = trim($dx_bits[0]);
-                $dx_right = isset($dx_bits[1]) ? trim($dx_bits[1]) : '';
-
-                /* Card product: the slide's own choice, else the first bestseller,
-                   so a slide left on Automatic still shows something current. */
-                $dx_cp = null;
-                if (!empty($dx_s->card_product_id)) {
-                    $dx_found = $this->product_model->get_product_by_id($dx_s->card_product_id);
-                    if ($dx_found) { $dx_cp = $dx_found[0]; }
-                }
-                if (!$dx_cp && isset($PRODUCTS[0])) { $dx_cp = $PRODUCTS[0]; }
-
-                $dx_card_img = null;
-                $dx_card_url = base_url('shop');
-                if ($dx_cp) {
-                    $dx_imgs = $this->product_model->select_product_images($dx_cp->id);
-                    if ($dx_imgs) { $dx_card_img = base_url('uploads/product/' . $dx_imgs[0]->image); }
-                    $dx_card_url = $this->product_model->get_product_url($dx_cp->id);
-                }
-                $dx_card_label = !empty($dx_s->card_label) ? $dx_s->card_label : 'New Collection';
-          ?>
-            <div class="dx-hero-slide">
-              <div class="dx-hero-inner">
-
-                <span class="dx-hero-ghost" aria-hidden="true">Period Panty</span>
-
-                <h2 class="dx-hero-title">
-                  <span class="dx-hero-l"><?php echo $dx_left; ?></span>
-                  <span class="dx-hero-r"><?php echo $dx_right; ?></span>
-                </h2>
-
-                <img class="dx-hero-figure"
-                     src="<?php echo base_url('uploads/slider/' . $dx_s->image); ?>"
-                     alt="" aria-hidden="true">
-
-                <?php if ($dx_card_img) { ?>
-                <a class="dx-hero-card" href="<?php echo $dx_card_url; ?>">
-                  <span class="dx-hero-card-img" style="background-image:url('<?php echo $dx_card_img; ?>')"></span>
-                  <span class="dx-hero-card-eyebrow"><?php echo $dx_card_label; ?></span>
-                  <span class="dx-hero-card-title"><?php echo $dx_cp->title; ?></span>
-                  <span class="dx-hero-card-foot">
-                    <span>Shop Now</span>
-                    <span class="dx-hero-card-arrow" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <path d="M7 17 17 7M9 7h8v8"/>
-                      </svg>
-                    </span>
-                  </span>
-                </a>
-                <?php } ?>
-
-                <p class="dx-hero-desc"><?php echo $dx_s->description; ?></p>
-
-                <div class="dx-hero-proof">
-                  <span class="dx-hero-layers" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                  <span class="dx-hero-proof-text">
-                    <strong>4&#8209;Layer</strong>
-                    Protection
-                  </span>
-                </div>
-
-                <div class="dx-hero-actions">
-                  <span class="dx-hero-kicker">Discover Best</span>
-                  <a class="dx-hero-btn" href="<?php echo $dx_s->button_link ? base_url($dx_s->button_link) : base_url('shop'); ?>">
-                    <?php echo $dx_s->button_title ? $dx_s->button_title : 'Shop Now'; ?>
-                  </a>
-                </div>
-
-              </div>
-            </div>
-          <?php } ?>
-          </div>
-
-          <a class="dx-hero-scroll" href="#dx-next" aria-label="Scroll to content">
-            <span class="dx-hero-scroll-track"><span class="dx-hero-scroll-dot"></span></span>
-            <span class="dx-hero-scroll-label">Scroll</span>
-          </a>
-
-
-          <script>
-          /* The headline is two halves either side of the figure, and the copy
-             is admin-editable, so a long title would run past the edge and get
-             clipped - which is exactly what happened with "HEALTHIER YOU".
-             This shrinks the type on any slide whose longer half does not fit
-             its column. It only applies to the grid layout; below 992px the
-             headline is a centred flex line and wraps normally. */
-          (function () {
-            function fit() {
-              document.querySelectorAll('.dx-hero-title').forEach(function (t) {
-                var l = t.querySelector('.dx-hero-l'),
-                    r = t.querySelector('.dx-hero-r');
-                if (!l || !r) { return; }
-                t.style.fontSize = '';
-                var cs = getComputedStyle(t);
-                if (cs.display !== 'grid') { return; }
-                var cols = cs.gridTemplateColumns.split(' ');
-                var gap  = parseFloat(cols[1]) || 280;
-                var col  = (t.clientWidth - gap) / 2;
-                if (col <= 0) { return; }
-                var widest = Math.max(l.scrollWidth, r.scrollWidth);
-                if (widest > col) {
-                  t.style.fontSize = Math.floor(parseFloat(cs.fontSize) * col / widest) + 'px';
-                }
-              });
-            }
-            document.addEventListener('DOMContentLoaded', fit);
-            window.addEventListener('load', fit);
-            window.addEventListener('resize', fit);
-          })();
-          </script>
-        </section>
         <?php
         /* "Made for different needs" row.
            Each card is a Footer-type row in tbl_slider, so CMS > Sliders owns
@@ -240,9 +111,18 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
 
                 <?php if ($dx_t['kind'] === 'banner') { ?>
                 <a class="dx-bento-card dx-bento-banner"
-                   href="<?php echo $dx_r->button_link ? $dx_r->button_link : base_url('shop'); ?>">
+                   href="<?php echo html_escape(base_url($dx_r->button_link ? $dx_r->button_link : "shop")); ?>">
                   <span class="dx-bento-banner-img"
                         style="background-image:url('<?php echo base_url('uploads/slider/' . $dx_r->image); ?>')"></span>
+                  <?php if (!empty($dx_r->title)) { ?>
+                  <span class="dx-bento-banner-copy">
+                    <span class="dx-bento-banner-title"><?php echo nl2br(html_escape(str_replace("|", "\n", $dx_r->title))); ?></span>
+                    <?php if (!empty($dx_r->description)) { ?>
+                    <span class="dx-bento-banner-sub"><?php echo html_escape($dx_r->description); ?></span>
+                    <?php } ?>
+                    <span class="dx-bento-banner-link"><?php echo html_escape(!empty($dx_r->button_title) ? $dx_r->button_title : "Explore"); ?> <span aria-hidden="true">→</span></span>
+                  </span>
+                  <?php } ?>
                 </a>
 
                 <?php } else { ?>
@@ -336,7 +216,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
 
               <div class="dx-sf-figure">
                 <span class="dx-sf-badge">Max Absorb</span>
-                <img src="<?php echo base_url('assets/front/media/dx-stressfree-model.png'); ?>" alt="" aria-hidden="true">
+                <img class="dx-sf-product-photo" src="<?php echo base_url("assets/front/media/dx-facefree-stressfree-v1.jpg"); ?>" alt="Red period briefs on soft cream linen" loading="lazy">
                 <span class="dx-sf-bot" aria-hidden="true"></span>
                 <span class="dx-sf-frame" aria-hidden="true"></span>
                 <a class="dx-sf-shop" href="<?php echo base_url('shop'); ?>">
@@ -384,7 +264,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                     <div class="col-12 col-lg-6">
                         <?php $first  =  $this->category_model->get_category_by_id(4) ;   ?>
                         <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                        <img src="assets/front/images/3.jpg" alt="<?php echo $first[0]->title; ?>" class="card-img">
+                        <img src="<?php echo base_url("assets/front/media/dx-facefree-shorts-v1.jpg"); ?>" alt="<?php echo html_escape($first[0]->title); ?>" class="card-img dx-style-product-photo" loading="lazy">
                             <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
                                 <div>
                                   <a href="<?php echo base_url().$first[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $first[0]->title; ?> </a>

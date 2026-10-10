@@ -3,25 +3,22 @@
 -- escaping is the server's own. Safe to re-run.
 --
 -- The FAQ and customer-review tables are deliberately absent: they migrate
--- themselves on first page load, and production's are empty so the defaults
--- import automatically.
+-- themselves on first page load.
 
 -- 1. Hero card columns (MariaDB 10.0+; production runs 10.5).
+--    Retained as legacy: the lifestyle hero does not render a product card.
 ALTER TABLE tbl_slider
   ADD COLUMN IF NOT EXISTS card_product_id INT(11) NULL DEFAULT NULL AFTER color,
   ADD COLUMN IF NOT EXISTS card_label VARCHAR(100) NULL DEFAULT NULL AFTER card_product_id;
 
--- 2. Hero slides (Upper) and the two bento banners (Middle).
---    Without these the hero breaks: the live rows still reference rectangular
---    JPEGs, which would cover the headline.
-UPDATE tbl_slider SET title='MAKE YOUR | OWN RULES', description='Leak-proof period underwear designed for comfort, care and confidence', button_title='Explore Collection', button_link='shop', image='dx-hero-1.png', status='1', type='Upper', card_product_id=NULL, card_label='New Collection' WHERE id=1;
-UPDATE tbl_slider SET title='EMPOWERING | CONFIDENCE', description='No rashes. Maintains pH balance. Soft and breathable, every single day', button_title='Shop Now', button_link='shop', image='dx-hero-2.png', status='1', type='Upper', card_product_id=NULL, card_label='New Collection' WHERE id=2;
-UPDATE tbl_slider SET title='COMFORT FOR | EVERY STAGE', description='Reusable and long lasting. Better for you, and better for the environment', button_title='Discover Dexte', button_link='shop', image='dx-hero-3.png', status='1', type='Upper', card_product_id=NULL, card_label='New Collection' WHERE id=3;
-UPDATE tbl_slider SET title='middle Firts', description='', button_title='', button_link='', image='1683784781_collection.jpg', status='1', type='Middle', card_product_id=NULL, card_label='' WHERE id=4;
-UPDATE tbl_slider SET title='Second', description='', button_title='', button_link='', image='1683784794_aboutt.jpg', status='1', type='Middle', card_product_id=NULL, card_label='' WHERE id=5;
+-- 2. Hero slides (Upper) and the two feature banners (Middle).
+UPDATE tbl_slider SET title='Period Panties|for a stronger,|healthier you.', description='Comfort. Protection. Confidence.', button_title='Shop Now', button_link='shop', image='dx-lifestyle-hero-v1-1.jpg', status='1', type='Upper' WHERE id=1;
+UPDATE tbl_slider SET title='Comfort that|moves with you.', description='Soft, reusable period comfort. Made for your kind of day.', button_title='Shop Now', button_link='shop', image='dx-lifestyle-hero-v1-2.jpg', status='1', type='Upper' WHERE id=2;
+UPDATE tbl_slider SET title='Your everyday,|made softer.', description='Thoughtfully designed for comfort, confidence and a little more you-time.', button_title='Shop Now', button_link='shop', image='dx-lifestyle-hero-v1-3.jpg', status='1', type='Upper' WHERE id=3;
+UPDATE tbl_slider SET title='Latest|Collection', description='Starting at Rs. 449/-', button_title='Shop Now', button_link='', image='dx-facefree-collection-v1.jpg', status='1', type='Middle' WHERE id=4;
+UPDATE tbl_slider SET title='About|DEXTE Panties', description='Comfort, thoughtfully made.', button_title='About Us', button_link='about-us', image='dx-facefree-about-v1.jpg', status='1', type='Middle' WHERE id=5;
 
--- 3. The seven Made-For cards. Footer was an unused slider type, so clearing
---    it cannot touch existing content.
+-- 3. The seven Made-For cards. Footer was an unused slider type.
 DELETE FROM tbl_slider WHERE type='Footer';
 INSERT INTO tbl_slider (title,description,button_title,button_link,image,status,create_date,type,color) VALUES ('Teenagers','First periods and growing years','','shop','dx-made-1.jpg','1',NOW(),'Footer','');
 INSERT INTO tbl_slider (title,description,button_title,button_link,image,status,create_date,type,color) VALUES ('Working Women','All-day comfort and confidence','','shop','dx-made-2.jpg','1',NOW(),'Footer','');
@@ -31,7 +28,7 @@ INSERT INTO tbl_slider (title,description,button_title,button_link,image,status,
 INSERT INTO tbl_slider (title,description,button_title,button_link,image,status,create_date,type,color) VALUES ('Urine Incontinence','Stay active, stay confident','','shop','dx-made-6.jpg','1',NOW(),'Footer','');
 INSERT INTO tbl_slider (title,description,button_title,button_link,image,status,create_date,type,color) VALUES ('Sports & Activities','Freedom to move','','shop','dx-made-7.jpg','1',NOW(),'Footer','');
 
--- 4. Category artwork, copy and home-display flags (bento + framed grid).
+-- 4. Category artwork, copy and home-display flags.
 UPDATE tbl_categories SET image='dx-cat-1-v2.png', description='Classic cut, everyday comfort', home_display='1', status='1' WHERE id=1;
 UPDATE tbl_categories SET image='dx-cat-2-v2.png', description='Full coverage with tummy support', home_display='1', status='1' WHERE id=2;
 UPDATE tbl_categories SET image='dx-cat-3-v2.png', description='Balanced rise for all-day wear', home_display='1', status='1' WHERE id=3;
@@ -39,8 +36,7 @@ UPDATE tbl_categories SET image='dx-cat-4-v2.png', description='Extra coverage, 
 UPDATE tbl_categories SET image='dx-cat-5.png', description='Minimal lines, invisible fit', home_display='1', status='1' WHERE id=5;
 UPDATE tbl_categories SET image='', description='Multi-packs, better value', home_display='1', status='1' WHERE id=18;
 
--- 5. Product colours, sampled from each product's own photograph. The product
---    cards tint themselves from this column.
+-- 5. Product colours, sampled from each product's own photograph.
 UPDATE tbl_products SET color='#0c0c0c' WHERE id=1;
 UPDATE tbl_products SET color='#242424' WHERE id=2;
 UPDATE tbl_products SET color='#243c6c' WHERE id=3;

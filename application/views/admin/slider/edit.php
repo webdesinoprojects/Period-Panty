@@ -6,66 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><?php echo $link[0]->title ;  ?> | Edit Slider</title>
     <?php $this->load->view('admin/layout/head_css'); ?>
-<script type="text/javascript">
-  
-    function show_preview()
-    {
-        var _URL = window.URL || window.webkitURL;
-        var file = event.target.files[0];
-        var ext = file.name.split('.').pop();
+    <script src="<?php echo base_url('assets/admin/js/slider-preview.js'); ?>" defer></script>
 
-        var allowed_exts = ['jpg','jpeg'];
 
-        if (allowed_exts.indexOf(ext)==-1) {
-
-            alert('invalid image file');
-            $('#logo').val('');
-            return false;
-
-        }
-
-        var img = new Image();
-        img.onload = function()
-        {
-           
-                $('#logo_preview').html("");
-                $('#edited_image').css('display', 'none');
-                $('#logo_preview').append("<img style='height:auto; width:250px; margin-left:2%;' src='"+this.src+"'/>");
-            }
-        }
-        img.src = _URL.createObjectURL(file);
-    }
-</script>
-<script type="text/javascript">
-  
-    function show_preview2()
-    {
-        var _URL = window.URL || window.webkitURL;
-        var file = event.target.files[0];
-        var ext = file.name.split('.').pop();
-
-        var allowed_exts = ['jpg','jpeg'];
-
-        if (allowed_exts.indexOf(ext)==-1) {
-
-            alert('invalid image file');
-            $('#logo2').val('');
-            return false;
-
-        }
-
-        var img = new Image();
-        img.onload = function()
-        {
-           
-                $('#logo_preview2').html("");
-                $('#edited_image').css('display', 'none');
-                $('#logo_preview2').append("<img style='height:auto; width:250px; margin-left:2%;' src='"+this.src+"'/>");
-           
-        }
-        img.src = _URL.createObjectURL(file);
-    }
-</script>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -95,11 +38,12 @@
                                         <label for="exampleInputEmail1">Title</label>
                                         <input type="text" class="form-control" name="title"  value="<?php echo $RESULT[0]->title; ?>"  placeholder="Enter Title">
                                         <?php echo form_error( 'title'); ?>
+                                        <p class="help-block">For Upper hero and Middle feature banners, use | to insert a headline line break. Description, button and image stay editable here. Upload photo-only artwork, without baked-in text.</p>
                                     </div>
                                       
                                     <div class="form-group col-sm-12">
                                         <label for="exampleInputEmail1">Web Slider</label>
-                                        <input type="file" class="form-control" name="image"  id="logo" onchange="show_preview();" accept="image/png, image/jpeg,image/png,image/JPEG,image/JPG,image/PNG">
+                                        <input type="file" class="form-control" name="image"  id="logo" accept="image/png,image/jpeg">
                                         <input type="hidden" name="old_file" value="<?php echo $RESULT[0]->image; ?>" >
 
                                          <div class="" id="logo_preview">
@@ -109,8 +53,8 @@
                                          </div>
                                            <br>
 
-                                                    <p class="error" style="color: red">Note: use Web Slider image  1920 *1080 px width-height</p> 
-                                         <p class="error" style="color: red">Note: use Web category image  600 *600 px width-height</p> 
+                                                    <p class="error" style="color: red">Upper hero: use a full lifestyle photograph, ideally 1860 × 845 px (maximum 2000 × 1100). Keep the subject on the right and space for text on the left. Do not bake text into the image.</p> 
+                                         <p class="error" style="color: red">Middle / Footer category images: 600 × 600 px.</p> 
                                     </div>  
                         
                                     <div class="form-group col-sm-12">
@@ -131,7 +75,7 @@
                                     </div>
                                     <div class="form-group col-sm-4">
                                         <!-- Hero card, Upper sliders only. See the note in add.php. -->
-                                        <label for="card_product_id">Hero Card Product <small>(Upper only)</small></label>
+                                        <label for="card_product_id">Legacy Hero Card Product <small>(not shown in lifestyle hero)</small></label>
                                         <select class="form-control" name="card_product_id">
                                             <option value="">Automatic &mdash; first bestseller</option>
                                             <?php foreach ($this->product_model->get_all_product() as $dx_p) { ?>
@@ -140,7 +84,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-4">
-                                        <label for="card_label">Hero Card Label</label>
+                                        <label for="card_label">Legacy Hero Card Label</label>
                                         <input type="text" class="form-control" name="card_label" placeholder="e.g. New Collection" value="<?php echo $RESULT[0]->card_label; ?>">
                                     </div>
                                     <div class="form-group col-sm-4">
