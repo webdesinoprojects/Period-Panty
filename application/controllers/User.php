@@ -55,6 +55,10 @@ class User extends CI_Controller
 				$postdata['email_verify'] = '1';
 				$postdata['create_date'] = date('Y-m-d h:i:s');
 				$user_id = $this->user_model->insert_user($postdata);
+				if (!$user_id) {
+					echo json_encode(array("status" => 0, "message" => html_escape($this->user_model->customer_error ?: "Could not create your account. Please retry.")));
+					return;
+				}
 				$link=$this->setting_model->get_all_setting();
 				if( $postdata['email']){
         			$this->load->library('email');	
@@ -111,6 +115,10 @@ class User extends CI_Controller
 				$postdata['create_date'] = date('Y-m-d h:i:s');
 	            $postdata['phone_verify'] ="1";
 				$user_id = $this->user_model->insert_user($postdata);
+				if (!$user_id) {
+					echo json_encode(array("status" => 0, "message" => html_escape($this->user_model->customer_error ?: "Could not create your account. Please retry.")));
+					return;
+				}
 					$this->load->library('email');	
 				$this->email->set_mailtype("html");
 				$this->email->set_newline("\r\n");				
@@ -124,6 +132,8 @@ class User extends CI_Controller
 				$this->email->message($htmlContent);				
 				$this->email->send(); 
 				$rows =  $this->user_model->get_user_by_id($user_id);
+				$this->session->sess_regenerate(TRUE);
+				$this->session->unset_userdata(array("GUEST_CUSTOMER_ID", "GUEST_DETAILS", "GUEST_CHECKOUT", "guest_started_at", "checkout_data"));
 				$admin_data = array('USER_ID'=>$rows[0]->id,'USER_NAME'=>$rows[0]->fname.' '.$rows[0]->lname,'USER_EMAIL'=>$rows[0]->email);
 				$this->session->set_userdata($admin_data);
 				$response['status'] = 1; 						
@@ -167,17 +177,25 @@ class User extends CI_Controller
 		{
 			$email = $this->input->post('email');
 			$password = $this->input->post('password');
-			if(empty($email) || empty($password))
+			if(!is_string($email) || !is_string($password) || trim($email) === "" || $password === "")
 			{
 				  $response['message'] = '<div class="alert alert-danger">Invalid login credentials</div>'; 
 			}
 			else
 			{
-				$rows = $this->user_model->user_login($email,base64_encode($password));
-				if(count($rows)>0)
+				$digits = $this->user_model->normalise_phone($email);
+				// A phone identifier is never also interpreted as an email: this
+				// avoids authenticating a legacy numeric-email account instead.
+				$rows = $digits !== ""
+				    ? $this->user_model->user_login_by_contact_no($digits, base64_encode($password))
+				    : (filter_var(trim($email), FILTER_VALIDATE_EMAIL)
+				        ? $this->user_model->user_login(trim($email), base64_encode($password)) : array());
+				if(count($rows) === 1)
 				{
 					if($rows[0]->status==1)
 					{
+						$this->session->sess_regenerate(TRUE);
+						$this->session->unset_userdata(array("GUEST_CUSTOMER_ID", "GUEST_DETAILS", "GUEST_CHECKOUT", "guest_started_at", "checkout_data"));
 					    $_SESSION['user_session'] = $gen_refer_code   = substr(md5(rand(100, 2147483647)), 0, 15);
 					    $_SESSION['guest'] = 'No';
 						$admin_data = array('USER_ID'=>$rows[0]->id,'USER_NAME'=>$rows[0]->fname.' '.$rows[0]->lname,'USER_EMAIL'=>$rows[0]->email);
@@ -223,6 +241,8 @@ class User extends CI_Controller
 	
 	public function logout()
 	{
+		$this->session->unset_userdata(array("GUEST_CUSTOMER_ID", "GUEST_DETAILS", "GUEST_CHECKOUT", "guest_started_at", "checkout_token", "checkout_data"));
+		$this->session->sess_regenerate(TRUE);
 		$this->session->unset_userdata('USER_ID');
 		$this->session->unset_userdata('USER_EMAIL');
 		$this->session->unset_userdata('USER_NAME');
@@ -397,9 +417,11 @@ class User extends CI_Controller
 		
 		if(isset($_POST['updateprofile']))
 		{
-			$post_data = $this->input->post();
-			unset($post_data['updateprofile']);
-			$this->user_model->update_user($user_id,$post_data);
+			$post_data = array_intersect_key($this->input->post(), array_flip(array("fname", "lname", "email", "contact_no", "address", "landmark", "country", "state", "city", "pincode")));
+			if (!$this->user_model->update_user($user_id,$post_data)) {
+				$this->session->set_flashdata('msg', '<div class="alert alert-danger">' . html_escape($this->user_model->customer_error ?: "Could not update your profile.") . '</div>');
+				redirect('user/edit_profile'); return;
+			}
 			$this->session->set_flashdata('msg','<div class="alert alert-success">Your profile has been updated successfully</div>');
 			redirect('user/edit_profile');
 		}	

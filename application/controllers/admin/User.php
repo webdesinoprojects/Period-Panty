@@ -52,7 +52,10 @@ class User extends CI_Controller
 			$post_data = $this->input->post();	
 			unset($post_data['old_image']);
 			unset($post_data['update_profile']);
-			$this->user_model->update_user($args[0],$post_data);
+			if (!$this->user_model->update_user($args[0],$post_data)) {
+				$this->session->set_flashdata('msg', '<div class="alert alert-danger">' . html_escape($this->user_model->customer_error ?: "Could not update customer.") . '</div>');
+				redirect('admin/user/profile/'.$args[0]); return;
+			}
 			$this->session->set_flashdata('msg','<div class="alert alert-success">Profile has been updated successfully</div>');
 			redirect('admin/user/profile/'.$args[0]);
 		}	

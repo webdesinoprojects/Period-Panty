@@ -41,7 +41,7 @@
         <div class="container">
            
             <?php if(count($CARTDATA)>0){ ?>
-             <?php echo $this->session->flashdata('msg'); ?>   
+             <?php if ($this->session->flashdata('msg')) { ?><p role="alert"><?php echo html_escape($this->session->flashdata('msg')); ?></p><?php } ?>
              <div class="row pb-8 mt-9 pb-lg-10">
                 <div class="col-lg-8 ">
                     <div class="table-responsive-md ">

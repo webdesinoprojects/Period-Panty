@@ -275,7 +275,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                     </div>
                     <div class="col-12 col-lg-6">
                         <div class="row">
-                            <?php $Second =  $this->category_model->get_category_by_id(1) ;   ?>
+                            <?php $Second =  $this->category_model->get_category_by_id(18) ;   ?>
                             <div class="col-md-6 mt-6 mb-5 mt-lg-0">
                                 <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
                                     <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">
@@ -308,7 +308,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                                     </div>
                                 </div>
                             </div>
-                             <?php $Second =  $this->category_model->get_category_by_id(5) ;   ?>
+                             <?php $Second =  $this->category_model->get_category_by_id(22) ;   ?>
                             <div class="col-md-6 mt-6 mb-5 mt-lg-0">
                                 <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
                                     <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">

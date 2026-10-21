@@ -17,125 +17,71 @@ class Cart extends CI_Controller{
 		$this->load->view('front/checkout/cart',$data);
 	}
 			
-	function add_to_cart()
-	{
-		if(isset($_POST) && count($_POST)>0 && !empty($_POST['product_id']))
-		{
-		   
-			$pro_id = $_POST['product_id'];
-			$pricedata= $cartdata = $offerdata =$offer_discount_data  = null;
-            $error = 0 ; 
-			if (count($this->cart->contents())>0){
-			      foreach ($this->cart->contents() as $item){
-			        if ($item['id']==$_POST['variation_id']){
-			          $error = 1 ;
-			        }
-			      }
-		    }
-		    
-		    if(  $error == 0){
+    private function selected_cart_product($product_id, $variation_id, $qty)
+    {
+        foreach (array($product_id, $variation_id, $qty) as $value) {
+            if (!is_scalar($value) || !ctype_digit((string) $value) || (int) $value < 1) { return FALSE; }
+        }
+        $products = $this->product_model->get_product_by_id((int) $product_id);
+        $variations = $this->product_model->select_product_variation_by_id((int) $variation_id);
+        if (count($products) !== 1 || count($variations) !== 1) { return FALSE; }
+        $product = $products[0]; $variation = $variations[0];
+        if ((int) $variation->product_id !== (int) $product->id ||
+            (isset($product->status) && (string) $product->status !== "1") ||
+            (isset($product->delete_flag) && (string) $product->delete_flag !== "0") ||
+            (int) $variation->qty < (int) $qty ||
+            (!empty($product->min_order) && (int) $qty < (int) $product->min_order) ||
+            (!empty($product->max_order) && (int) $qty > (int) $product->max_order)) { return FALSE; }
+        $quote = $this->input->post("quoted_price");
+        if ($quote !== NULL && (!is_scalar($quote) || !preg_match('/^[0-9]+(?:\\.[0-9]{1,2})?$/D', (string) $quote) ||
+            (int) round((float) $quote * 100) !== (int) round($this->product_model->effective_variation_price($variation, $product) * 100))) {
+            return FALSE;
+        }
+        return array($product, $variation);
+    }
 
-    
-    			$product_data = $this->product_model->get_product_by_id($pro_id);
-    			$price = ($product_data[0]->special_price!='0.00')?$product_data[0]->special_price:$product_data[0]->price;	
-    			$final_amt  = $price ;
-    			
-    			$pricedata  = array('price' => $product_data[0]->price,'special_price' => $product_data[0]->special_price,'discount' => $product_data[0]->discount, );
-    			if(isset($_POST['variation_id'])){
-    			    $variation_id = $_POST['variation_id'] ; 
-    			    $variation = $this->product_model->select_product_variation_by_id($_POST['variation_id']) ; 
-    			 	$cartdata =array('size'=>$variation[0]->size , 'sku'=>$variation[0]->sku) ;   
-    			}else{
-    			    $cartdata = array() ;
-    			     $variation_id = 0 ; 
-    			}
-    		
-    			if(count($product_data)>0)
-    			{
-    				
-    				$insert_data = array(
-    					'id' => $variation_id,
-    					'name' => $product_data[0]->title,
-    					'price' => $final_amt,
-    				 	'qty' => $this->input->post('qty'), 
-    				    'custom_options'=>array(
-    				    'pricedata'=>$pricedata,
-    					'cartdata'=>$cartdata)
-    				);
-    				
-    				 $this->cart->insert($insert_data); 
-    				 $cart_content = $this->cart->contents();;
-    				 echo count($cart_content);
-    			}
-    			else
-    			{
-    				echo 0;
-    			}	
-		    }else{
-		        	
-		        	$cart_content = $this->cart->contents();;
-    				 echo count($cart_content);
-		        	
-		    }
-		}
-		else 
-		{
-			echo 0;
-		}	
-	}
+    public function add_to_cart()
+    {
+        $selected = $this->selected_cart_product($this->input->post("product_id"), $this->input->post("variation_id"), $this->input->post("qty"));
+        if (!$selected) { $this->output->set_status_header(422); echo 0; return; }
+        list($product, $variation) = $selected;
+        $amount = $this->product_model->effective_variation_price($variation, $product);
+        foreach ($this->cart->contents() as $item) {
+            if ((int) $item["id"] === (int) $variation->id) {
+                $this->cart->update(array("rowid" => $item["rowid"], "price" => $amount));
+                echo count($this->cart->contents()); return;
+            }
+        }
+        $this->cart->insert(array("id" => $variation->id, "name" => $product->title,
+            "price" => $amount, "qty" => (int) $this->input->post("qty"),
+            "custom_options" => array(
+                "pricedata" => array("price" => $product->price, "special_price" => $product->special_price, "discount" => $product->discount),
+                "cartdata" => array("size" => $variation->size, "sku" => $variation->sku))));
+        echo count($this->cart->contents());
+    }
 
-
-	function add_to_cart_pageload()
-	{
-
-		if(isset($_POST) && count($_POST)>0 && !empty($_POST['id']))
-		{
-	        $error = 0 ; 
-			$pro_id = $_POST['id'];
-			$variation_id = $_POST['variation_id'];
-			$pricedata= $cartdata = $offerdata =$offer_discount_data  = null;
-			if (count($this->cart->contents())>0){
-			      foreach ($this->cart->contents() as $item){ 
-			        if ($item['id']==$_POST['variation_id']){
-			          $error = 1 ;
-			        }
-			      }
-		    }
-		    
-		    if(empty($error)){
-    			$product_data = $this->product_model->get_product_by_id($pro_id);
-    			$price = ($product_data[0]->special_price!='0.00')?$product_data[0]->special_price:$product_data[0]->price;	
-    			$final_amt  = $price ;
-    			$pricedata  = array('price' => $product_data[0]->price,'special_price' => $product_data[0]->special_price,'discount' => $product_data[0]->discount);
-    		
-	        	if(isset($_POST['variation_id'])){
-    			    $variation_id = $_POST['variation_id'] ; 
-    			    $variation = $this->product_model->select_product_variation_by_id($_POST['variation_id']) ; 
-    			 		$cartdata =array('size'=>$variation[0]->size , 'sku'=>$variation[0]->sku) ; 
-    			}else{
-    			    $cartdata = array() ;
-    			     $variation_id = 0 ; 
-    			}
-				
-				$insert_data = array(
-					'id' => $variation_id,
-					'name' => $product_data[0]->title,
-					'price' => $final_amt,
-				 	'qty' => $this->input->post('qty'), 
-				    'custom_options'=>array(
-				    'pricedata'=>$pricedata,
-					'cartdata'=>$cartdata)
-				);
-		
-				$this->cart->insert($insert_data); 
-				$cart_content = $this->cart->contents();
-				redirect('checkout/onepage');
-    		
-		    }else{
-		        redirect('checkout/onepage');
-		    }
-		}	
-	}
+    public function add_to_cart_pageload()
+    {
+        $selected = $this->selected_cart_product($this->input->post("id"), $this->input->post("variation_id"), $this->input->post("qty"));
+        if (!$selected) {
+            $this->session->set_flashdata("msg", "Please select an available product and size.");
+            redirect("cart"); return;
+        }
+        list($product, $variation) = $selected;
+        $amount = $this->product_model->effective_variation_price($variation, $product);
+        foreach ($this->cart->contents() as $item) {
+            if ((int) $item["id"] === (int) $variation->id) {
+                $this->cart->update(array("rowid" => $item["rowid"], "price" => $amount));
+                redirect("checkout/onepage"); return;
+            }
+        }
+        $this->cart->insert(array("id" => $variation->id, "name" => $product->title,
+            "price" => $amount, "qty" => (int) $this->input->post("qty"),
+            "custom_options" => array(
+                "pricedata" => array("price" => $product->price, "special_price" => $product->special_price, "discount" => $product->discount),
+                "cartdata" => array("size" => $variation->size, "sku" => $variation->sku))));
+        redirect("checkout/onepage");
+    }
 	
 	function update()
 	{

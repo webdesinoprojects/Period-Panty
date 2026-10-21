@@ -15,6 +15,25 @@ class Product extends CI_Controller
 		$this->load->library('form_validation');
 
 	}
+
+	// A blank/zero per-size price means "inherit the product's own price" -
+	// store NULL rather than 0, so tbl_product_variation stays the source of
+	// truth only for sizes that actually have their own price.
+	private function variation_price_value($prices, $key)
+	{
+		if (!isset($prices[$key])) { return null; }
+		$value = trim($prices[$key]);
+		if ($value === '' || !is_numeric($value) || (float) $value <= 0) { return null; }
+		return number_format((float) $value, 2, ".", "");
+	}
+
+    public function valid_size_price($value)
+    {
+        if ($value === NULL || $value === "") { return TRUE; }
+        if (is_scalar($value) && preg_match('/^[0-9]{1,8}(?:\\.[0-9]{1,2})?$/D', trim((string) $value))) { return TRUE; }
+        $this->form_validation->set_message("valid_size_price", "Size price must be blank or a non-negative amount with at most two decimal places.");
+        return FALSE;
+    }
     public function listing(){
 		$data['RESULT'] = $this->product_model->get_all_product();
 		$this->load->view('admin/product/listing', $data);
@@ -28,6 +47,7 @@ class Product extends CI_Controller
     public function add_new(){
 		if (isset($_POST['submitform']))
 		{
+		$this->form_validation->set_rules("variation_price[]", "Size price", "callback_valid_size_price");
 		$this->form_validation->set_rules('cat_id', 'Category', 'trim|required');
 		$this->form_validation->set_rules('title', 'Title', 'trim|required');
 		$this->form_validation->set_rules('price', 'Price', 'trim|required');
@@ -48,6 +68,7 @@ class Product extends CI_Controller
 		    $size =  $postdata['size'] ; unset($postdata['size']) ; 
 		    $sku =  $postdata['sku'] ; unset($postdata['sku']) ; 
 		    $qty =  $postdata['qty'] ; unset($postdata['qty']) ;
+		    $variation_price = isset($postdata['variation_price']) ? $postdata['variation_price'] : array(); unset($postdata['variation_price']);
 		    $stock  = 0 ;     	
 			foreach($qty as $key => $value){
 			    $stock = (int)$value + $stock ; 
@@ -61,6 +82,7 @@ class Product extends CI_Controller
 			    $varrydata['size'] =  $value; 
 			    $varrydata['sku'] =  $sku[$key] ; 
 			    $varrydata['qty'] =  $qty[$key] ; 
+			    $varrydata['price'] =  $this->variation_price_value($variation_price, $key) ; 
 			    $varrydata['product_id']= $product_id;
 			    $this->db->insert('tbl_product_variation' , $varrydata) ; 
 			}
@@ -94,6 +116,8 @@ class Product extends CI_Controller
 	    $data['RESULT'] = $this->product_model->get_product_by_id($args[0]);
 		if (isset($_POST['submitform']))
 		{
+			$this->form_validation->set_rules("variation_price[]", "Size price", "callback_valid_size_price");
+			$this->form_validation->set_rules("old_variation_price[]", "Size price", "callback_valid_size_price");
 			$this->form_validation->set_rules('title', 'Title', 'trim|required');
 			$this->form_validation->set_rules('price', 'Price', 'trim|required');
 			$this->form_validation->set_rules('status', 'Status', 'trim|required');
@@ -127,10 +151,12 @@ class Product extends CI_Controller
 					    	$size =  $postdata['size'] ; unset($postdata['size']) ;  
         		            $sku =  $postdata['sku'] ; unset($postdata['sku']) ;  
         		            $qty =  $postdata['qty'] ; unset($postdata['qty']) ; 
+        		            $variation_price = isset($postdata['variation_price']) ? $postdata['variation_price'] : array(); unset($postdata['variation_price']);
         		            foreach($size as $key => $value){
                 			    $varrydata['size'] =  $value; 
                 			    $varrydata['sku'] =  $sku[$key] ; 
                 			    $varrydata['qty'] =  $qty[$key] ; 
+                			    $varrydata['price'] =  $this->variation_price_value($variation_price, $key) ; 
                 			    $varrydata['product_id']= $args[0];
                 			    $stock = $qty[$key] + $stock ; 
                 			    $this->db->insert('tbl_product_variation' , $varrydata) ; 
@@ -143,12 +169,17 @@ class Product extends CI_Controller
     		            $old_qty =  $postdata['old_qty'] ; unset($postdata['old_qty']) ; 
     		            $old_sku =  $postdata['old_sku'] ; unset($postdata['old_sku']) ; 
     		            $old_variation =  $postdata['old_variation'] ; unset($postdata['old_variation']) ; 
+    		            $old_variation_price = isset($postdata['old_variation_price']) ? $postdata['old_variation_price'] : array(); unset($postdata['old_variation_price']);
     		            
              	       
     		            foreach($old_size as $key => $value){
             			    $updatedata['size'] =  $value;  
             			    $updatedata['qty'] =  $old_qty[$key] ; 
             			    $updatedata['sku'] =  $old_sku[$key] ; 
+            			    unset($updatedata['price']);
+            			    if (array_key_exists($key, $old_variation_price)) {
+            			        $updatedata['price'] = $this->variation_price_value($old_variation_price, $key);
+            			    }
             			    $varriation_id =  $old_variation[$key] ; 
             			    $stock = $old_qty[$key] + $stock ; 
             			    $this->db->where('id', $varriation_id) ; 
@@ -211,6 +242,7 @@ class Product extends CI_Controller
 		$args = func_get_args();
 	    if (isset($_POST['submitform']))
 		{
+		$this->form_validation->set_rules("variation_price[]", "Size price", "callback_valid_size_price");
 		$this->form_validation->set_rules('cat_id', 'Category', 'trim|required');
 		$this->form_validation->set_rules('title', 'Title', 'trim|required');
 		$this->form_validation->set_rules('price', 'Price', 'trim|required');
@@ -232,6 +264,7 @@ class Product extends CI_Controller
 		    $size =  $postdata['size'] ; unset($postdata['size']) ; 
 		    $sku =  $postdata['sku'] ; unset($postdata['sku']) ; 
 		    $qty =  $postdata['qty'] ; unset($postdata['qty']) ;
+		    $variation_price = isset($postdata['variation_price']) ? $postdata['variation_price'] : array(); unset($postdata['variation_price']);
 		    $stock  = 0 ;     	
 			foreach($qty as $key => $value){
 			    $stock = (int)$value + $stock ; 
@@ -245,6 +278,7 @@ class Product extends CI_Controller
 			    $varrydata['size'] =  $value; 
 			    $varrydata['sku'] =  $sku[$key] ; 
 			    $varrydata['qty'] =  $qty[$key] ; 
+			    $varrydata['price'] =  $this->variation_price_value($variation_price, $key) ; 
 			    $varrydata['product_id']= $product_id;
 			    $this->db->insert('tbl_product_variation' , $varrydata) ; 
 			}

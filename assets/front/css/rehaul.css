@@ -2891,6 +2891,12 @@ section.mt-7:has(#pagination-result) { padding-bottom: 1.5rem; }
 
 .dx-swatch-input:focus-visible + .dx-swatch { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--dx-rose); }
 
+/* Same swatch as an <a>, used on the product page to hop between colours.
+   The colour you are already looking at keeps the ring. */
+.dx-swatch-link { display: inline-block; text-decoration: none; }
+.dx-swatch-link.is-current { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--dx-rose); }
+.dx-swatch-link:hover { text-decoration: none; }
+
 /* --- Actions ------------------------------------------------------------- */
 .dx-filter-actions {
     display: flex;

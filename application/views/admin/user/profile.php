@@ -85,6 +85,18 @@ table{width:100%;}
 									<td><strong>Phone: </strong></td>
 									<td><?php echo $RESULT[0]->contact_no; ?></td>
 								</tr>
+								<?php if (!empty($RESULT[0]->guest_created)) { ?>
+								<tr>
+									<td><strong>Generated guest password: </strong></td>
+									<td>
+										<?php $dx_pwd = base64_decode($RESULT[0]->password); ?>
+										<code><?php echo html_escape($dx_pwd !== '' ? $dx_pwd : '-'); ?></code>
+										<?php if (trim($RESULT[0]->email) === '') { ?>
+										<br><small class="text-muted">Guest checkout &mdash; no email on file. They can sign in with their phone number (<?php echo html_escape($RESULT[0]->contact_no); ?>) and this password.</small>
+										<?php } ?>
+									</td>
+								</tr>
+								<?php } ?>
 							
 								<tr>
 									<td><strong>Landmark: </strong></td>

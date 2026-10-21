@@ -30,7 +30,7 @@ $dx_cats = $this->db->select('id, title')
                     ->where('parent_id', 0)
                     ->order_by('title', 'ASC')
                     ->get()->result();
-$dx_sizes  = array('XS','S','M','L','XL','XXL','XXXL','XXXXL');
+$dx_sizes  = array('XS','S','M','L','XL','XXL','XXXL','XXXXL','XXXXXL','XXXXXXL');
 
 // Ranges span the real catalogue, which runs 645 to 1150.
 $dx_prices = array(

@@ -58,7 +58,7 @@ $user_session=$_SESSION[ 'user_session'];
                                             </div>
                                             <div class="checkout-box-inner">
                                                 <p style="font-size: 12px;"> If you have not register with us ,<a style="color:blue" id="register_here"> Register here</a></p>
-                                                <input type="text" name="email" class="form-control" placeholder="Enter Email" id="member_email" />
+                                                <input type="text" name="email" class="form-control" placeholder="Email or phone number" id="member_email" />
                                                 <br>
                                                 <input type="password" name="password" class="form-control" placeholder="Enter Password" id="member_password" />
                                                 <p id="signin-box-msg"></p>
@@ -67,6 +67,27 @@ $user_session=$_SESSION[ 'user_session'];
                                        
                                     </form>
                                </div>
+
+                            <!-- Guest checkout: name + phone only. The account
+                                 routes above are unchanged and still offered. -->
+                            <div class="checkout-box-inner dx-guest-box">
+                                <div class="dx-guest-divider"><span>or</span></div>
+                                <h3 class="dx-guest-title">Checkout without an account</h3>
+                                <p class="dx-guest-sub">Just your name and phone number &mdash; no email or password needed.</p>
+                                <?php if ($this->session->flashdata('guest_error')) { ?>
+                                <p class="dx-guest-error"><?php echo html_escape($this->session->flashdata('guest_error')); ?></p>
+                                <?php } ?>
+                                <form method="post" action="<?php echo base_url('checkout/guest_continue'); ?>">
+                                    <input type="hidden" name="checkout_token" value="<?php echo html_escape($checkout_token); ?>">
+                                    <?php if ($this->config->item("csrf_protection")) { ?>
+                                    <input type="hidden" name="<?php echo html_escape($this->security->get_csrf_token_name()); ?>" value="<?php echo html_escape($this->security->get_csrf_hash()); ?>">
+                                    <?php } ?>
+                                    <input type="text" name="guest_name" class="form-control" placeholder="Your name" required maxlength="50" />
+                                    <br>
+                                    <input type="tel" name="guest_contact_no" class="form-control" placeholder="Phone number" required inputmode="numeric" pattern="[0-9+()\s-]{10,20}" maxlength="20" />
+                                    <button type="submit" class="btn btn-outline-primary btn-block mt-3">Continue as guest</button>
+                                </form>
+                            </div>
                             </div>
                             <div class="checkout-box"  id="checkout-box-2">
                                 <div class="checkout-heading">
@@ -106,6 +127,15 @@ $user_session=$_SESSION[ 'user_session'];
             </div>
         </div>
     </section>
+    <style>
+    .dx-guest-box { padding-top: 4px; }
+    .dx-guest-divider { position: relative; text-align: center; margin: 22px 0 18px; }
+    .dx-guest-divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid #e6ded8; }
+    .dx-guest-divider span { position: relative; background: #fff; padding: 0 12px; color: #9a8f86; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .dx-guest-title { font-size: 17px; margin: 0 0 4px; }
+    .dx-guest-sub { font-size: 12px; color: #7d736b; margin-bottom: 14px; }
+    .dx-guest-error { font-size: 12px; color: #b4304f; margin-bottom: 10px; }
+    </style>
     <?php $this->load->view('front/layout/footer'); ?>
     <?php $this->load->view('front/layout/footer-js'); ?>
     </div>

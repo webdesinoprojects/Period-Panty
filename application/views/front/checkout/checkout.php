@@ -1,7 +1,17 @@
 <?php error_reporting() ; ?>
 <?php $user_id=$this->session->userdata('USER_ID'); ?>
 <?php $coupon=$this->session->userdata('coupon_data'); ?>
-<?php $userdata=$this->user_model->get_user_by_id($user_id); ?>
+<?php
+if ($user_id) {
+    $userdata = $this->user_model->get_user_by_id($user_id);
+} else {
+    // Never load an existing customer's private profile for an unverified guest.
+    $guest_details = $this->session->userdata("GUEST_DETAILS");
+    $userdata = array((object) array_merge(array("fname" => "", "lname" => "", "contact_no" => "",
+        "address" => "", "landmark" => "", "country" => "", "state" => "", "city" => "", "pincode" => ""),
+        is_array($guest_details) ? $guest_details : array()));
+}
+?>
 <?php $link=$this->setting_model->get_all_setting();?>
 <?php
 $user_session=$_SESSION[ 'user_session'];
@@ -30,7 +40,14 @@ $user_session=$_SESSION[ 'user_session'];
                 <div class="col-md-10 offset-md-1">
                     <div class="row">
                         <div class="col-md-6">
+                            <?php if ($this->session->flashdata("checkout_error")) { ?>
+                            <p class="alert alert-danger" role="alert"><?php echo html_escape($this->session->flashdata("checkout_error")); ?></p>
+                            <?php } ?>
                             <form method="post" class="checkout" action="<?php echo base_url('checkout/checkout_process') ; ?>">
+                                <input type="hidden" name="checkout_token" value="<?php echo html_escape($checkout_token); ?>">
+                                <?php if ($this->config->item("csrf_protection")) { ?>
+                                <input type="hidden" name="<?php echo html_escape($this->security->get_csrf_token_name()); ?>" value="<?php echo html_escape($this->security->get_csrf_hash()); ?>">
+                                <?php } ?>
                                 <div class="checkout-box"  id="checkout-box-1">
                                     <div class="checkout-heading">
                                         <h2>1. Shipping Details</h2>

@@ -387,6 +387,7 @@ class Product extends CI_Controller{
 			$data['RESULT'] = $product_data;
 			$data['CATEGORY'] = $this->category_model->get_category_by_id($cat_id);
 			$data['productscat'] = $this->product_model->get_product_by_category_id($cat_id,8);
+			$data['color_variation'] = $this->product_model->get_color_variation_by_product_code($product_data[0]->product_code);
 			$this->load->view('front/product/detail',$data);
 
 		}

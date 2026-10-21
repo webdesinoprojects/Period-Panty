@@ -118,6 +118,7 @@
                                                 <td>SIZE</td>
                                                 <td>SKU</td>
                                                 <td>Stock Qty</td>
+                                                <td>Price (blank = product price)</td>
                                                 <td></td>
                                              
                                             </tr>
@@ -135,6 +136,7 @@
                                                     </td>
                                                     <td><input type="text" name="old_sku[]" class="form-control"  value="<?php echo $row->sku ?>" required placeholder="Enter sku" ></td>
                                                     <td><input type="number" name="old_qty[]" class="form-control" id="qty" min="0" value="<?php echo $row->qty ?>" ></td>
+                                                    <td><input type="number" step="0.01" min="0" name="old_variation_price[]" class="form-control" value="<?php echo ($row->price !== null) ? $row->price : ''; ?>" placeholder="Same as product price"></td>
                                                    <td><input type="hidden" name="old_variation[]" class="form-control"  value="<?php echo $row->id ?>" ></td>
                                                  </tr>
                                                     <?php endforeach; ?> 
@@ -348,7 +350,7 @@
      <script>
         function size_option() {
         
-            $('#size_option').append('<tr><td><select class="form-control" name="size[]" required><option value="">Select</option><?php foreach($size as $value){ ?><option value="<?php echo $value->title ; ?>"><?php echo $value->title ; ?></option><?php } ?></select></td><td><input type="text" class="form-control" name="sku[]"  value="<?php echo set_value('sku'); ?>" required placeholder="Enter sku"></td><td><input type="number" class="form-control" name="qty[]" id="qty" min="1" value="<?php echo set_value('qty'); ?>"></td><td><a class="btn btn-danger remove_size"><i class="fa fa-fw fa-trash"></i></a></td></tr>');
+            $('#size_option').append('<tr><td><select class="form-control" name="size[]" required><option value="">Select</option><?php foreach($size as $value){ ?><option value="<?php echo $value->title ; ?>"><?php echo $value->title ; ?></option><?php } ?></select></td><td><input type="text" class="form-control" name="sku[]"  value="<?php echo set_value('sku'); ?>" required placeholder="Enter sku"></td><td><input type="number" class="form-control" name="qty[]" id="qty" min="1" value="<?php echo set_value('qty'); ?>"></td><td><input type="number" step="0.01" min="0" class="form-control" name="variation_price[]" value="" placeholder="Same as product price"></td><td><a class="btn btn-danger remove_size"><i class="fa fa-fw fa-trash"></i></a></td></tr>');
         }
   
     

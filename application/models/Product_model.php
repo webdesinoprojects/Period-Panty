@@ -1,7 +1,50 @@
-<?php 
+<?php
 class Product_model extends CI_Model
-{	
+{
 	protected $table = 'tbl_products';
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->ensure_variation_price_column();
+	}
+
+	// Per-size pricing: tbl_product_variation historically had no price of its
+	// own, so every size sold at the parent product's price. A NULL/zero value
+	// here means "inherit the parent product's price", so existing variations
+	// keep working unchanged until an admin sets a size-specific price.
+	private function ensure_variation_price_column()
+	{
+		if ($this->db->field_exists("price", "tbl_product_variation")) { return; }
+		$lock = "dx_variation_price_" . sha1($this->db->database);
+		$locked = $this->db->query("SELECT GET_LOCK(?, 10) AS acquired", array($lock))->row();
+		if (!$locked || (int) $locked->acquired !== 1) {
+			throw new RuntimeException("Could not initialize size pricing. Please retry.");
+		}
+		try {
+			if ($this->db->field_exists("price", "tbl_product_variation")) { return; }
+			$this->load->dbforge();
+			$added = $this->dbforge->add_column("tbl_product_variation", array(
+				"price" => array("type" => "DECIMAL", "constraint" => "10,2", "null" => TRUE, "default" => NULL),
+			));
+			if (!$added) { throw new RuntimeException("Could not initialize size pricing."); }
+		} finally {
+			$this->db->query("SELECT RELEASE_LOCK(?)", array($lock));
+		}
+	}
+
+	// The price a given variation actually sells at: its own price when an
+	// admin has set one, otherwise the parent product's price/special_price.
+	public function effective_variation_price($variation, $product)
+	{
+		if (isset($variation->price) && $variation->price !== null && (float) $variation->price > 0) {
+			return (float) $variation->price;
+		}
+		return ($product->special_price != '0.00' && $product->special_price !== null)
+			? (float) $product->special_price
+			: (float) $product->price;
+	}
+
 	/*start forum product model*/
 	public function save_product($data)
 	{
@@ -68,7 +111,7 @@ class Product_model extends CI_Model
 	}	
 	public function get_color_variation_by_product_code($product_code)
 	{
-	    $this->db->select("category.url_slug as cat_url,product.url_slug,product.color,product.id");
+	    $this->db->select("category.url_slug as cat_url,product.url_slug,product.color,product.id,product.title");
 		$this->db->from('tbl_products as product');
 		$this->db->join('tbl_categories as category',"product.cat_id = category.id",'left');
 		$this->db->where('product.product_code',$product_code);
@@ -170,7 +213,12 @@ class Product_model extends CI_Model
 
 	public function get_product_by_urlslug($key)
 	{
+		/* A product she asked us to take off the shop was still reachable, and
+		   still buyable, by its own URL - it only vanished from the listings.
+		   Product::detail() is the one caller and sends a miss back to home. */
 		$this->db->where('url_slug',$key);
+		$this->db->where('delete_flag','0');
+		$this->db->where('status','1');
 		return $this->db->get($this->table)->result();
 	}
 	

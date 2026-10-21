@@ -21,7 +21,7 @@ $product_data = $this->product_model->get_product_by_id($variation_data[0]->prod
             </div>
         </div>
         <div class="qty-info">
-            <p><?php echo CURRENCY_SYMBOL." ".number_format($item['subtotal']); ?></p>
+            <p><?php echo CURRENCY_SYMBOL." ".number_format($item['subtotal'], 2); ?></p>
             <!--<div class="qty-inner-box">-->
             <!--    <span class="qty-text">Qty</span>-->
             <!--    <span> <?php echo $item['qty'] ; ?></span>-->

@@ -11,11 +11,15 @@ class Checkout extends CI_Controller
 	    unset($_SESSION['shipping_charges']) ;
 		if(count($this->cart->contents())==0){ redirect('cart'); }
 		$user_id = $this->session->userdata('USER_ID');
+		if (!$user_id && time() - (int) $this->session->userdata("guest_started_at") > 1800) {
+			$this->session->unset_userdata(array("GUEST_CUSTOMER_ID", "GUEST_DETAILS"));
+		}
 	
 		$data['RESULT'] = $this->page_model->get_page_by_id(17);
+		$data['checkout_token'] = $this->checkout_token();
 		$data['country'] = $this->db->get("countries")->result() ; 
 		$data['state'] = $this->db->get_where("states",array('country_id'=>101))->result();
-		if(!$user_id){
+		if(!$user_id && !$this->session->userdata("GUEST_CUSTOMER_ID")){
 		    $_SESSION['redirect'] = 'checkout/onepage/' ; 
 		    $this->load->view('front/checkout/checkout-login',$data);
 		}else{
@@ -26,6 +30,19 @@ class Checkout extends CI_Controller
 
 	
 	function checkout_process(){
+	    if (!$this->cart_prices_current()) {
+	        $this->session->set_flashdata("msg", "A product price or availability changed. Please remove and re-add the affected item before checkout.");
+	        redirect("cart"); return;
+	    }
+	    if ($this->input->method() !== "post" || !$this->valid_checkout_token() || !$this->checkout_customer_id()) {
+	        $this->session->set_flashdata("checkout_error", "Please refresh checkout and try again.");
+	        redirect("checkout/onepage"); return;
+	    }
+	    $shipping_phone = $this->user_model->normalise_phone($this->input->post("scontact_no"));
+	    if ($shipping_phone === "") {
+	        $this->session->set_flashdata("checkout_error", "Please enter a valid shipping phone number.");
+	        redirect("checkout/onepage"); return;
+	    }
 	    error_reporting(0) ;
 	    $user_id=0;
 		$user_id = ($this->session->userdata('USER_ID'))?$this->session->userdata('USER_ID') :0 ; ;
@@ -33,6 +50,7 @@ class Checkout extends CI_Controller
 
 		if(count($this->cart->contents())==0){ redirect('cart'); }
 		$_SESSION['checkout_data'] =  $_POST ;
+		$_SESSION['checkout_data']['scontact_no'] = $shipping_phone;
 		if(($_POST['payment_method'] =='Pay On Delivery') && (empty($user_id))){
 		   
 	         redirect('checkout/checkout_process_insert_data') ; 
@@ -46,8 +64,13 @@ class Checkout extends CI_Controller
 	}
 	
 	function checkout_process_insert_data(){
+	    if (!$this->cart_prices_current()) {
+	        $this->session->set_flashdata("msg", "A product price or availability changed. Please remove and re-add the affected item before checkout.");
+	        redirect("cart"); return;
+	    }
 	    $user_id=0;
-		$user_id = ($this->session->userdata('USER_ID'))?$this->session->userdata('USER_ID') :0 ; ;
+		$user_id = $this->checkout_customer_id();
+		if (!$user_id) { redirect("checkout/onepage"); return; }
 		$data['user'] =$data['rewards']=null;
 		if(count($this->cart->contents())==0){ redirect('cart'); }
 	    if(isset($_SESSION['checkout_data'] ['sfname']))
@@ -55,7 +78,7 @@ class Checkout extends CI_Controller
 			$order_data = $this->get_amount_array();
 			$used_reward_point='';
 			if($user_id){
-			   	$ord_data['user_type'] = 'Logged';
+			   	$ord_data['user_type'] = $this->session->userdata("USER_ID") ? 'Logged' : 'Guest';
 			   	$ord_data['user_id'] = $user_id;
     			$ord_data['coupon_data'] = $order_data['coupon_data'];
     			$couponData =  json_decode($order_data['coupon_data']);	
@@ -87,7 +110,7 @@ class Checkout extends CI_Controller
 			$this->save_item_data($order_id, $user_id);
 			$this->save_billing_data($order_id, $user_id);
 			$this->save_shipping_data($order_id, $user_id);
-			if($user_id){
+			if($this->session->userdata("USER_ID")){
 			   	$this->update_user_data($order_id, $user_id); 
 			}
     	   $this->empty_cart() ; 
@@ -123,6 +146,79 @@ class Checkout extends CI_Controller
 	    $_SESSION['guest'] = 'start';
 	    redirect('checkout/onepage') ; 
 	}
+
+    private function checkout_customer_id()
+    {
+        if (!$this->session->userdata("USER_ID") && time() - (int) $this->session->userdata("guest_started_at") > 1800) {
+            $this->session->unset_userdata(array("GUEST_CUSTOMER_ID", "GUEST_DETAILS"));
+            return 0;
+        }
+        return (int) ($this->session->userdata("USER_ID") ?: $this->session->userdata("GUEST_CUSTOMER_ID"));
+    }
+
+    private function cart_prices_current()
+    {
+        foreach ($this->cart->contents() as $item) {
+            $variants = $this->product_model->select_product_variation_by_id($item["id"]);
+            if (count($variants) !== 1) { return FALSE; }
+            $products = $this->product_model->get_product_by_id($variants[0]->product_id);
+            if (count($products) !== 1 || (string) $products[0]->status !== "1" || (string) $products[0]->delete_flag !== "0") { return FALSE; }
+            $current = $this->product_model->effective_variation_price($variants[0], $products[0]);
+            if ((int) round($current * 100) !== (int) round($item["price"] * 100)) { return FALSE; }
+        }
+        return TRUE;
+    }
+
+    private function checkout_token()
+    {
+        if (!$this->session->userdata("checkout_token")) {
+            $this->session->set_userdata("checkout_token", bin2hex(random_bytes(32)));
+        }
+        return $this->session->userdata("checkout_token");
+    }
+
+    private function valid_checkout_token()
+    {
+        $token = $this->input->post("checkout_token");
+        $expected = $this->session->userdata("checkout_token");
+        return is_string($token) && is_string($expected) && hash_equals($expected, $token);
+    }
+
+    // Guest identity links only this new order to a customer record. It is NOT
+    // an authenticated USER_ID and must never unlock account/history routes.
+    public function guest_continue()
+    {
+        if (!count($this->cart->contents())) { redirect("cart"); return; }
+        if ($this->input->method() !== "post") { redirect("checkout/onepage"); return; }
+        if ($this->session->userdata("USER_ID")) { redirect("checkout/onepage"); return; }
+        $name = $this->input->post("guest_name");
+        $phone = $this->user_model->normalise_phone($this->input->post("guest_contact_no"));
+        if (!$this->valid_checkout_token() || !is_string($name) || strlen(trim($name)) > 50 ||
+            !preg_match("/^[\\p{L}\\p{M}][\\p{L}\\p{M} .'-]{0,49}$/uD", trim($name)) || $phone === "") {
+            $this->session->set_flashdata("guest_error", "Please refresh the form and enter a valid name and Indian phone number.");
+            redirect("checkout/onepage"); return;
+        }
+        if (time() - (int) $this->session->userdata("guest_started_at") < 10) {
+            $this->session->set_flashdata("guest_error", "Please wait a moment before trying again.");
+            redirect("checkout/onepage"); return;
+        }
+        $name = trim($name);
+        $this->session->set_userdata("guest_started_at", time());
+        $rows = $this->user_model->guest_customer($name, $phone, "dx" . bin2hex(random_bytes(8)));
+        if (count($rows) !== 1) {
+            $this->session->set_flashdata("guest_error", "We could not start guest checkout for this phone. Please sign in or contact support.");
+            redirect("checkout/onepage"); return;
+        }
+        $this->session->sess_regenerate(TRUE);
+        $this->session->set_userdata(array(
+            "GUEST_CUSTOMER_ID" => (int) $rows[0]->id,
+            "GUEST_DETAILS" => array("fname" => $name, "contact_no" => $phone),
+            "guest_started_at" => time(),
+            "checkout_token" => bin2hex(random_bytes(32))
+        ));
+        $this->session->unset_userdata(array("guest_welcome_back", "GUEST_CHECKOUT", "checkout_data"));
+        redirect("checkout/onepage");
+    }
 
 	
 	function create_invoice_no(){
@@ -239,7 +335,7 @@ class Checkout extends CI_Controller
 	
 		$bill_data['fname'] = $_SESSION['checkout_data']['sfname']; 
 		$bill_data['lname'] = $_SESSION['checkout_data']['slname']; 
-		$bill_data['contact_no'] = $_SESSION['checkout_data']['scontact_no']; 
+			// A delivery contact is not the account's phone identity.
 		$bill_data['country'] = $_SESSION['checkout_data']['scountry']; 
 		$bill_data['address'] = $_SESSION['checkout_data']['saddress'];
 		$bill_data['city'] = $_SESSION['checkout_data']['scity'];
@@ -360,6 +456,9 @@ class Checkout extends CI_Controller
 		$user_id = $this->session->userdata('USER_ID');
 		$data['ORDER'] =$order = $this->order_model->get_order_data($ord_id);
 		$data['USER'] = $this->user_model->get_user_by_id($order[0]->user_id);
+		// Guest checkout supplies no verified email and must not notify an
+		// unrelated existing customer's mailbox based only on a typed phone.
+		if ($order[0]->user_type === "Guest" || empty($data['USER'][0]->email)) { return; }
      	$htmlContent = $this->load->view('front/mail/order-template',$data, TRUE);
 		$this->load->library('email');
 		$this->email->set_mailtype("html");

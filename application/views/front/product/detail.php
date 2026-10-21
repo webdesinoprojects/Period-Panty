@@ -249,16 +249,16 @@ input[type="radio"]{
       </div>
        <div class="col-md-6 col-lg-6  col-xl pl-xl-7">
             <h2 class="fs-24 mb-2"><?php echo $RESULT[0]->title; ?></h2>
-            <p class="d-flex align-items-center text-secondary font-weight-600 fs-14 mb-2">
+            <p class="d-flex align-items-center text-secondary font-weight-600 fs-14 mb-2" id="dx-price-display">
                 <?php if($RESULT[0]->special_price !=='0.00'){ ?>
-                    <span class="text-line-through"><?php echo CURRENCY_SYMBOL." ".round($RESULT[0]->price); ?></span>
-                   <span class="fs-18 text-secondary font-weight-bold ml-3"> <?php echo CURRENCY_SYMBOL." ".round($RESULT[0]->special_price); ?></span>
+                    <span class="text-line-through"><?php echo CURRENCY_SYMBOL." ".number_format((float) $RESULT[0]->price, 2, ".", ""); ?></span>
+                   <span class="fs-18 text-secondary font-weight-bold ml-3" id="dx-price-current"> <?php echo CURRENCY_SYMBOL." ".number_format($this->product_model->effective_variation_price(NULL, $RESULT[0]), 2, ".", ""); ?></span>
                    
                      <?php if($RESULT[0]->discount){?>
                      <span class="badge badge-primary fs-16 ml-4 font-weight-600 px-3"><?php echo $RESULT[0]->discount; ?>% Off</span>
                    <?php } ?>
                      <?php }else{ ?>
-                    <span class="fs-18 text-secondary font-weight-bold ml-3"> <?php echo CURRENCY_SYMBOL." ".round($RESULT[0]->price); ?></span>
+                    <span class="fs-18 text-secondary font-weight-bold ml-3" id="dx-price-current"> <?php echo CURRENCY_SYMBOL." ".number_format($this->product_model->effective_variation_price(NULL, $RESULT[0]), 2, ".", ""); ?></span>
                     
                 <?php }?> 
                
@@ -294,7 +294,38 @@ input[type="radio"]{
               </ul>
             </div>
             
+            <?php
+              /* admin can type anything into a product's colour and it goes straight
+                 into a style attribute, so only a plain hex gets through here. Count
+                 what survives that, not the raw rows, or a product whose siblings all
+                 have a blank colour renders an empty "Colour:" row. */
+              $dx_swatches = array();
+              if (isset($color_variation)) {
+                  foreach ($color_variation as $cv) {
+                      if (preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', trim($cv->color))) {
+                          $dx_swatches[] = $cv;
+                      }
+                  }
+              }
+              if (count($dx_swatches) > 1) { ?>
+              <div class="form-group shop-swatch mb-5 d-flex align-items-center">
+                <span class="font-weight-600 text-secondary mr-4">Colour: </span>
+                <div class="dx-swatch-group">
+                    <?php foreach ($dx_swatches as $cv) {
+                        $cv_hex = trim($cv->color); ?>
+                        <a class="dx-swatch dx-swatch-link<?php echo ((int) $cv->id === (int) $RESULT[0]->id) ? ' is-current' : ''; ?>"
+                           href="<?php echo base_url() . $cv->cat_url . '/' . $cv->url_slug; ?>.html"
+                           style="background: <?php echo htmlspecialchars($cv_hex, ENT_QUOTES); ?>;"
+                           title="<?php echo htmlspecialchars($cv->title, ENT_QUOTES); ?>">
+                          <span class="sr-only"><?php echo htmlspecialchars($cv->title, ENT_QUOTES); ?></span>
+                        </a>
+                    <?php } ?>
+                </div>
+              </div>
+            <?php } ?>
+
             <form action="<?php echo base_url('cart/add_to_cart_pageload') ; ?>" method="post" id="submit_form">
+                <input type="hidden" name="quoted_price" id="dx-quoted-price" value="<?php echo number_format($this->product_model->effective_variation_price(NULL, $RESULT[0]), 2, ".", ""); ?>">
               <div class="form-group shop-swatch mb-5 d-flex align-items-center">
                 <span class="font-weight-600 text-secondary mr-4">Size: </span>
                 
@@ -302,7 +333,8 @@ input[type="radio"]{
                 <div class="wrapper text-uppercase justify-content-start ">
                     <?php   foreach($variation as $key => $value) {  ?>
                           <?php if($value->qty > 0){  ?>
-                           <input type="radio" class="variation_id" name="variation_id" id="option-<?php echo $key+1 ; ?>" value="<?php echo $value->id ; ?>"  >
+                           <?php $dx_variation_price = $this->product_model->effective_variation_price($value, $RESULT[0]); ?>
+                           <input type="radio" class="variation_id" name="variation_id" id="option-<?php echo $key+1 ; ?>" value="<?php echo $value->id ; ?>" data-price="<?php echo number_format($dx_variation_price, 2, ".", ""); ?>" data-has-own-price="<?php echo ($value->price !== null && (float) $value->price > 0) ? '1' : '0'; ?>"  >
                          <?php } ?> 
                        
                     <?php } ?> 
@@ -420,6 +452,24 @@ input[type="radio"]{
 
     
         $('#buy_now').removeClass('addedbutton').addClass('buybutton').attr('title','Add to Cart').html('Add to Cart');
+
+        // Per-size pricing: this size may have its own price. When it does,
+        // show that flat price and drop the strike-through/discount badge,
+        // which were computed from the product's own price and would be
+        // stale for a size that sells at a different amount.
+        var price = $(this).data('price');
+        var hasOwnPrice = $(this).data('has-own-price') == 1 || $(this).data('has-own-price') == '1';
+        if (Number.isFinite(Number(price)) && Number(price) >= 0) {
+            if (hasOwnPrice) {
+                $('#dx-price-display .text-line-through').hide();
+                $('#dx-price-display .badge').hide();
+            } else {
+                $('#dx-price-display .text-line-through').show();
+                $('#dx-price-display .badge').show();
+            }
+            $('#dx-price-current').text('<?php echo CURRENCY_SYMBOL; ?> ' + Number(price).toFixed(2));
+            $('#dx-quoted-price').val(Number(price).toFixed(2));
+        }
     });
 
 </script>
@@ -435,12 +485,15 @@ input[type="radio"]{
             if(variation_id){
                  $.ajax({
                 url: "<?php echo base_url('cart/add_to_cart')?>",
-                data:{product_id:product_id,qty:qty,variation_id:variation_id},
+                data:{product_id:product_id,qty:qty,variation_id:variation_id,quoted_price:$('#dx-quoted-price').val()},
                 type: "POST",
                 success: function(data) {
                       $('.cart-label').html(data);    
                       $(a).removeClass('buybutton').addClass('addedbutton').attr('title','Added').html('Added');
-                  }
+                  },
+                error: function() {
+                    alert('The price or availability changed. Refresh the page and select your size again.');
+                }
                 });
              
             }else{
