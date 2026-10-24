@@ -22,10 +22,20 @@ class Product extends CI_Controller{
 		$this->db->where('product.status','1');
 		$data['PRODUCT_TOTAL'] = $this->db->count_all_results('', FALSE);
 
+		// Pages 2+ are swapped in over AJAX, but the address bar now carries the
+		// page number, so a shared link, a refresh or a crawler has to land on
+		// the right slice from the server rather than always on page one.
+		$page  = (int) $this->input->get('page');
+		$pages = max(1, (int) ceil($data['PRODUCT_TOTAL'] / 12));
+		if ($page < 1)      { $page = 1; }
+		if ($page > $pages) { $page = $pages; }
+		$_GET['page'] = $page;   // getAllPageLinks() reads this to mark the current one
+		$data['PAGE'] = $page;
+
 		// First paint is server-rendered so the grid works without JS and stays
 		// crawlable; product/pagination takes over from the first interaction.
 		$this->db->order_by('product.id', 'DESC');
-		$this->db->limit(12, 0);
+		$this->db->limit(12, ($page - 1) * 12);
 		$data['PRODUCTS'] = $this->db->get()->result();
 
 		// Render the pager server-side with the same helper the AJAX endpoint
@@ -34,13 +44,26 @@ class Product extends CI_Controller{
 		$data['PAGER'] = $this->getAllPageLinks(
 			$data['PRODUCT_TOTAL'],
 			base_url('product/pagination') . '?page=',
-			12
+			12,
+			base_url('shop') . '?page='
 		);
 		$this->load->view('front/product/listing',$data);
 	}
 
-    function getAllPageLinks($count,$href,$perpage) {
+    /**
+     * $page_url, when given, puts a real href on each pager link so the pages
+     * can be shared, middle-clicked and crawled. The onclick still does the
+     * AJAX swap and returns false, so a normal click navigates nowhere.
+     */
+    function getAllPageLinks($count,$href,$perpage,$page_url = '') {
 		$output = '';
+		$anchor = function ($page, $label, $extra = '') use ($href, $page_url) {
+			$cls  = 'link' . ($extra !== '' ? ' ' . $extra : '');
+			$attr = ($page_url !== '') ? ' href="' . $page_url . $page . '"' : '';
+			$tail = ($page_url !== '') ? '; return false;' : '';
+			return '<a class="' . $cls . '"' . $attr . ' onclick="getresult('
+			     . "\'" . $href . $page . "\'" . ')' . $tail . '" >' . $label . '</a>';
+		};
 		if(!isset($_GET["page"])) $_GET["page"] = 1;
 		if($perpage != 0)
 			$pages  = ceil($count/$perpage);
@@ -48,14 +71,14 @@ class Product extends CI_Controller{
 			if($_GET["page"] == 1) 
 				$output = $output . '<span class="link first disabled">&#8810;</span><span class="link disabled">&#60;</span>';
 			else	
-				$output = $output . '<a class="link first" onclick="getresult(\'' . $href . (1) . '\')" >&#8810;</a><a class="link" onclick="getresult(\'' . $href . ($_GET["page"]-1) . '\')" >&#60;</a>';
+				$output = $output . $anchor(1, '&#8810;', 'first') . $anchor($_GET["page"]-1, '&#60;');
 			
 			
 			if(($_GET["page"]-3)>0) {
 				if($_GET["page"] == 1)
 					$output = $output . '<span id=1 class="link current">1</span>';
 				else				
-					$output = $output . '<a class="link" onclick="getresult(\'' . $href . '1\')" >1</a>';
+					$output = $output . $anchor(1, '1');
 			}
 			if(($_GET["page"]-3)>1) {
 					$output = $output . '<span class="dot">...</span>';
@@ -67,7 +90,7 @@ class Product extends CI_Controller{
 				if($_GET["page"] == $i)
 					$output = $output . '<span id='.$i.' class="link current">'.$i.'</span>';
 				else				
-					$output = $output . '<a class="link" onclick="getresult(\'' . $href . $i . '\')" >'.$i.'</a>';
+					$output = $output . $anchor($i, $i);
 			}
 			
 			if(($pages-($_GET["page"]+2))>1) {
@@ -77,11 +100,11 @@ class Product extends CI_Controller{
 				if($_GET["page"] == $pages)
 					$output = $output . '<span id=' . ($pages) .' class="link current">' . ($pages) .'</span>';
 				else				
-					$output = $output . '<a class="link" onclick="getresult(\'' . $href .  ($pages) .'\')" >' . ($pages) .'</a>';
+					$output = $output . $anchor($pages, $pages);
 			}
 			
 			if($_GET["page"] < $pages)
-				$output = $output . '<a  class="link" onclick="getresult(\'' . $href . ($_GET["page"]+1) . '\')" >></a><a  class="link" onclick="getresult(\'' . $href . ($pages) . '\')" >&#8811;</a>';
+				$output = $output . $anchor($_GET["page"]+1, '>') . $anchor($pages, '&#8811;');
 			else				
 				$output = $output . '<span class="link disabled">></span><span class="link disabled">&#8811;</span>';
 			

@@ -207,7 +207,35 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
         		filter = $('.' + class_name).val();
         		return filter;
         }
-        function getresult(url) {
+
+        var DX_SHOP_URL = '<?php echo base_url("shop"); ?>';
+        var DX_LOAD_URL = '<?php echo $load_url; ?>';
+
+        /* Keeps the address bar in step with the grid, so a page of results can
+           be shared, bookmarked and walked back through. Only the page number
+           goes in: shop() can reproduce that on a fresh request, but not the
+           filter and sort state, which lives in the sidebar. With a filter on,
+           the URL is left alone rather than made to promise something a refresh
+           could not honour. */
+        function dx_push_page(url, filtered, push) {
+            if (push === false || !window.history || !history.pushState) { return; }
+            var m = /[?&]page=(\d+)/.exec(url);
+            if (!m || filtered) { return; }
+            var n = m[1];
+            history.pushState({ dxPage: n }, '',
+                n === '1' ? DX_SHOP_URL : DX_SHOP_URL + '?page=' + n);
+        }
+
+        /* Back and forward re-fetch the page they point at. push=false so the
+           handler does not re-push the entry it is already sitting on. */
+        $(window).on('popstate', function (e) {
+            var st = e.originalEvent && e.originalEvent.state;
+            var n  = (st && st.dxPage)
+                  || (/[?&]page=(\d+)/.exec(location.search) || [, '1'])[1];
+            getresult(DX_LOAD_URL + '?page=' + n, false);
+        });
+
+        function getresult(url, push) {
             var price = get_filter('price');
         	if (!$("input[name='size']:checked").val()) {
              
@@ -268,6 +296,10 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
         		},
         		success: function(data){
         		$("#pagination-result").html(data);
+
+        		var filtered = !!(price || size || age_group || sorting
+        		                  || (color && color.length));
+        		dx_push_page(url, filtered, push);
         	
         		},
         			        
@@ -298,6 +330,8 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
             		},
             		success: function(data){
             		$("#pagination-result").html(data);
+
+            		dx_push_page(DX_LOAD_URL + '?page=1', false, true);
         			
             		},
             		error: function() 
