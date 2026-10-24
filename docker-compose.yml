@@ -18,6 +18,13 @@ services:
       DB_PASS: "${DB_PASS}"
       RAZOR_KEY_ID: "${RAZOR_KEY_ID:-}"
       RAZOR_KEY_SECRET: "${RAZOR_KEY_SECRET:-}"
+      # Transactional email. Without the key the app falls back to the
+      # previous SMTP/mail path, so leaving these unset changes nothing.
+      # DEXTE_MAIL_FROM must be a mailbox on the domain verified with
+      # Resend; the address in tbl_setting is not, and Resend rejects it.
+      DEXTE_RESEND_API_KEY: "${DEXTE_RESEND_API_KEY:-}"
+      DEXTE_MAIL_FROM: "${DEXTE_MAIL_FROM:-}"
+      DEXTE_MAIL_FROM_NAME: "${DEXTE_MAIL_FROM_NAME:-DEXTE}"
     volumes:
       # Database files live in a named volume so they survive rebuilds and
       # redeploys. Removing this volume destroys the database.
