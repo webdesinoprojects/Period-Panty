@@ -255,7 +255,11 @@ class Product extends CI_Controller{
             foreach($PRODUCTS as $product){
     
                 $data['product']= $product ; 
-                $output .= '<div class="col-lg-4 col-md-6 col-sm-6 col-6 products-col-item">' ; 
+                // Must match the wrapper in listing.php. Page 1 is rendered by that
+                // view and pages 2+ by this string, so when the shop grid was
+                // redesigned the two drifted apart: paginated pages came back
+                // three across with no vertical gap between the cards.
+                $output .= '<div class="col-xl-3 col-lg-4 col-md-6 mb-6 mb-lg-7">' ; 
                 $output .=  $this->load->view('front/product/listing-view',$data, TRUE);
                 $output .= '</div>';
             }
