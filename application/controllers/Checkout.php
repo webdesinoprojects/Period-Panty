@@ -193,9 +193,20 @@ class Checkout extends CI_Controller
         if ($this->session->userdata("USER_ID")) { redirect("checkout/onepage"); return; }
         $name = $this->input->post("guest_name");
         $phone = $this->user_model->normalise_phone($this->input->post("guest_contact_no"));
-        if (!$this->valid_checkout_token() || !is_string($name) || strlen(trim($name)) > 50 ||
-            !preg_match("/^[\\p{L}\\p{M}][\\p{L}\\p{M} .'-]{0,49}$/uD", trim($name)) || $phone === "") {
-            $this->session->set_flashdata("guest_error", "Please refresh the form and enter a valid name and Indian phone number.");
+        // One message per cause. These used to share a single line covering an
+        // expired token, a bad name and a bad number, so a shopper could not
+        // tell which of the two fields to correct.
+        if (!$this->valid_checkout_token()) {
+            $this->session->set_flashdata("guest_error", "That form had gone stale. Please try again.");
+            redirect("checkout/onepage"); return;
+        }
+        if (!is_string($name) || strlen(trim($name)) > 50 ||
+            !preg_match("/^[\\p{L}\\p{M}][\\p{L}\\p{M} .'-]{0,49}$/uD", trim($name))) {
+            $this->session->set_flashdata("guest_error", "Please enter your name using letters only.");
+            redirect("checkout/onepage"); return;
+        }
+        if ($phone === "") {
+            $this->session->set_flashdata("guest_error", "Please enter a 10 digit phone number.");
             redirect("checkout/onepage"); return;
         }
         if (time() - (int) $this->session->userdata("guest_started_at") < 10) {
@@ -206,7 +217,7 @@ class Checkout extends CI_Controller
         $this->session->set_userdata("guest_started_at", time());
         $rows = $this->user_model->guest_customer($name, $phone, "dx" . bin2hex(random_bytes(8)));
         if (count($rows) !== 1) {
-            $this->session->set_flashdata("guest_error", "We could not start guest checkout for this phone. Please sign in or contact support.");
+            $this->session->set_flashdata("guest_error", "This number already has an account. Please sign in above to continue.");
             redirect("checkout/onepage"); return;
         }
         $this->session->sess_regenerate(TRUE);
@@ -359,6 +370,10 @@ class Checkout extends CI_Controller
 		$ship_data['pincode'] =$_SESSION['checkout_data']['spincode'];
 		$ship_data['country'] =$_SESSION['checkout_data']['scountry']; 
 		$ship_data['landmark'] = $_SESSION['checkout_data']['slandmark'];
+		// Typed during this checkout, so it is safe to keep even for a guest,
+		// unlike the address on the account their phone number happened to match.
+		$semail = isset($_SESSION['checkout_data']['semail']) ? trim($_SESSION['checkout_data']['semail']) : '';
+		$ship_data['email'] = filter_var($semail, FILTER_VALIDATE_EMAIL) ? $semail : '';
 		$this->order_model->save_shipping_data($ship_data);	
 	}
 	
@@ -456,16 +471,22 @@ class Checkout extends CI_Controller
 		$user_id = $this->session->userdata('USER_ID');
 		$data['ORDER'] =$order = $this->order_model->get_order_data($ord_id);
 		$data['USER'] = $this->user_model->get_user_by_id($order[0]->user_id);
-		// Guest checkout supplies no verified email and must not notify an
-		// unrelated existing customer's mailbox based only on a typed phone.
-		if ($order[0]->user_type === "Guest" || empty($data['USER'][0]->email)) { return; }
+		// A guest's phone is unverified, so the address on the account it matched
+		// must never be mailed - that mailbox may belong to somebody else. The
+		// address typed into this checkout is a different matter: it is
+		// self-supplied and only ever receives this same order.
+		$ship = $this->order_model->get_shipping_data($order[0]->id);
+		$to = (count($ship) && filter_var(trim($ship[0]->email), FILTER_VALIDATE_EMAIL))
+			? trim($ship[0]->email)
+			: (($order[0]->user_type === "Guest") ? '' : trim($data['USER'][0]->email));
+		if (!filter_var($to, FILTER_VALIDATE_EMAIL)) { return; }
      	$htmlContent = $this->load->view('front/mail/order-template',$data, TRUE);
 		$this->load->library('email');
 		$this->email->set_mailtype("html");
 		$this->email->set_newline("\r\n");				
-		$this->email->to(trim($data['USER'][0]->email));
+		$this->email->to($to);
 		$this->email->from($link[0]->from_email,$link[0]->title);
-		$this->email->subject('Order Confirm');
+		$this->email->subject('Your DEXTE order ' . $order[0]->order_no);
 		$this->email->message($htmlContent);				
 		$this->email->send();	
 		 

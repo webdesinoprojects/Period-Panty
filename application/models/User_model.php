@@ -38,7 +38,11 @@ class User_model extends CI_Model{
             if (!in_array($prefix, array("0", "91", "0091"), TRUE)) { return ""; }
         }
         $digits = substr($digits, -10);
-        if (!preg_match('/^[6-9][0-9]{9}$/D', $digits) || preg_match('/^([0-9])\\1{9}$/D', $digits)) { return ""; }
+        // Ten digits, not all the same. The first digit is deliberately not
+        // restricted: the 6-9 rule is true of Indian mobiles today but turned
+        // away numbers people were really typing, and the number is only ever
+        // used to reach the buyer, never to authorise anything on its own.
+        if (!preg_match('/^[0-9]{10}$/D', $digits) || preg_match('/^([0-9])\\1{9}$/D', $digits)) { return ""; }
         return $digits;
     }
 

@@ -69,6 +69,13 @@ $user_session=$_SESSION[ 'user_session'];
                                             </div>
                                               <div class="col-md-12">
                                                 <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="email" class="form-control" name="semail" maxlength="254" value="<?php echo html_escape($userdata[0]->email); ?>" Placeholder="Email (for your order confirmation)">
+                                                    <small class="text-muted">Optional. Your order confirmation goes here.</small>
+                                                </div>
+                                            </div>
+                                              <div class="col-md-12">
+                                                <div class="form-group">
                                                     <label>Phone Number</label>
                                                      <input type="text" class="form-control" name="scontact_no" minlength="10" maxlength="10" value="<?php echo $userdata[0]->contact_no ?>" required  pattern="^\d{10}$"  oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" Placeholder="Mobile Number*">
                                                 </div>
@@ -208,7 +215,7 @@ $user_session=$_SESSION[ 'user_session'];
                                 </div>
                                 <div class="checkout-box" id="checkout-box-4">
                                     <div class="checkout-heading">
-                                        <h2>4.  Purchase </h2>
+                                        <h2>3.  Purchase </h2>
                                         <span class="edit-checkout-box">Edit</span>
                                     </div>
                                     <div class="checkout-box-inner">
@@ -321,6 +328,21 @@ $(document).ready(function(){
 
 <script>
 							    
+    /* Reveal whatever is blocking the submit. 'invalid' does not bubble, so
+       this listens on the capture phase; reopening the section makes the field
+       focusable and the browser then reports it in the normal way, instead of
+       the Purchase button appearing to do nothing at all. */
+    (function () {
+        var form = document.querySelector('form.checkout');
+        if (!form) { return; }
+        form.addEventListener('invalid', function (e) {
+            var box = e.target.closest ? e.target.closest('.checkout-box-inner') : null;
+            if (box && box.offsetParent === null) {
+                box.style.display = 'block';
+            }
+        }, true);
+    })();
+
     $('.checkout-btn-1').click(function () {
         $(this).parents('.checkout-box').find('.checkout-box-inner').hide();
         $('#checkout-box-2 .checkout-box-inner').show();
