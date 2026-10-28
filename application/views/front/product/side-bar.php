@@ -71,7 +71,7 @@ $dx_colors = $this->db->select('DISTINCT(color) AS color', FALSE)
                 <select class="cat_id dx-filter-select">
                     <option value="">All categories</option>
                     <?php foreach ($dx_cats as $c) { ?>
-                        <option value="<?php echo (int) $c->id; ?>"><?php echo htmlspecialchars($c->title, ENT_QUOTES); ?></option>
+                        <option value="<?php echo (int) $c->id; ?>" <?php echo isset($cat_id) && (int) $cat_id === (int) $c->id ? 'selected' : ''; ?>><?php echo htmlspecialchars($c->title, ENT_QUOTES); ?></option>
                     <?php } ?>
                 </select>
             </div>

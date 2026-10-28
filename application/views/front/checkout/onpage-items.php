@@ -9,7 +9,7 @@ $product_data = $this->product_model->get_product_by_id($variation_data[0]->prod
     <div class="order-summary-row">
         <div class="order-summary-row-inner-box">
             <div class="order-row-img-wrapper">
-                <img class="mr-15" src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" alt="" style="width:50px">
+                <img class="mr-15" src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" alt="" style="width:50px">
             </div>
             <div class="summary-row-desc"><a class="cart_title" href="<?php echo $url; ?>"><?php echo $item['name']; ?>* <?php echo $item['qty'] ; ?> </a>
                 <div class="cart-row-variants">

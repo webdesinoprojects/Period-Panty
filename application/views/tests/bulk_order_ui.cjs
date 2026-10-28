@@ -1,0 +1,35 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const repo = path.resolve(__dirname, '../../..');
+const events = {};
+const button = { disabled: false, textContent: '' };
+const sizes = [0, 1].map(() => ({ checked: false, message: '', setCustomValidity(v) { this.message = v; }, addEventListener(name, cb) { this.change = cb; } }));
+const form = { querySelectorAll: () => sizes, querySelector: () => button, addEventListener(name, cb) { events[name] = cb; } };
+const source = fs.readFileSync(path.join(repo, 'assets/front/js/bulk-order.js'), 'utf8');
+vm.runInNewContext(source, { document: { getElementById: () => form }, Array });
+assert(sizes[0].message.includes('Choose at least one'));
+sizes[1].checked = true; sizes[1].change(); assert.equal(sizes[0].message, '');
+sizes[1].checked = false; sizes[1].change(); assert(sizes[0].message);
+events.submit(); assert.equal(button.disabled, true); assert(button.textContent.includes('Saving'));
+vm.runInNewContext(source, { document: { getElementById: () => null } });
+const sql = fs.readFileSync(path.join(repo, 'application/models/sql/20261028_collections_contact.sql'), 'utf8');
+assert(sql.includes("WHERE price = 999.00 AND delete_flag = '0'"));
+assert(!/SET\s+(?:qty|price)\s*=/i.test(sql), 'Migration must not change stock or prices.');
+assert(!/UPDATE\s+tbl_(?:users|order|order_item)\b/i.test(sql));
+for (const image of ['dx-collection-branded-v2.jpg', 'dx-about-branded-v2.jpg', 'dx-combo-pack-v2.jpg', 'dx-category-bamboo-v2.jpg', 'dx-category-cotton-v2.jpg', 'dx-category-seamless-v2.png']) {
+    assert(fs.existsSync(path.join(repo, 'assets/front/media', image)), 'Missing image: ' + image);
+}
+assert(sql.includes("description = '' WHERE id = 4"));
+assert(sql.includes('dexteofficials@gmail.com') && sql.includes('dextewellness@gmail.com'));
+const listing = fs.readFileSync(path.join(repo, 'application/views/front/product/listing.php'), 'utf8');
+assert(listing.includes("get_filter('cat_id') || DX_CATEGORY_ID"));
+assert(listing.includes('cat_id: DX_CATEGORY_ID'));
+assert(listing.includes('base_url($url_slug . ".html")'));
+const home = fs.readFileSync(path.join(repo, 'application/views/front/home.php'), 'utf8');
+const section = home.slice(home.indexOf('<section class="py-8 dx-band dx-style'), home.indexOf("include('flows_marquee.php')"));
+assert.equal((section.match(/<div\b/g) || []).length, (section.match(/<\/div>/g) || []).length, 'Collection section containers must balance.');
+const css = fs.readFileSync(path.join(repo, 'assets/front/css/rehaul.css'), 'utf8');
+assert.equal((css.match(/\{/g) || []).length, (css.match(/\}/g) || []).length, 'Stylesheet braces must balance.');
+console.log('PASS: bulk form behaviour, asset references, safe migration scope and category URL guards.');

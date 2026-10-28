@@ -45,7 +45,7 @@
       <a href="<?php echo $product->url_slug.'.html'; ?>">
         <div class="prod-img">
           <?php if(count($product_images)>0){ ?>
-          <img src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" >
+          <img src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" >
           <?php } else{ ?>
           <img src="<?php echo base_url('assets/front/images/product-no-image.jpg'); ?>" >
           <?php } ?>

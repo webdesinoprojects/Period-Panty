@@ -7,7 +7,7 @@
         <div class="col-2 p-0">
             <div class="slider-nav">
             	<?php $j = 0; foreach($product_images as $images){  ?>
-                <div><img src="<?php echo base_url('uploads/product/'.$images->thumb_image); ?>" alt="<?php echo $images->img_tag; ?>" class="img-fluid lazyload"></div>
+                <div><img src="<?php echo $this->category_model->content_image('product', $images->thumb_image); ?>" alt="<?php echo $images->img_tag; ?>" class="img-fluid lazyload"></div>
               		   <?php $j++; } ?>
             </div>
         </div>
@@ -16,7 +16,7 @@
 	  	   <?php $j = 0; foreach($product_images as $images){  ?>
         		<div>
         			<center>
-        				<img src="<?php echo base_url('uploads/product/'.$images->image); ?>" alt="<?php echo $images->img_tag; ?>" class="img-fluid product-img-height  lazyload image_zoom_cls-<?php echo $j ?>" >
+				<img src="<?php echo $this->category_model->content_image('product', $images->image); ?>" alt="<?php echo $images->img_tag; ?>" class="img-fluid product-img-height  lazyload image_zoom_cls-<?php echo $j ?>" >
         			</center>
         		</div>
        	   <?php $j++; } ?>

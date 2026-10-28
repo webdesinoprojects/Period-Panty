@@ -29,6 +29,8 @@ class Setting extends CI_Controller
 		if(isset($_POST['submitform']))
 		{			
 			$this->form_validation->set_rules('email', 'Email', 'trim|required');
+			$this->form_validation->set_rules('email_secondary', 'Secondary email', 'trim|valid_email|max_length[254]');
+			$this->form_validation->set_rules('linkedin_link', 'LinkedIn link', 'trim|valid_url|max_length[100]');
 			$this->form_validation->set_rules('copyright', 'Copyright', 'trim|required');
 			$this->form_validation->set_rules('title', 'title', 'trim|required');
 			$this->form_validation->set_error_delimiters('<div class="error"><i class="fa fa-warning"></i>&nbsp', '</div>');

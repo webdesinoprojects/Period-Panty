@@ -89,7 +89,9 @@ class Contact extends CI_Controller
         }
         $this->email->initialize($mail_config);
         $this->email->from($settings->from_email, preg_replace('/[\r\n]+/', " ", $settings->title));
-        $this->email->to($settings->email);
+        $recipients = array($settings->email);
+        if (!empty($settings->email_secondary) && filter_var($settings->email_secondary, FILTER_VALIDATE_EMAIL)) { $recipients[] = $settings->email_secondary; }
+        $this->email->to(array_unique($recipients));
         $this->email->reply_to($enquiry["email"], preg_replace('/[\r\n]+/', " ", $enquiry["name"]));
         $this->email->subject("DEXTE contact enquiry #" . $id . ": " . preg_replace('/[\r\n]+/', " ", $enquiry["subject"]));
         $this->email->message("Contact enquiry #" . $id . "\n\nName: " . $enquiry["name"] . "\nEmail: " . $enquiry["email"] . "\nPhone: " . $enquiry["mobile"] . "\nSubject: " . $enquiry["subject"] . "\n\n" . $enquiry["message"]);

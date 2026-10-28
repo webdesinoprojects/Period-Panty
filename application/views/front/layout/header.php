@@ -4,7 +4,7 @@
 <?php 	$wislist  = $this->user_model->count_user_wishlist($user_id); ?>
 <?php $act = $this->uri->segment(2); ?>
 <?php $cart_content = $this->cart->contents(); ?>
- <?php $parent = $this->category_model->get_home_category_by_parent('0');?>
+ <?php $parent = $this->category_model->get_shop_collections();?>
 <header class="main-header navbar-light header-sticky header-sticky-smart header-02">
     <div class="topbar" style="background-color: #ead1f0">
         <div class="container">
@@ -108,7 +108,7 @@ src="https://www.facebook.com/tr?id=787775496297748&ev=PageView&noscript=1"
                                     </li>
                                      <li aria-haspopup="true" aria-expanded="false"
                                         class="nav-item  py-2 py-xl-7 sticky-py-xl-6 px-0 px-xl-5">
-                                        <a class="p-0" href="#">
+                                        <a class="p-0" href="<?php echo base_url('bulk-orders'); ?>">
                                         Bulk Order
                                         </a>
                                     </li>
@@ -188,6 +188,4 @@ src="https://www.facebook.com/tr?id=787775496297748&ev=PageView&noscript=1"
 
 
 </header>
-        
-        
-      
+

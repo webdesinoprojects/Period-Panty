@@ -55,7 +55,7 @@
                          
                                 <div class="col-sm-2 col-2"> 
                                 
-                                <img src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" alt="<?php echo $product_images[0]->img_tag; ?>" style="width:50%">
+                                <img src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" alt="<?php echo $product_images[0]->img_tag; ?>" style="width:50%">
                               
                                 </div>
                                 <div class="col-sm-7 col-10"> 

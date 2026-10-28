@@ -6,7 +6,7 @@
               <a class="primary_img" href="<?php echo $url ?>">
                 <?php if($product_images){ ?>
                 
-                 <img src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" class="main-image" alt="<?php echo $product->title; ?>">
+                 <img src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" class="main-image" alt="<?php echo $product->title; ?>">
           
                  <?php }else{  ?>
                  <img src="<?php echo base_url('images/1215BP6.png'); ?>" alt="<?php echo $product->title; ?>" class="main-image">
@@ -39,4 +39,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>

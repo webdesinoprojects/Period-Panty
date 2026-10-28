@@ -151,48 +151,71 @@ class Welcome extends CI_Controller
 	
 	function bulk_orders()
 	{
-	    $link = $this->setting_model->get_all_setting();
-		if(isset($_POST['name']))
-		{
-		
-             $name = $this->input->post('name'); 
-    		 $to_email = $this->input->post('email');
-    		 $mobile = $this->input->post('mobile');
-    		 $messages = $this->input->post('message');
-    		 $address = $this->input->post('address');
-    		 $subject = $this->input->post('subject');
-             $postdata = $this->input->post() ; 
-             unset($postdata['submit']);
-             $postdata['create_date']= date('Y-m-d H:i:s') ;
-             //Load email library 
-             $this->load->library('email'); 
-             $this->email->from($link[0]->from_email,$link[0]->title);
-             $this->email->subject($link[0]->title.'::'.$subject);    
-             $this->email->to($link[0]->email);
-    		 $this->email->set_mailtype("html");
-    		 $message = '<html><body>';
-			$message .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
-			$message .= "<tr style='background: #eee;'><td colspan='2'> ".$subject." </td></tr>";
-			$message .= "<tr><td><strong>Name:</strong> </td><td>" . $name . "</td></tr>";
-			$message .= "<tr><td><strong>Email:</strong> </td><td>" . $to_email . "</td></tr>";
-			$message .= "<tr><td><strong>Mobile:</strong> </td><td>" . $mobile . "</td></tr>";
-			$message .= "<tr><td><strong>Address:</strong> </td><td>" . $address . "</td></tr>";
-			$message .= "<tr><td><strong>Message:</strong> </td><td>" . $messages . "</td></tr>";
-			$message .= "</table>";
-			$message .= "</body></html>";
-            $this->email->message($message); 
-            $this->email->send();
-             if( $this->db->insert('tbl_mail_info', $postdata )) {
-                  $this->session->set_flashdata('msg','<div class="alert alert-success">Thank you for showing interest in our products. We shall get back to you within 24 hours.</div>');
-             }else{
-                  $this->session->set_flashdata('msg','<div class="alert alert-danger">Error in sending Email.</div>');
-             }
-             redirect('bulk-orders#form');
-            		
+		$this->load->model(array('contact_model', 'bulk_order_model'));
+		$this->contact_model->initialize();
+		$data = array('errors' => array(), 'values' => array(), 'notice' => $this->session->flashdata('bulk_notice'));
+		if (!$this->session->userdata('bulk_token')) { $this->session->set_userdata('bulk_token', bin2hex(random_bytes(32))); }
+		if ($this->input->method() === 'post') {
+			$failure_status = 422;
+			$token = $this->input->post('bulk_token');
+			if (!is_string($token) || !hash_equals($this->session->userdata('bulk_token'), $token)) {
+				$data['errors']['form'] = 'This form expired. Refresh the page and try again.';
+			} elseif ($this->input->post('website') !== '') {
+				$data['errors']['form'] = 'Please refresh the form and try again.';
+			} elseif (time() - (int) $this->session->userdata('bulk_last_sent') < 45) {
+				$data['errors']['form'] = 'Your previous enquiry was received. Please wait before sending another.';
+			} else {
+				$checked = $this->bulk_order_model->validate($this->input->post(NULL, FALSE));
+				$data['values'] = $checked['data']; $data['errors'] = $checked['errors'];
+				if (!$data['errors']) {
+					$enquiry = $this->bulk_order_model->enquiry($checked['data']);
+					$id = $this->contact_model->save($enquiry);
+					if (!$id) {
+						$data['errors']['form'] = 'We could not save your enquiry. Please try again, or call us.';
+						$failure_status = 503;
+					} else {
+						$settings = $this->setting_model->get_all_setting();
+						$accepted = $this->send_bulk_notification($enquiry, $id, $settings[0]);
+						$this->contact_model->record_delivery($id, $accepted ? 'accepted' : 'failed');
+						$this->session->set_userdata(array('bulk_last_sent' => time(), 'bulk_token' => bin2hex(random_bytes(32))));
+						$this->session->set_flashdata('bulk_notice', array('id' => $id));
+						redirect('bulk-orders#bulk-form', 'location', 303); return;
+					}
+				}
+			}
+			if ($data['errors']) { $this->output->set_status_header($failure_status); }
 		}
-		$data['RESULT'] = $this->page_model->get_page_by_id(37);
-		$this->load->view('front/page',$data);
+		$data['bulk_token'] = $this->session->userdata('bulk_token');
+		$this->load->view('front/bulk-orders', $data);
+	}
 
+	private function send_bulk_notification($enquiry, $id, $settings)
+	{
+		$recipients = array();
+		foreach (array($settings->email, isset($settings->email_secondary) ? $settings->email_secondary : '') as $recipient) {
+			if (filter_var($recipient, FILTER_VALIDATE_EMAIL)) { $recipients[] = $recipient; }
+		}
+		if (!$recipients || !filter_var($settings->from_email, FILTER_VALIDATE_EMAIL)) { return FALSE; }
+		$this->load->library('email');
+		$this->email->clear(TRUE);
+		$mail_config = array('mailtype' => 'text', 'charset' => 'utf-8', 'newline' => "\r\n", 'crlf' => "\r\n", 'smtp_timeout' => 10);
+		if (getenv('DEXTE_SMTP_HOST')) {
+			$mail_config['protocol'] = 'smtp';
+			$mail_config['smtp_host'] = getenv('DEXTE_SMTP_HOST');
+			$mail_config['smtp_port'] = getenv('DEXTE_SMTP_PORT') ?: 587;
+			$mail_config['smtp_user'] = getenv('DEXTE_SMTP_USER') ?: '';
+			$mail_config['smtp_pass'] = getenv('DEXTE_SMTP_PASS') ?: '';
+			$mail_config['smtp_crypto'] = getenv('DEXTE_SMTP_CRYPTO') ?: 'tls';
+		}
+		$this->email->initialize($mail_config);
+		$this->email->from($settings->from_email, preg_replace('/[\r\n]+/', ' ', $settings->title));
+		$this->email->to(array_unique($recipients));
+		if ($enquiry['email'] !== '') { $this->email->reply_to($enquiry['email']); }
+		$this->email->subject('DEXTE bulk enquiry #' . $id . ': ' . $enquiry['subject']);
+		$this->email->message('Reference #' . $id . "\nName: " . $enquiry['name'] . "\nPhone: " . $enquiry['mobile'] . "\nEmail: " . $enquiry['email'] . "\n\n" . $enquiry['message']);
+		$accepted = $this->email->send(FALSE);
+		if (!$accepted) { log_message('error', 'Bulk notification failed for enquiry #' . $id); }
+		return $accepted;
 	}
 
 	function offer()

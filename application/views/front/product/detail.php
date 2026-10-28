@@ -225,8 +225,8 @@ input[type="radio"]{
                 <?php foreach($product_images as $key=> $images){  ?>
                 <div class="box px-0">
                     <div class="card p-0 rounded-0 border-0">
-                      <a href="<?php echo base_url('uploads/product/'.$images->image); ?>" class="card-img" data-gtf-mfp="true" data-gallery-id="<?php echo $images->id; ?>">
-                        <img src="<?php echo base_url('uploads/product/'.$images->image); ?>" alt="<?php echo $images->img_tag; ?>" class="w-100">
+                      <a href="<?php echo $this->category_model->content_image('product', $images->image); ?>" class="card-img" data-gtf-mfp="true" data-gallery-id="<?php echo $images->id; ?>">
+                        <img src="<?php echo $this->category_model->content_image('product', $images->image); ?>" alt="<?php echo $images->img_tag; ?>" class="w-100">
                       </a>
                     </div>
                 </div>
@@ -235,7 +235,7 @@ input[type="radio"]{
             <div class="slick-slider slider-nav mx-n1 mx-xl-0" data-slick-options='{"slidesToShow": 6,"vertical":true, "autoplay":false,"dots":false,"arrows":false,"asNavFor": ".slider-for","focusOnSelect": true,"responsive":[{"breakpoint": 1200,"settings": {"vertical": false}}]}'>
                   <?php foreach($product_images as $images){  ?>
                  <div class="box px-1 px-xl-0 py-2 pt-xl-0">
-                    <img src="<?php echo base_url('uploads/product/'.$images->image); ?>" class="w-100" alt="<?php echo $images->img_tag; ?>">
+                    <img src="<?php echo $this->category_model->content_image('product', $images->image); ?>" class="w-100" alt="<?php echo $images->img_tag; ?>">
                   </div>
                 <?php }       ?>          
             </div>

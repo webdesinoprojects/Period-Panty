@@ -1,10 +1,11 @@
 <?php
 $link = $this->setting_model->get_all_setting();
 $contact_settings = $link[0];
-$contact_email = !empty($contact_settings->email) ? $contact_settings->email : "info@dexteshop.com";
-$contact_phone = !empty($contact_settings->phone) ? $contact_settings->phone : "+91-9311268555";
+$contact_email = !empty($contact_settings->email) ? $contact_settings->email : "dexteofficials@gmail.com";
+$contact_secondary_email = !empty($contact_settings->email_secondary) ? $contact_settings->email_secondary : "";
+$contact_phone = !empty($contact_settings->phone) ? $contact_settings->phone : "+91 8527632266";
 $contact_tel = preg_replace("/[^0-9+]/", "", $contact_phone);
-$contact_address = !empty($contact_settings->address_content) ? $contact_settings->address_content : "Nanda Enclave Gali No. 2, Sector 19, Nanda Enclave, Dwarka, Delhi, 110075.";
+$contact_address = !empty($contact_settings->address_content) ? $contact_settings->address_content : "Gurgaon, Haryana, India";
 $contact_whatsapp = preg_replace("/[^0-9]/", "", !empty($contact_settings->whatapp) ? $contact_settings->whatapp : $contact_phone);
 if (strlen($contact_whatsapp) === 10) { $contact_whatsapp = "91" . $contact_whatsapp; }
 ?>
@@ -100,7 +101,7 @@ if (strlen($contact_whatsapp) === 10) { $contact_whatsapp = "91" . $contact_what
                 <article class="dx-contact-info-card dx-contact-location">
                     <span class="dx-contact-kicker">Come say hello</span>
                     <span class="dx-contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
-                    <h3>Rooted in <em>Delhi.</em></h3>
+                    <h3>Rooted in <em>Gurgaon.</em></h3>
                     <p><?php echo html_escape($contact_address); ?></p>
                     <a class="dx-contact-text-link" href="#contact-map">Find us on the map <span aria-hidden="true">&rarr;</span></a>
                     <img class="dx-contact-location-art" src="<?php echo base_url("assets/front/media/dx-contact-pink-bud.jpg"); ?>" alt="" width="424" height="900" loading="lazy">
@@ -111,12 +112,13 @@ if (strlen($contact_whatsapp) === 10) { $contact_whatsapp = "91" . $contact_what
                     <h3>Give us a call.</h3><p><?php echo html_escape($contact_phone); ?></p>
                     <span class="dx-contact-card-arrow" aria-hidden="true">&nearr;</span>
                 </a>
-                <a class="dx-contact-info-card dx-contact-email" href="mailto:<?php echo html_escape($contact_email); ?>">
+                <article class="dx-contact-info-card dx-contact-email">
                     <span class="dx-contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 6 9 7 9-7"/></svg></span>
                     <span class="dx-contact-kicker">A note works too</span>
-                    <h3>Write to us.</h3><p><?php echo html_escape($contact_email); ?></p>
+                    <h3>Write to us.</h3><p><a href="mailto:<?php echo html_escape($contact_email); ?>"><?php echo html_escape($contact_email); ?></a>
+                    <?php if ($contact_secondary_email) { ?><br><a href="mailto:<?php echo html_escape($contact_secondary_email); ?>"><?php echo html_escape($contact_secondary_email); ?></a><?php } ?></p>
                     <span class="dx-contact-card-arrow" aria-hidden="true">&nearr;</span>
-                </a>
+                </article>
                 <article class="dx-contact-info-card dx-contact-help">
                     <svg class="dx-contact-help-leaf" viewBox="0 0 110 170" fill="none" aria-hidden="true"><path d="M36 161C48 118 54 74 76 14M57 90C27 85 13 67 11 42C40 46 54 63 57 90ZM65 66C90 62 104 42 103 22C79 27 66 42 65 66ZM47 125C19 119 9 103 8 83C33 89 45 103 47 125Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M57 90C27 85 13 67 11 42C40 46 54 63 57 90ZM65 66C90 62 104 42 103 22C79 27 66 42 65 66Z" fill="currentColor" fill-opacity=".12"/></svg>
                     <span class="dx-contact-kicker">Little questions, answered</span>

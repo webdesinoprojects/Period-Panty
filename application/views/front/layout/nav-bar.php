@@ -24,7 +24,7 @@
                         <li><a href="<?php echo base_url('about-us') ?>">ABOUT US</a></li>
                         <li class="menu-item-has-children"><a href="#">SHOP<i class="fa fa-angle-down"></i></a>
                             <ul class="sub-menu megamenu">
-                                <?php $parent = $this->category_model->get_home_category_by_parent('0');?>
+                                <?php $parent = $this->category_model->get_shop_collections();?>
                                 <?php foreach($parent as $parents){ ?>
                                     <li class="sub-menu-item-has-children" ><a href="<?php echo base_url() ?><?php echo $parents->url_slug;?>.html"><?php echo $parents->title; ?></a>
                                     <?php $childs = $this->category_model->get_home_category_by_parent($parents->id);?>

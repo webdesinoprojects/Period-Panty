@@ -357,16 +357,20 @@ class Product extends CI_Controller{
     		// has to supply the same variables that view now expects. Without
     		// these it raised "Undefined variable: PRODUCT_TOTAL" on every
     		// category page.
-    		$data['PRODUCT_TOTAL'] = $this->db->count_all_results('', FALSE);
-
-    		$this->db->limit(12, 0);
+		$data['PRODUCT_TOTAL'] = $this->db->count_all_results('', FALSE);
+		$page = max(1, (int) $this->input->get('page'));
+		$page = min($page, max(1, (int) ceil($data['PRODUCT_TOTAL'] / 12)));
+		$_GET['page'] = $page;
+		$data['PAGE'] = $page;
+		$this->db->limit(12, ($page - 1) * 12);
     		$data['PRODUCTS'] = $this->db->get()->result();
 
     		$data['load_url'] = base_url('product/pagination');
     		$data['PAGER'] = $this->getAllPageLinks(
     			$data['PRODUCT_TOTAL'],
     			base_url('product/pagination') . '?cat_id=' . (int) $cat_id . '&page=',
-    			12
+			12,
+			base_url($category_data[0]->url_slug . '.html') . '?page='
     		);
 
 			$this->load->view('front/product/listing',$data);

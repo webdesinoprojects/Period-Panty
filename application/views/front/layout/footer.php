@@ -23,12 +23,15 @@
                             <li  class="pb-1"><a href="<?php echo base_url('about-us') ?>">About Us</a></li>
                          
                             <li  class="pb-1"><a href="<?php echo base_url('contact-us') ?>"> Contact Us</a></li>
-                               <li  class="pb-1"><a href="#">Bulk Order</a></li>
+                               <li  class="pb-1"><a href="<?php echo base_url('bulk-orders'); ?>">Bulk Order</a></li>
                             
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-3 col-12 mb-7 mb-lg-0">
                         <h3 class="fs-20 mb-3">Information</h3>
+                        <p class="dx-footer-contact"><a href="mailto:<?php echo html_escape($link[0]->email); ?>"><?php echo html_escape($link[0]->email); ?></a><br>
+                        <?php if (!empty($link[0]->email_secondary)) { ?><a href="mailto:<?php echo html_escape($link[0]->email_secondary); ?>"><?php echo html_escape($link[0]->email_secondary); ?></a><br><?php } ?>
+                        <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', $link[0]->phone); ?>"><?php echo html_escape($link[0]->phone); ?></a><br><?php echo html_escape($link[0]->address_content); ?></p>
                         <ul class="list-unstyled mb-0">
                             <li class="py-1" ><a href="<?php echo base_url('privacy-policy') ?>"  class="lh-175">Privacy Policy</a></li>
                             <li class="py-1" ><a href="<?php echo base_url('terms-conditions') ?>"  class="lh-175"> Terms Conditions</a></li>
@@ -50,6 +53,7 @@
                             <li class="list-inline-item mr-4">
                                 <a href="<?php echo $link[0]->instagram_link; ?>"><i class="fab fa-instagram"></i></a>
                             </li>
+                            <?php if (!empty($link[0]->linkedin_link)) { ?><li class="list-inline-item mr-4"><a href="<?php echo html_escape($link[0]->linkedin_link); ?>" target="_blank" rel="noopener noreferrer" aria-label="DEXTE on LinkedIn"><i class="fab fa-linkedin-in"></i></a></li><?php } ?>
                        
                         </ul>
                     </div>
@@ -876,7 +880,7 @@
                               <span class="caret"></span>
                             </a>
                             <div class="dropdown-menu p-0 dropdown-menu-listing x-animated x-fadeInUp">
-                            <?php $parent = $this->category_model->get_home_category_by_parent('0');?>
+                            <?php $parent = $this->category_model->get_shop_collections();?>
                              <?php foreach($parent as $parents){ ?>
                                 <h4 class="dropdown-header text-secondary fs-16 my-3">
                                   <a href="<?php echo base_url() ?><?php echo $parents->url_slug;?>.html" ><?php echo strtoupper($parents->title); ?></a>
@@ -901,6 +905,7 @@
                                 Contact Us
                             </a>
                         </li>
+                        <li class="nav-item py-1 px-0"><a class="nav-link p-0" href="<?php echo base_url('bulk-orders'); ?>">Bulk Order</a></li>
                     </ul>
                 </div>
                 <div class="card-footer bg-transparent border-0 mt-auto pl-8 pr-7 pb-0 pt-4">
@@ -914,6 +919,7 @@
                             <li class="list-inline-item mr-4">
                                 <a href="<?php echo $link[0]->instagram_link; ?>" class="fs-20 lh-1"><i class="fab fa-instagram"></i></a>
                             </li>
+                            <?php if (!empty($link[0]->linkedin_link)) { ?><li class="list-inline-item mr-4"><a href="<?php echo html_escape($link[0]->linkedin_link); ?>" target="_blank" rel="noopener noreferrer" aria-label="DEXTE on LinkedIn"><i class="fab fa-linkedin-in"></i></a></li><?php } ?>
                         
                     </ul>
                     <p class="mb-0 text-gray">
@@ -925,4 +931,4 @@
         </div>
 
 <?php $this->load->view('front/layout/search-bar'); ?>
- 
+

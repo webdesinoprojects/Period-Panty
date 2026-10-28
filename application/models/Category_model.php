@@ -2,10 +2,38 @@
 class Category_model extends CI_Model
 {	
 	protected $table = 'tbl_categories';
-	/*start forum category model*/
-	public function get_category_by_urlslug($key) 
+	public function __construct()
 	{
+		parent::__construct();
+		$this->load->model('site_refresh_model');
+		$this->site_refresh_model->initialize();
+	}
+
+	public function get_shop_collections()
+	{
+		return $this->db->where('status', '1')->where('home_display', 1)
+			->where_in('url_slug', array('bamboo', 'seamless', 'cotton', 'combo', 'teen'))
+			->order_by("FIELD(url_slug, 'bamboo', 'seamless', 'cotton', 'combo', 'teen')", '', FALSE)
+			->get($this->table)->result();
+	}
+
+	public function content_image($folder, $filename)
+	{
+		$filename = basename((string) $filename);
+		if (strpos($filename, 'dx-') === 0 && is_file(FCPATH . 'assets/front/media/' . $filename)) {
+			return base_url('assets/front/media/' . $filename);
+		}
+		return base_url('uploads/' . $folder . '/' . $filename);
+	}
+	/*start forum category model*/
+	public function get_category_by_urlslug($key)
+	{
+		// Both callers are the public category page, which redirects to 404 on
+		// an empty result. Without this a collection switched off in admin kept
+		// serving a live, indexable page - the same hole get_product_by_urlslug
+		// had. Admin edits categories by id, so nothing there is affected.
 		$this->db->where('url_slug',$key);
+		$this->db->where('status','1');
 		return $this->db->get($this->table)->result();
 	}
 	

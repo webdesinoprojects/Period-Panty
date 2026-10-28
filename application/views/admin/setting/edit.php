@@ -78,6 +78,10 @@
                                         <?php echo form_error( 'title'); ?>
                                     </div>
                                     <div class="col-sm-6 form-group">
+                                        <label for="secondary-email">Secondary contact email</label>
+                                        <input id="secondary-email" type="email" class="form-control" name="email_secondary" value="<?php echo html_escape(isset($RESULT[0]->email_secondary) ? $RESULT[0]->email_secondary : ''); ?>">
+                                    </div>
+                                    <div class="col-sm-6 form-group">
                                         <label for="exampleInputEmail1">Phone</label>
                                         <input type="text" class="form-control" name="phone" value="<?php echo $RESULT[0]->phone; ?>"  placeholder="Enter Phone "> </div>
                                     <div class="col-sm-6 form-group">
@@ -103,6 +107,7 @@
                                     <div class="col-sm-6 form-group">
                                         <label for="exampleInputEmail1">Instagram Link</label>
                                         <input type="text" class="form-control" name="instagram_link" value="<?php echo $RESULT[0]->instagram_link; ?>"  placeholder="Enter Instagram Link"> </div>
+                                    <div class="col-sm-6 form-group"><label for="linkedin-link">LinkedIn Link</label><input id="linkedin-link" type="url" class="form-control" name="linkedin_link" value="<?php echo html_escape($RESULT[0]->linkedin_link); ?>"></div>
                                    
                                     <div class="col-sm-6 form-group">
                                         <label for="exampleInputEmail1">Youtube Link</label>

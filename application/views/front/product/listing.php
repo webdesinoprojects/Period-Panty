@@ -208,7 +208,8 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
         		return filter;
         }
 
-        var DX_SHOP_URL = '<?php echo base_url("shop"); ?>';
+        var DX_SHOP_URL = '<?php echo isset($url_slug) ? base_url($url_slug . ".html") : base_url("shop"); ?>';
+        var DX_CATEGORY_ID = <?php echo isset($cat_id) ? (int) $cat_id : 0; ?>;
         var DX_LOAD_URL = '<?php echo $load_url; ?>';
 
         /* Keeps the address bar in step with the grid, so a page of results can
@@ -278,7 +279,7 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
               	var sorting = $(".sorting option:selected").val();
             }
      
-        	var cat_id = get_filter('cat_id');
+            var cat_id = get_filter('cat_id') || DX_CATEGORY_ID;
         	var where_clause = get_filter('where_clause');
         	$.ajax({
         		url: url,
@@ -320,6 +321,7 @@ $PAGER    = isset($PAGER) ? $PAGER : '';
             		color: "GET",
             		data:  {
             		    rowcount:$("#rowcount").val(),
+                            cat_id: DX_CATEGORY_ID,
             		    price: price,
             			color: color,
             			age_group: age_group,

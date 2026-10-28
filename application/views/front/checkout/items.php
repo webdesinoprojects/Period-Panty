@@ -7,7 +7,7 @@ $product_data = $this->product_model->get_product_by_id($variation_data[0]->prod
 <?php  $url = $this->product_model->get_product_url($variation_data[0]->product_id) ; ?>
 
 <tr>
-  <td><img class="mr-15" src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" alt="" style="width:80px">
+  <td><img class="mr-15" src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" alt="" style="width:80px">
       <input type="hidden" name="rowid[]" value="<?php echo $item['rowid'] ?>" />
     <input type="hidden" name="productid[]" value="<?php echo $variation_data[0]->product_id ?>" />
   </td>

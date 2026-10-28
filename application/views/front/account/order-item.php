@@ -8,7 +8,7 @@ $product_data = $this->product_model->get_product_by_id($item->pro_id); ?>
     <th scope="row" style="width:40%">
       <ul class="cart_list">
         <li class="list-inline-item "><a href="#"><?php if(count($product_images)>0){ ?>
-            <img src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" width="90">
+            <img src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" width="90">
             <?php }  ?></a>
         </li>
         <bR>

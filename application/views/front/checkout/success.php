@@ -60,7 +60,7 @@ $items_data = $this->order_model->get_item_data($order_data[0]->id); ?>
                                  
                                         <div class="col-sm-3 col-2"> 
                                         
-                                        <img src="<?php echo base_url('uploads/product/'.$product_images[0]->image); ?>" alt="<?php echo $product_images[0]->img_tag; ?>" style="width:100%">
+                                        <img src="<?php echo $this->category_model->content_image('product', $product_images[0]->image); ?>" alt="<?php echo $product_images[0]->img_tag; ?>" style="width:100%">
                                       
                                         </div>
                                         <div class="col-sm-9 col-10"> 

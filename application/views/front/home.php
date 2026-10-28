@@ -16,7 +16,7 @@
     
     <meta property="og:title" content="Period Panties in India: Comfortable & Reliable | DEXTE" />
     
-    <meta property="og:description" content="Are you searching for reliable and comfortable period panties in India? Look no further! DEXTE brings you a comprehensive range of period panties designed to provide unparalleled comfort and protection during your menstrual cycle. Call Now +91-9311268555" />
+    <meta property="og:description" content="Are you searching for reliable and comfortable period panties in India? Look no further! DEXTE brings you a comprehensive range of period panties designed to provide unparalleled comfort and protection during your menstrual cycle. Call Now <?php echo html_escape($link[0]->phone); ?>" />
     <?php $this->load->view('front/layout/head'); ?>
 </head>
 
@@ -51,7 +51,7 @@ $this->load->view("front/includes/lifestyle_hero", array(
             <div class="dx-made-row">
               <?php foreach ($dx_made as $dx_m) { ?>
               <a class="dx-made-item" href="<?php echo base_url($dx_m->button_link ? $dx_m->button_link : 'shop'); ?>">
-                <span class="dx-made-img" style="background-image:url('<?php echo base_url('uploads/slider/' . $dx_m->image); ?>')"></span>
+                <span class="dx-made-img" style="background-image:url('<?php echo $this->category_model->content_image('slider', $dx_m->image); ?>')" role="img" aria-label="<?php echo html_escape($dx_m->title); ?>"></span>
                 <span class="dx-made-label"><?php echo $dx_m->title; ?></span>
                 <?php if ($dx_m->description) { ?>
                 <span class="dx-made-sub"><?php echo $dx_m->description; ?></span>
@@ -74,7 +74,7 @@ $this->load->view("front/includes/lifestyle_hero", array(
    the whole grid. No new table, no new admin fields.
 
    Tile sizes are assigned by position, so the order built here is the layout. */
-$dx_cats    = $this->category_model->get_home_category_by_parent(0);
+$dx_cats    = $this->category_model->get_shop_collections();
 $dx_banners = array();
 foreach ($slider as $dx_mb) { if ($dx_mb->type === 'Middle') { $dx_banners[] = $dx_mb; } }
 
@@ -114,7 +114,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                 <a class="dx-bento-card dx-bento-banner"
                    href="<?php echo html_escape(base_url($dx_r->button_link ? $dx_r->button_link : "shop")); ?>">
                   <span class="dx-bento-banner-img"
-                        style="background-image:url('<?php echo base_url('uploads/slider/' . $dx_r->image); ?>')"></span>
+                        style="background-image:url('<?php echo $this->category_model->content_image('slider', $dx_r->image); ?>')"></span>
                   <?php if (!empty($dx_r->title)) { ?>
                   <span class="dx-bento-banner-copy">
                     <span class="dx-bento-banner-title"><?php echo nl2br(html_escape(str_replace("|", "\n", $dx_r->title))); ?></span>
@@ -130,7 +130,7 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                 <a class="dx-bento-card" href="<?php echo base_url($dx_r->url_slug . '.html'); ?>">
 
                   <?php if ($dx_r->image) { ?>
-                  <span class="dx-bento-art" style="background-image:url('<?php echo base_url('uploads/category/' . $dx_r->image); ?>')"></span>
+                  <span class="dx-bento-art" style="background-image:url('<?php echo $this->category_model->content_image('category', $dx_r->image); ?>')"></span>
                   <?php } ?>
 
                   <!-- Brand botanical motif; the stroke draws itself in on hover. -->
@@ -261,69 +261,15 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                          own row, so the Bootstrap row > col structure stays intact. -->
                     <div class="col-12">
                       <div class="dx-style-frame">
-                        <div class="row">
-                    <div class="col-12 col-lg-6">
-                        <?php $first  =  $this->category_model->get_category_by_id(4) ;   ?>
-                        <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                        <img src="<?php echo base_url("assets/front/media/dx-facefree-shorts-v1.jpg"); ?>" alt="<?php echo html_escape($first[0]->title); ?>" class="card-img dx-style-product-photo" loading="lazy">
-                            <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
-                                <div>
-                                  <a href="<?php echo base_url().$first[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $first[0]->title; ?> </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-6">
-                        <div class="row">
-                            <?php $Second =  $this->category_model->get_category_by_id(18) ;   ?>
-                            <div class="col-md-6 mt-6 mb-5 mt-lg-0">
-                                <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                                    <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">
-                                    <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
-                                        <div>
-                                        <a href="<?php echo base_url().$Second[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $Second[0]->title; ?></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <?php $Second =  $this->category_model->get_category_by_id(2) ;   ?>
-                            <div class="col-md-6 mt-6 mb-5 mt-lg-0">
-                                <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                                    <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">
-                                    <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
-                                        <div>
-                                        <a href="<?php echo base_url().$Second[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $Second[0]->title; ?></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <?php $Second =  $this->category_model->get_category_by_id(3) ;   ?>
-                            <div class="col-md-6 mt-6 mb-5 mt-lg-0">
-                                <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                                    <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">
-                                    <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
-                                        <div>
-                                        <a href="<?php echo base_url().$Second[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $Second[0]->title; ?></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                             <?php $Second =  $this->category_model->get_category_by_id(22) ;   ?>
-                            <div class="col-md-6 mt-6 mb-5 mt-lg-0">
-                                <div class="card border-0 text-center hover-shine hover-zoom-in" data-animate="fadeInUp">
-                                    <img src="<?php echo base_url('uploads/category/').$Second[0]->image; ?>" alt="<?php echo $Second[0]->title; ?>" class="card-img">
-                                    <div class="card-img-overlay d-inline-flex flex-column p-5 justify-content-end">
-                                        <div>
-                                        <a href="<?php echo base_url().$Second[0]->url_slug.'.html' ;?>" class="fs-16 font-weight-600 btn text-secondary hover-white bg-white bg-hover-secondary shadow-1"><?php echo $Second[0]->title; ?></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                 
-                        </div>
+                        <div class="dx-collection-grid">
+                        <?php foreach ($this->category_model->get_shop_collections() as $collection) { ?>
+                          <a class="dx-collection-card<?php echo $collection->url_slug === 'combo' ? ' dx-collection-pack' : ''; ?>" href="<?php echo html_escape(base_url($collection->url_slug . '.html')); ?>">
+                            <img src="<?php echo $this->category_model->content_image('category', $collection->image); ?>" alt="<?php echo html_escape($collection->title); ?>" loading="lazy">
+                            <span><?php echo html_escape($collection->title); ?> <span aria-hidden="true">&rarr;</span></span>
+                          </a>
+                        <?php } ?>
                         </div>
                       </div>
-                    </div>
                     </div>
                 </div>
             </div>
