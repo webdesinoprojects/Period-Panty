@@ -263,7 +263,9 @@ if (isset($dx_pick[3]))    { $dx_tiles[] = array('kind' => 'cat',    'row' => $d
                       <div class="dx-style-frame">
                         <div class="dx-collection-grid">
                         <?php foreach ($this->category_model->get_shop_collections() as $collection) { ?>
-                          <a class="dx-collection-card<?php echo $collection->url_slug === 'combo' ? ' dx-collection-pack' : ''; ?>" href="<?php echo html_escape(base_url($collection->url_slug . '.html')); ?>">
+                          <?php /* Combo and Seamless are shot as packaged boxes rather than worn, so they
+           are fitted inside the tile instead of cropped to fill it. */ ?>
+                          <a class="dx-collection-card<?php echo in_array($collection->url_slug, array('combo', 'seamless'), TRUE) ? ' dx-collection-pack' : ''; ?>" href="<?php echo html_escape(base_url($collection->url_slug . '.html')); ?>">
                             <img src="<?php echo $this->category_model->content_image('category', $collection->image); ?>" alt="<?php echo html_escape($collection->title); ?>" loading="lazy">
                             <span><?php echo html_escape($collection->title); ?> <span aria-hidden="true">&rarr;</span></span>
                           </a>

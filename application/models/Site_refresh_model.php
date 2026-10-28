@@ -10,6 +10,7 @@ class Site_refresh_model extends CI_Model
         $this->apply('20261028_needs_lifestyle_v1', '20261028_needs_lifestyle.sql');
         $this->apply('20261028_combo_gallery_teen_copy_v1', '20261028_combo_gallery_teen_copy.sql');
         $this->apply('20261028_teen_combo_approved_v1', '20261028_teen_combo_approved.sql');
+        $this->apply('20261029_seamless_range_v1', '20261029_seamless_range.sql');
     }
 
     private function apply($key, $filename)
