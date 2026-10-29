@@ -83,7 +83,7 @@
                                     </td> 
                                     <td>
                                         <?php $IMAGES=$this->product_model->select_product_images($record->productID); ?>
-                                        <?php if(count($IMAGES)) { ?> <img src="<?php echo base_url('uploads/product/'.$IMAGES[0]->image); ?>" alt="Product Image" style="width: 50px">
+                                        <?php if(count($IMAGES)) { ?> <img src="<?php echo $this->category_model->content_image('product', $IMAGES[0]->image); ?>" alt="Product Image" style="width: 50px">
                                         <?PHP } ?> </td>
                                  
                                     <td>

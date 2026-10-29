@@ -412,6 +412,19 @@ class Product extends CI_Controller{
     	$uri2 = $this->uri->segment(2);
 		$url =  explode('.',$uri2);
 		$product_data = $this->product_model->get_product_by_urlslug($url[0]);
+		// Keep bookmarks working when a client correction moves a colour to
+		// Cotton. Resolve through the public model so hidden products stay hidden.
+		$catalogue_aliases = array(
+			'teen-period-panty-wine' => 'cotton-period-panty-wine',
+			'bamboo-cotton-period-panty-grey' => 'cotton-period-panty-dark-grey',
+		);
+		if (!$product_data && isset($catalogue_aliases[$url[0]])) {
+			$replacement = $this->product_model->get_product_by_urlslug($catalogue_aliases[$url[0]]);
+			if ($replacement) {
+				redirect($this->product_model->get_product_url($replacement[0]->id), 'location', 301);
+				return;
+			}
+		}
 	
 		if(count($product_data)>0)
 		{		$cat_id = $product_data[0]->cat_id;

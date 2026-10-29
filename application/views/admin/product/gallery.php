@@ -62,7 +62,7 @@
                                             <div class="users-list ">
                                                 <?php foreach($IMAGES as$key=> $image): ?>
                                                 <div class="row pro_img<?php echo $image->id; ?>" > 
-                                                    <div class="col-sm-3"> <img src="<?php echo base_url('uploads/product/'.$image->image); ?>" alt="Product Image" style="width
+                                                    <div class="col-sm-3"> <img src="<?php echo $this->category_model->content_image('product', $image->image); ?>" alt="Product Image" style="width
                                                     :50px"> </div>
                                                     <div class="col-sm-3"><?php echo $image->img_tag ?></div>
                                                     <div class="col-sm-3"><?php echo $image->position ?></div>

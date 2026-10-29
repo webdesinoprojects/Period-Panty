@@ -20,6 +20,6 @@ const upload = fs.readFileSync(path.join(repo, 'uploads/product/dx-combo-teen-pa
 assert(media.equals(upload));
 assert(media.length > 10000);
 const runner = fs.readFileSync(path.join(repo, 'application/models/Site_refresh_model.php'), 'utf8');
-assert(runner.includes("$this->apply('20261028_teen_combo_approved_v1', '20261028_teen_combo_approved.sql')"));
-assert(runner.indexOf("$this->apply('20261028_combo_gallery_teen_copy_v1'") < runner.indexOf("$this->apply('20261028_teen_combo_approved_v1'"));
+assert(runner.includes("'20261028_teen_combo_approved_v1' => '20261028_teen_combo_approved.sql'"), 'Migration must stay registered in the runner.');
+assert(runner.indexOf("'20261028_combo_gallery_teen_copy_v1' =>") < runner.indexOf("'20261028_teen_combo_approved_v1' =>"), 'The gallery migration must still run before the approval migration.');
 console.log('PASS: Teen pack-of-2 at Rs.1100, 100 packs in total across XS–XL, existing XL approval and one-time migration guard.');

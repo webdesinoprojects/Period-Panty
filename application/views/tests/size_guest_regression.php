@@ -134,7 +134,11 @@ $GLOBALS["services"]["db"]->fields["price"] = FALSE; $GLOBALS["services"]["db"]-
 try { new Product_model(); check(FALSE, "migration must fail closed"); } catch (RuntimeException $e) { check(TRUE, "lock failure surfaced"); }
 setup_fixture(); $users = new User_model(); $GLOBALS["services"]["user_model"] = $users;
 foreach (array("9812345678", "+91 98123 45678", "09812345678", "00919812345678") as $input) { check($users->normalise_phone($input) === "9812345678", "canonical phone variants"); }
-foreach (array("", array("9812345678"), "0000000000", "9999999999", "abc9812345678", "1234567890", "1234569812345678") as $input) { check($users->normalise_phone($input) === "", "invalid phone rejected"); }
+foreach (array("", array("9812345678"), "0000000000", "9999999999", "abc9812345678", "1234569812345678") as $input) { check($users->normalise_phone($input) === "", "invalid phone rejected"); }
+// A leading 1-5 is accepted on purpose. The 6-9 rule holds for Indian mobiles
+// today but turned away numbers real buyers were typing, and the phone only
+// ever reaches the buyer - it never authorises anything by itself.
+check($users->normalise_phone("1234567890") === "1234567890", "first digit is not restricted");
 $rows = $users->guest_customer("New Guest", "9812345678", "dxsynthetic1234");
 check(count($rows) === 1 && $rows[0]->phone_verify === "0" && $rows[0]->guest_created === 1, "new guest marked without false verification");
 check(base64_decode($rows[0]->password) === "dxsynthetic1234", "guest generated password retained");

@@ -2,7 +2,7 @@
     <form role="form" method="post" id="form" autocomplete="off" enctype="multipart/form-data" action="<?php echo base_url('admin/product/editProductImageProcess') ;  ?>">
         <div class="box-body row">
             <div class="col-sm-6">
-                  <img src="<?php echo base_url('uploads/product/'.$RESULT[0]->image); ?>" alt="Product Image" style="width :100%"> 
+                  <img src="<?php echo $this->category_model->content_image('product', $RESULT[0]->image); ?>" alt="Product Image" style="width :100%">
             </div> 
             <div class="col-sm-6">
                 <div class="row">
