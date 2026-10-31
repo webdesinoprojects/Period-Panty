@@ -167,6 +167,11 @@ foreach (array("front/checkout/checkout.php", "front/checkout/side-cart-value.ph
     $v = file_get_contents(APPPATH . "views/" . $view_file);
     check(strpos($v, "load->library") === FALSE, "no library loading inside " . $view_file);
     check(strpos($v, "dx_online_pay") !== FALSE, "payment gate honoured in " . $view_file);
+    // A view runs inside CI_Loader's scope, so $this is the Loader, not the
+    // controller. method_exists($this, ...) therefore asks the wrong object
+    // and silently answers FALSE - which is what hid Pay Online entirely.
+    check(strpos($v, 'method_exists($this,') === FALSE, "never asks the Loader for a controller method in " . $view_file);
+    check(strpos($v, "get_instance()") !== FALSE, "resolves the real controller in " . $view_file);
 }
 
 echo json_encode(array(

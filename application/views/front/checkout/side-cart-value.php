@@ -47,12 +47,20 @@ $user_session=$_SESSION[ 'user_session'];
                 <label>Payment Method</label>
                
                 <div class="custom-control custom-checkbox mb-3">
-<?php /* Pay Online is only offered when it can actually complete:
-       live keys for everyone, test keys only for a session let in through
+<?php /* Pay Online is only offered when it can actually complete: live keys
+       for everyone, test keys only for a session let in through
        payment/test_access. Decided on the controller so a gateway problem
-       cannot stop this page rendering its payment options. */
-   $dx_online_pay = method_exists($this, 'dx_online_payment_offered') ? $this->dx_online_payment_offered() : FALSE;
-   $dx_test_mode = $dx_online_pay && method_exists($this, 'dx_payment_is_test_mode') ? $this->dx_payment_is_test_mode() : FALSE; ?>
+       cannot stop this page rendering its payment options.
+
+       get_instance(), not $this: a view runs inside CI_Loader's scope, so
+       $this is the Loader. Property reads like $this->session still work,
+       because CI_Loader::__get() forwards them to the controller - which is
+       why the session flag read fine - but asking the Loader whether it has
+       a controller method answers no, so the gate returned FALSE every time
+       and the controller was never consulted. */
+   $dx_ci =& get_instance();
+   $dx_online_pay = method_exists($dx_ci, 'dx_online_payment_offered') ? $dx_ci->dx_online_payment_offered() : FALSE;
+   $dx_test_mode = $dx_online_pay && method_exists($dx_ci, 'dx_payment_is_test_mode') ? $dx_ci->dx_payment_is_test_mode() : FALSE; ?>
                     <?php if ($dx_online_pay): ?>
                     <input type="radio" class="custom-control-input" id="customCheck" name="payment_method" value="Pay Online" checked>
                     <label class="custom-control-label" for="customCheck">Pay Online</label>
