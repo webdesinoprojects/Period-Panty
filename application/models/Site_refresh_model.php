@@ -17,6 +17,7 @@ class Site_refresh_model extends CI_Model
             '20261031_featured_mix_v1' => '20261031_featured_mix.sql',
             '20261031_shorts_identity_v1' => '20261031_shorts_identity.sql',
             '20261031_sports_split_v1' => '20261031_sports_split.sql',
+            '20261031_cotton_youth_sizes_v1' => '20261031_cotton_youth_sizes.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -127,6 +128,11 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261031_cotton_youth_sizes_v1' => array(
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (30,31,36,37) AND status = '1' AND delete_flag = '0'", 4),
+                // Fail closed rather than duplicate them if the marker is lost.
+                array("SELECT COUNT(*) AS total FROM tbl_product_variation WHERE product_id IN (30,31,36,37) AND size IN ('10-12 Years','12-14 Years')", 0),
+            ),
             '20261031_sports_split_v1' => array(
                 array("SELECT COUNT(*) AS total FROM tbl_categories WHERE id = 4", 1),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (1,6,28) AND delete_flag = '0'", 3),
@@ -154,6 +160,11 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261031_cotton_youth_sizes_v1') {
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_variation WHERE product_id IN (30,31,36,37) AND size IN ('10-12 Years','12-14 Years')", 8, $key);
+            // They must inherit the 499 base, not carry the 599 of the big sizes.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_variation WHERE product_id IN (30,31,36,37) AND size IN ('10-12 Years','12-14 Years') AND price IS NULL", 8, $key);
         }
         if ($key === '20261031_sports_split_v1') {
             // Seamless must hold panties only, Sports must hold the two shorts,

@@ -165,6 +165,13 @@ class Product_model extends CI_Model
 	{
 
 		$this->db->where('product_id',$pro_id);
+		// Sizes were coming back in insertion order, so anything added later
+		// sat after 6XL - the two youth sizes especially. Order them the way
+		// a size ladder reads; anything unrecognised falls to the end.
+		$order = "FIELD(UPPER(size), '10-12 YEARS','12-14 YEARS','XS','S','M','L','XL','XXL','2XL','XXXL','3XL','XXXXL','4XL','XXXXXL','5XL','XXXXXXL','6XL')";
+		$this->db->order_by($order . ' = 0', '', FALSE);
+		$this->db->order_by($order, '', FALSE);
+		$this->db->order_by('id', 'ASC');
 		return $this->db->get('tbl_product_variation')->result();
 	}
 
