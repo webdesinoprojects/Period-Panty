@@ -7,3 +7,13 @@ deploy/*.md
 DEPLOY.md
 *.sql
 *.sql.gz
+
+# The 669 MB backup copy of an older site sitting inside the web root. It is
+# not part of the running site, and it carries its own application/config/
+# constants.php with a hardcoded live Razorpay key id and secret - which this
+# COPY was baking into every production image.
+public_html/
+Wordpress/
+application.zip
+applicationbkup.zip
+system1/

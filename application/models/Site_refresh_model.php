@@ -18,6 +18,7 @@ class Site_refresh_model extends CI_Model
             '20261031_shorts_identity_v1' => '20261031_shorts_identity.sql',
             '20261031_sports_split_v1' => '20261031_sports_split.sql',
             '20261031_cotton_youth_sizes_v1' => '20261031_cotton_youth_sizes.sql',
+            '20261101_razorpay_columns_v1' => '20261101_razorpay_columns.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -44,6 +45,23 @@ class Site_refresh_model extends CI_Model
                 throw new RuntimeException('Cannot initialize site content migration.');
             }
             if ($this->db->where('migration', $key)->count_all_results($table)) { $done[$key] = TRUE; return TRUE; }
+            if ($key === '20261101_razorpay_columns_v1') {
+                $this->load->dbforge();
+                $columns = array(
+                    'razorpay_order_id' => array('type' => 'VARCHAR', 'constraint' => 64, 'default' => ''),
+                    'razorpay_payment_id' => array('type' => 'VARCHAR', 'constraint' => 64, 'default' => ''),
+                    'amount_paise' => array('type' => 'INT', 'constraint' => 11, 'default' => 0),
+                    'payment_verified_at' => array('type' => 'DATETIME', 'null' => TRUE),
+                );
+                foreach ($columns as $name => $definition) {
+                    if (!$this->db->field_exists($name, 'tbl_order')
+                        && !$this->dbforge->add_column('tbl_order', array($name => $definition))) {
+                        throw new RuntimeException('Cannot add ' . $name . ' to tbl_order.');
+                    }
+                }
+                // The callback finds the order by this column on every payment.
+                $this->db->query('CREATE INDEX dx_order_razorpay ON tbl_order (razorpay_order_id)');
+            }
             if ($key === '20261028_collections_contact_v1' && !$this->db->field_exists('email_secondary', 'tbl_setting')) {
                 $this->load->dbforge();
                 if (!$this->dbforge->add_column('tbl_setting', array('email_secondary' => array('type' => 'VARCHAR', 'constraint' => 254, 'default' => '')))) {
@@ -160,6 +178,9 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261101_razorpay_columns_v1') {
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_order WHERE amount_paise = 0 AND final_amount > 0", 0, $key);
         }
         if ($key === '20261031_cotton_youth_sizes_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_variation WHERE product_id IN (30,31,36,37) AND size IN ('10-12 Years','12-14 Years')", 8, $key);

@@ -1,119 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Meta -->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<!-- SITE TITLE -->
-<title></title>
-
-<?php  $this->load->view('front/layout/head') ;  ?>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Redirecting to payment</title>
+<?php $this->load->view('front/layout/head'); ?>
 </head>
+<body onload="dxRazorpayOpen();">
 
-<body onload="razorpaySubmit(this);">
-
-
-<!-- START MAIN CONTENT -->
 <div class="main_content">
+  <div class="section">
+    <div class="container text-center" style="padding:80px 0">
+      <h2 class="fs-24 mb-3">Opening secure payment&hellip;</h2>
+      <p class="text-secondary">Order <?php echo html_escape($order_no); ?></p>
+      <noscript><p>JavaScript is required to complete payment.</p></noscript>
 
-<!-- STAT SECTION ABOUT --> 
-<div class="section">
-  <div class="container">
-
-                <?php
-
-                $productinfo = $item_name;
-                $txnid = time();
-                $surl = $surl;
-                $furl = $furl;        
-                $key_id = RAZOR_KEY_ID;
-                $currency_code = $currency_code;            
-                $total = $amount*100; 
-                $amount = $amount;
-                $merchant_order_id = $item_number;
-                $card_holder_name = $name;
-                $email = $email;
-                $phone = $phone;
-                $name =  "";
-                $return_url = $return_url;
-                ?>
-          
-                 <form name="razorpay-form" id="razorpay-form" action="<?php echo $return_url; ?>" method="POST">
-                  <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id" />
-                  <input type="hidden" name="merchant_order_id" id="merchant_order_id" value="<?php echo $merchant_order_id; ?>"/>
-                  <input type="hidden" name="merchant_trans_id" id="merchant_trans_id" value="<?php echo $txnid; ?>"/>
-                  <input type="hidden" name="merchant_product_info_id" id="merchant_product_info_id" value="<?php echo $productinfo; ?>"/>
-                  <input type="hidden" name="merchant_surl_id" id="merchant_surl_id" value="<?php echo $surl; ?>"/>
-                  <input type="hidden" name="merchant_furl_id" id="merchant_furl_id" value="<?php echo $furl; ?>"/>
-                  <input type="hidden" name="card_holder_name_id" id="card_holder_name_id" value="<?php echo $card_holder_name; ?>"/>
-                  <input type="hidden" name="merchant_total" id="merchant_total" value="<?php echo $total; ?>"/>
-                  <input type="hidden" name="merchant_amount" id="merchant_amount" value="<?php echo $amount; ?>"/>
-                </form>
-
-               
-                   
-
-                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-                <script>
-                  var razorpay_options = {
-                    key: "<?php echo $key_id; ?>",
-                    amount: "<?php echo $total; ?>",
-                    name: "<?php echo $name; ?>",
-                    description: "Order # <?php echo $merchant_order_id; ?>",
-                    netbanking: true,
-                    currency: "<?php echo $currency_code; ?>",
-                    prefill: {
-                      name:"<?php echo $card_holder_name; ?>",
-                      email: "<?php echo $email; ?>",
-                      contact: "<?php echo $phone; ?>"
-                    },
-                    notes: {
-                      soolegal_order_id: "<?php echo $merchant_order_id; ?>",
-                    },
-                    handler: function (transaction) {
-                        document.getElementById('razorpay_payment_id').value = transaction.razorpay_payment_id;
-                        document.getElementById('razorpay-form').submit();
-                    },
-                    "modal": {
-                        "ondismiss": function(){
-                             window.location.href = '<?php echo base_url() ?>';
-                        }
-                    }
-                  };
-                  var razorpay_submit_btn, razorpay_instance;
-
-
-                  function razorpaySubmit(el){
-                    if(typeof Razorpay == 'undefined'){
-                      setTimeout(razorpaySubmit, 200);
-                      if(!razorpay_submit_btn && el){
-                        razorpay_submit_btn = el;
-                        el.disabled = true;
-                        el.value = 'Please wait...';  
-                      }
-                    } else {
-                      if(!razorpay_instance){
-                        razorpay_instance = new Razorpay(razorpay_options);
-                        if(razorpay_submit_btn){
-                          razorpay_submit_btn.disabled = false;
-                          razorpay_submit_btn.value = "Pay Now";
-                        }
-                      }
-                      razorpay_instance.open();
-                    }
-                  }  
-
-
-                </script>
-
-
-        </div>
+      <?php /* Only three values come back from Razorpay and all three are
+               verified server-side. There is deliberately no amount field and
+               no order-number field here: the old form carried both, and both
+               were editable in devtools. */ ?>
+      <form name="razorpay-form" id="dx-razorpay-form" action="<?php echo html_escape($callback_url); ?>" method="POST">
+        <input type="hidden" name="razorpay_payment_id" id="dx-rzp-payment-id">
+        <input type="hidden" name="razorpay_order_id" id="dx-rzp-order-id">
+        <input type="hidden" name="razorpay_signature" id="dx-rzp-signature">
+        <?php if ($this->config->item('csrf_protection') === TRUE): ?>
+          <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+        <?php endif; ?>
+      </form>
     </div>
+  </div>
 </div>
-<!-- END SECTION ABOUT --> 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+// key_id is Razorpay's publishable identifier and is meant to be here. The key
+// secret and the webhook secret never reach this page, this script, any XHR or
+// any URL - they exist only on the server.
+var dxRazorpayOptions = {
+  key: <?php echo json_encode($key_id); ?>,
+  order_id: <?php echo json_encode($razorpay_order_id); ?>,
+  amount: <?php echo json_encode($amount_paise); ?>,
+  currency: "INR",
+  name: "DEXTE",
+  description: <?php echo json_encode('Order ' . $order_no); ?>,
+  prefill: {
+    name: <?php echo json_encode($buyer_name); ?>,
+    email: <?php echo json_encode($buyer_email); ?>,
+    contact: <?php echo json_encode($buyer_phone); ?>
+  },
+  notes: { dx_order_no: <?php echo json_encode($order_no); ?> },
+  handler: function (response) {
+    document.getElementById('dx-rzp-payment-id').value = response.razorpay_payment_id || '';
+    document.getElementById('dx-rzp-order-id').value = response.razorpay_order_id || '';
+    document.getElementById('dx-rzp-signature').value = response.razorpay_signature || '';
+    document.getElementById('dx-razorpay-form').submit();
+  },
+  modal: {
+    ondismiss: function () {
+      window.location.href = <?php echo json_encode($cancel_url); ?>;
+    }
+  }
+};
 
-
-</div>
+var dxRazorpayInstance;
+function dxRazorpayOpen() {
+  if (typeof Razorpay === 'undefined') { setTimeout(dxRazorpayOpen, 200); return; }
+  if (!dxRazorpayInstance) {
+    dxRazorpayInstance = new Razorpay(dxRazorpayOptions);
+    // A failed attempt must not look like a success: send the buyer to the
+    // failure page rather than leaving the modal silently closed.
+    dxRazorpayInstance.on('payment.failed', function () {
+      window.location.href = <?php echo json_encode($cancel_url); ?>;
+    });
+  }
+  dxRazorpayInstance.open();
+}
+</script>
+</body>
+</html>

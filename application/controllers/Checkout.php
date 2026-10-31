@@ -117,6 +117,11 @@ class Checkout extends CI_Controller
     	   
            $order = $this->order_model->get_order_data_by_order_no($order_no) ; 
 			if($_SESSION['checkout_data'] ['payment_method'] =='Pay Online'){
+				// Binds the payment page to the session that placed the order.
+				// Invoice numbers are sequential, and without this anyone could
+				// walk them and read a stranger's name, address and phone off
+				// the payment screen.
+				$this->session->set_userdata('dx_pay_order_no', $order_no);
 				redirect('order-payment-process/'.$order_no);
 			}else{
 			    $update_data['payment_method'] = 'Pay On Delivery';

@@ -87,8 +87,21 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 define('CURRENCY','dollar');
 define('CURRENCY_SYMBOL','₹');
 // Payment credentials are read from the environment so they are never held in
-// version control. Set RAZOR_KEY_ID / RAZOR_KEY_SECRET on the server (or in the
-// container) before taking live payments; the empty fallbacks keep local and CI
-// runs from transacting by accident.
-define('RAZOR_KEY_ID', getenv('RAZOR_KEY_ID') ?: '');
-define('RAZOR_KEY_SECRET', getenv('RAZOR_KEY_SECRET') ?: '');
+// version control. The empty fallbacks keep local and CI runs from transacting
+// by accident: Razorpay_client treats a missing key as "payments are off".
+//
+// RAZORPAY_* are the names used across our other projects; the older RAZOR_*
+// names still work so an existing server does not break on deploy.
+//
+// The webhook secret is a SEPARATE value generated in the Razorpay dashboard.
+// It is never the key secret: a webhook body is signed with one and the payment
+// signature with the other, and reusing one for both means a leak of either
+// forges both.
+define('RAZORPAY_KEY_ID', getenv('RAZORPAY_KEY_ID') ?: (getenv('RAZOR_KEY_ID') ?: ''));
+define('RAZORPAY_KEY_SECRET', getenv('RAZORPAY_KEY_SECRET') ?: (getenv('RAZOR_KEY_SECRET') ?: ''));
+define('RAZORPAY_WEBHOOK_SECRET', getenv('RAZORPAY_WEBHOOK_SECRET') ?: '');
+
+// Only the key id may ever reach a browser. The secret must not appear in a
+// view, a JSON response, a log line, an error message or a URL.
+define('RAZOR_KEY_ID', RAZORPAY_KEY_ID);
+define('RAZOR_KEY_SECRET', RAZORPAY_KEY_SECRET);
