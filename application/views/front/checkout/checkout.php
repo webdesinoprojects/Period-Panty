@@ -245,6 +245,10 @@ $user_session=$_SESSION[ 'user_session'];
        cannot stop this page rendering its payment options. */
    $dx_online_pay = method_exists($this, 'dx_online_payment_offered') ? $this->dx_online_payment_offered() : FALSE;
    $dx_test_mode = $dx_online_pay && method_exists($this, 'dx_payment_is_test_mode') ? $this->dx_payment_is_test_mode() : FALSE; ?>
+<?php /* Diagnostic marker. Names no secret and no value - only whether each
+       condition held - so it is safe in page source. Lets us see why Pay
+       Online is or is not offered without another round of guessing. */ ?>
+<!-- dx-pay-gate offered=<?php echo $dx_online_pay ? '1' : '0'; ?> test=<?php echo $dx_test_mode ? '1' : '0'; ?> flag=<?php echo $this->session->userdata('dx_rzp_test_access') ? '1' : '0'; ?> keyid=<?php echo (defined('RAZORPAY_KEY_ID') && RAZORPAY_KEY_ID !== '') ? '1' : '0'; ?> -->
                                             <?php if ($dx_online_pay): ?>
                                             <div class="custom-control custom-checkbox mb-3">
                                                 <input type="radio" class="custom-control-input payment_method " id="customCheck3" name="payment_method" value="Pay Online"  required>
