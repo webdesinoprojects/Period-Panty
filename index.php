@@ -53,7 +53,11 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	// Also read the process environment, so a container can set CI_ENV
+	// without an Apache SetEnv. Defaulting to development on a live
+	// site turns display_errors on, which shows customers PHP notices
+	// and absolute server paths.
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : (getenv('CI_ENV') ?: 'development'));
 
 /*
  *---------------------------------------------------------------

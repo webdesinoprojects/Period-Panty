@@ -295,18 +295,28 @@ class Payment extends CI_Controller
 		));
 	}
 
+	/**
+	 * Prefill for the gateway. tbl_shipping's columns are fname, lname, phone
+	 * and email - there is no sfname. The old code read the s-prefixed names
+	 * too, and error_reporting(0) hid the notices, so the prefill has always
+	 * been blank. Every field is optional here: a missing one must not warn.
+	 */
 	private function buyer_contact($order, $shipping)
 	{
-		$name = ''; $phone = ''; $email = '';
-		if (!empty($shipping)) {
-			$name = trim($shipping[0]->sfname . ' ' . $shipping[0]->slname);
-			$phone = $shipping[0]->scontact_no;
-		}
-		if (!empty($order->user_id)) {
+		$row = !empty($shipping) ? $shipping[0] : NULL;
+		$field = function ($name) use ($row) {
+			return ($row !== NULL && isset($row->$name)) ? trim((string) $row->$name) : '';
+		};
+		$email = $field('email');
+		if ($email === '' && !empty($order->user_id)) {
 			$user = $this->user_model->get_user_by_id($order->user_id);
-			if (!empty($user)) { $email = $user[0]->email; }
+			if (!empty($user) && isset($user[0]->email)) { $email = $user[0]->email; }
 		}
-		return array('name' => $name, 'email' => $email, 'phone' => $phone);
+		return array(
+			'name' => trim($field('fname') . ' ' . $field('lname')),
+			'email' => $email,
+			'phone' => $field('phone'),
+		);
 	}
 
 	function order_mail_template($ord_id)
