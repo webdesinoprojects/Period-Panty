@@ -298,7 +298,7 @@ class Payment extends CI_Controller
 	/**
 	 * Prefill for the gateway. tbl_shipping's columns are fname, lname, phone
 	 * and email - there is no sfname. The old code read the s-prefixed names
-	 * too, and error_reporting(0) hid the notices, so the prefill has always
+	 * too, and error suppression hid the notices, so the prefill has always
 	 * been blank. Every field is optional here: a missing one must not warn.
 	 */
 	private function buyer_contact($order, $shipping)
