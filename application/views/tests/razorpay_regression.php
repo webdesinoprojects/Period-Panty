@@ -158,6 +158,17 @@ $checkout = file_get_contents(APPPATH . "controllers/Checkout.php");
 check(strpos($checkout, "checkout_allowed") !== FALSE, "checkout re-checks entitlement server-side");
 check(strpos($checkout, "'Pay On Delivery'") !== FALSE, "a forged Pay Online falls back to delivery");
 
+// A view that loads a library can kill the page mid-render, and the buyer
+// then sees a checkout with no payment options at all - which is exactly
+// what happened. The decision belongs on the controller, and must fail closed.
+check(strpos($checkout, "dx_online_payment_offered") !== FALSE, "controller owns the decision");
+check(strpos($checkout, "catch (Exception") !== FALSE, "a gateway failure is caught, not fatal");
+foreach (array("front/checkout/checkout.php", "front/checkout/side-cart-value.php") as $view_file) {
+    $v = file_get_contents(APPPATH . "views/" . $view_file);
+    check(strpos($v, "load->library") === FALSE, "no library loading inside " . $view_file);
+    check(strpos($v, "dx_online_pay") !== FALSE, "payment gate honoured in " . $view_file);
+}
+
 echo json_encode(array(
     "suite" => "razorpay_regression",
     "passed" => $passed,

@@ -49,10 +49,10 @@ $user_session=$_SESSION[ 'user_session'];
                 <div class="custom-control custom-checkbox mb-3">
 <?php /* Pay Online is only offered when it can actually complete:
        live keys for everyone, test keys only for a session let in through
-       payment/test_access. Otherwise the buyer would land on a payment page
-       that never loads and the order would sit Pending. */
-   $this->load->library('razorpay_client');
-   $dx_online_pay = $this->razorpay_client->checkout_allowed($this->session->userdata('dx_rzp_test_access')); ?>
+       payment/test_access. Decided on the controller so a gateway problem
+       cannot stop this page rendering its payment options. */
+   $dx_online_pay = method_exists($this, 'dx_online_payment_offered') ? $this->dx_online_payment_offered() : FALSE;
+   $dx_test_mode = $dx_online_pay && method_exists($this, 'dx_payment_is_test_mode') ? $this->dx_payment_is_test_mode() : FALSE; ?>
                     <?php if ($dx_online_pay): ?>
                     <input type="radio" class="custom-control-input" id="customCheck" name="payment_method" value="Pay Online" checked>
                     <label class="custom-control-label" for="customCheck">Pay Online</label>

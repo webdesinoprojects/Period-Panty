@@ -4,6 +4,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Checkout extends CI_Controller
 {
     
+	/**
+	 * May this visitor pay online? Fails closed: any problem loading the
+	 * gateway client leaves only Pay On Delivery, which always works. It must
+	 * never throw, because it is consulted while a view is rendering.
+	 */
+	public function dx_online_payment_offered()
+	{
+		try {
+			$this->load->library('razorpay_client');
+			return $this->razorpay_client->checkout_allowed($this->session->userdata('dx_rzp_test_access'));
+		} catch (Exception $e) {
+			log_message('error', 'Razorpay client unavailable at checkout: ' . $e->getMessage());
+			return FALSE;
+		}
+	}
+
+	public function dx_payment_is_test_mode()
+	{
+		try {
+			$this->load->library('razorpay_client');
+			return $this->razorpay_client->is_test_mode();
+		} catch (Exception $e) {
+			return FALSE;
+		}
+	}
+
     public function onepage()
 	{	 
 	    error_reporting(0) ;
