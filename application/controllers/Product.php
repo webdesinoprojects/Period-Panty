@@ -417,6 +417,8 @@ class Product extends CI_Controller{
 		$catalogue_aliases = array(
 			'teen-period-panty-wine' => 'cotton-period-panty-wine',
 			'bamboo-cotton-period-panty-grey' => 'cotton-period-panty-dark-grey',
+			// Short-lived name of mine; 28 is her compression short, not a boyshort.
+			'seamless-period-boyshorts-black' => 'dexte-compression-period-shorts-black',
 		);
 		if (!$product_data && isset($catalogue_aliases[$url[0]])) {
 			$replacement = $this->product_model->get_product_by_urlslug($catalogue_aliases[$url[0]]);

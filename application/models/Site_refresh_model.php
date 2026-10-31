@@ -14,6 +14,8 @@ class Site_refresh_model extends CI_Model
             '20261029_seamless_range_v1' => '20261029_seamless_range.sql',
             '20261029_sheet_copy_v1' => '20261029_sheet_copy.sql',
             '20261030_sheet_catalogue_v1' => '20261030_sheet_catalogue.sql',
+            '20261031_featured_mix_v1' => '20261031_featured_mix.sql',
+            '20261031_shorts_identity_v1' => '20261031_shorts_identity.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -116,6 +118,14 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (6,7,30,31,34,36,37) AND delete_flag = '0'", 7),
                 array("SELECT COUNT(*) AS total FROM tbl_categories WHERE url_slug = 'cotton'", 1),
             ),
+            '20261031_featured_mix_v1' => array(
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (1,6,8,20,32,35,37,38) AND status = '1' AND delete_flag = '0'", 8),
+            ),
+            '20261031_shorts_identity_v1' => array(
+                // 9 is the donor of the seamless copy, so it has to be there too.
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
+            ),
         );
         if (isset($checks[$key])) {
             foreach ($checks[$key] as $check) { $this->require_count($check[0], $check[1], $key); }
@@ -138,6 +148,19 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261031_shorts_identity_v1') {
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'seamless-period-panty-black-lace' AND price = 999.00", 1, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND url_slug = 'dexte-compression-period-shorts-black' AND price = 1850.00", 1, $key);
+            // The copy has to have actually moved, not just the names.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND short_description LIKE '%Seamless construction%'", 1, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND short_description LIKE '%compression-style fit%'", 1, $key);
+        }
+        if ($key === '20261031_featured_mix_v1') {
+            // The point of the migration is the spread, so check the spread:
+            // eight cards drawn from five different collections.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE is_featured = 'yes' AND status = '1' AND delete_flag = '0'", 8, $key);
+            $this->require_count("SELECT COUNT(DISTINCT p.cat_id) AS total FROM tbl_products p WHERE p.is_featured = 'yes' AND p.status = '1' AND p.delete_flag = '0'", 5, $key);
         }
         if ($key === '20261030_sheet_catalogue_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE p.id IN (30,31,36,37) AND c.url_slug = 'cotton' AND p.price = 499.00", 4, $key);
