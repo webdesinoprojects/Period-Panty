@@ -12,8 +12,8 @@ class Category_model extends CI_Model
 	public function get_shop_collections()
 	{
 		return $this->db->where('status', '1')->where('home_display', 1)
-			->where_in('url_slug', array('bamboo', 'seamless', 'cotton', 'combo', 'teen'))
-			->order_by("FIELD(url_slug, 'bamboo', 'seamless', 'cotton', 'combo', 'teen')", '', FALSE)
+			->where_in('url_slug', array('bamboo', 'seamless', 'cotton', 'combo', 'teen', 'sports'))
+			->order_by("FIELD(url_slug, 'bamboo', 'seamless', 'cotton', 'combo', 'teen', 'sports')", '', FALSE)
 			->get($this->table)->result();
 	}
 

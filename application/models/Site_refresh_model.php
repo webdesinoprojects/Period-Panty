@@ -16,6 +16,7 @@ class Site_refresh_model extends CI_Model
             '20261030_sheet_catalogue_v1' => '20261030_sheet_catalogue.sql',
             '20261031_featured_mix_v1' => '20261031_featured_mix.sql',
             '20261031_shorts_identity_v1' => '20261031_shorts_identity.sql',
+            '20261031_sports_split_v1' => '20261031_sports_split.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -126,6 +127,11 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261031_sports_split_v1' => array(
+                array("SELECT COUNT(*) AS total FROM tbl_categories WHERE id = 4", 1),
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (1,6,28) AND delete_flag = '0'", 3),
+                array("SELECT COUNT(*) AS total FROM tbl_slider WHERE type = 'Footer' AND title = 'Sports & Activities'", 1),
+            ),
         );
         if (isset($checks[$key])) {
             foreach ($checks[$key] as $check) { $this->require_count($check[0], $check[1], $key); }
@@ -148,6 +154,14 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261031_sports_split_v1') {
+            // Seamless must hold panties only, Sports must hold the two shorts,
+            // and the zebra print must be off the storefront.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'seamless' AND p.status = '1' AND p.delete_flag = '0' AND p.title LIKE '%Shorts%'", 0, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'sports' AND p.status = '1' AND p.delete_flag = '0'", 2, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 1 AND status = '1'", 0, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_slider WHERE type = 'Footer' AND title = 'Sports & Activities' AND button_link = 'sports'", 1, $key);
         }
         if ($key === '20261031_shorts_identity_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'seamless-period-panty-black-lace' AND price = 999.00", 1, $key);
