@@ -51,6 +51,16 @@ class Checkout extends CI_Controller
 		if(count($this->cart->contents())==0){ redirect('cart'); }
 		$_SESSION['checkout_data'] =  $_POST ;
 		$_SESSION['checkout_data']['scontact_no'] = $shipping_phone;
+		// Hiding the radio is not enough - the post can be forged. Anyone not
+		// entitled to pay online is put back on delivery rather than sent to a
+		// payment page that cannot work, or to a test gateway.
+		if (isset($_SESSION['checkout_data']['payment_method'])
+			&& $_SESSION['checkout_data']['payment_method'] === 'Pay Online') {
+			$this->load->library('razorpay_client');
+			if (!$this->razorpay_client->checkout_allowed($this->session->userdata('dx_rzp_test_access'))) {
+				$_SESSION['checkout_data']['payment_method'] = 'Pay On Delivery';
+			}
+		}
 		if(($_POST['payment_method'] =='Pay On Delivery') && (empty($user_id))){
 		   
 	         redirect('checkout/checkout_process_insert_data') ; 

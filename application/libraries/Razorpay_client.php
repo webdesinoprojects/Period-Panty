@@ -48,6 +48,40 @@ class Razorpay_client
 		return $this->key_id;
 	}
 
+	/** Razorpay test keys are prefixed; test cards are public knowledge. */
+	public function is_test_mode()
+	{
+		return strpos($this->key_id, 'rzp_test_') === 0;
+	}
+
+	/**
+	 * Whether this visitor may choose Pay Online at all.
+	 *
+	 * Live keys: anyone, once a key pair exists. Test keys: only a session
+	 * that has been let in deliberately, because a test card would otherwise
+	 * buy real stock for nothing. No keys: nobody - which also stops the
+	 * current live dead end, where picking Pay Online opens a payment page
+	 * that can never load and leaves the order Pending forever.
+	 */
+	public function checkout_allowed($session_has_test_access = FALSE)
+	{
+		if (!$this->enabled()) { return FALSE; }
+		return $this->is_test_mode() ? (bool) $session_has_test_access : TRUE;
+	}
+
+	/**
+	 * Unlocks test checkout for one session. Returns FALSE unless
+	 * RAZORPAY_TEST_ACCESS_TOKEN is set and matches, so an unset token means
+	 * no amount of guessing opens it.
+	 */
+	public function test_access_token_matches($candidate)
+	{
+		$expected = getenv('RAZORPAY_TEST_ACCESS_TOKEN');
+		if (!is_string($expected) || strlen($expected) < 16) { return FALSE; }
+		if (!is_string($candidate) || $candidate === '') { return FALSE; }
+		return hash_equals($expected, $candidate);
+	}
+
 	public function last_error()
 	{
 		return $this->error;

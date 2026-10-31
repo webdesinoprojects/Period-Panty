@@ -239,12 +239,21 @@ $user_session=$_SESSION[ 'user_session'];
                                             <label>Payment Method</label>
                                 
                                            
+<?php /* Pay Online is only offered when it can actually complete:
+       live keys for everyone, test keys only for a session let in through
+       payment/test_access. Otherwise the buyer would land on a payment page
+       that never loads and the order would sit Pending. */
+   $this->load->library('razorpay_client');
+   $dx_online_pay = $this->razorpay_client->checkout_allowed($this->session->userdata('dx_rzp_test_access')); ?>
+                                            <?php if ($dx_online_pay): ?>
                                             <div class="custom-control custom-checkbox mb-3">
                                                 <input type="radio" class="custom-control-input payment_method " id="customCheck3" name="payment_method" value="Pay Online"  required>
-                                                <label class="custom-control-label" for="customCheck3">Pay Online <small style="color:green"><?php echo $link[0]->online_discount_title ; ?></small> </label>
+                                                <label class="custom-control-label" for="customCheck3">Pay Online <small style="color:green"><?php echo $link[0]->online_discount_title ; ?></small>
+                                                <?php if ($this->razorpay_client->is_test_mode()): ?><small style="color:#b00"> (TEST MODE - no real money)</small><?php endif; ?></label>
                                             </div>    
+                                            <?php endif; ?>
                                             <div class="custom-control custom-checkbox mb-3">
-                                                <input type="radio" class="custom-control-input payment_method " id="customCheck2" name="payment_method" value="Pay On Delivery" >
+                                                <input type="radio" class="custom-control-input payment_method " id="customCheck2" name="payment_method" value="Pay On Delivery" <?php echo $dx_online_pay ? '' : 'checked required'; ?>>
                                                 <label class="custom-control-label" for="customCheck2">Pay On Delivery <small style="color:green"> <?php echo $link[0]->cod_shipping_title ; ?></small> </label>
                                             </div> 
                                             

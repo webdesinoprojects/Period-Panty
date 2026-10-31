@@ -146,6 +146,23 @@ class Payment extends CI_Controller
 		$this->output->set_status_header(200)->set_output('{"status":"ok"}');
 	}
 
+	/**
+	 * Opens test checkout for this session only. Requires
+	 * RAZORPAY_TEST_ACCESS_TOKEN to be set on the server and matched exactly.
+	 * Pointless and harmless once live keys are in use.
+	 */
+	public function test_access()
+	{
+		$token = (string) $this->uri->segment(3);
+		if (!$this->razorpay_client->is_test_mode()
+			|| !$this->razorpay_client->test_access_token_matches($token)) {
+			show_404();
+			return;
+		}
+		$this->session->set_userdata('dx_rzp_test_access', 1);
+		redirect('checkout/onepage');
+	}
+
 	public function success()
 	{
 		$order = $this->order_model->get_order_data_by_order_no($this->uri->segment(3));

@@ -94,6 +94,33 @@ check($rzp->create_order(-185000, "DX-1") === FALSE, "negative amount refused");
 check($rzp->fetch_payment("'; DROP TABLE tbl_order; --") === FALSE, "malformed payment id refused before any request");
 check($rzp->last_error() === "INVALID_PAYMENT_ID", "malformed payment id reports why");
 
+// ---- who may choose Pay Online ------------------------------------------
+$test_client = new Razorpay_client(array("key_id" => "rzp_test_abc", "key_secret" => "s", "webhook_secret" => "w"));
+$live_client = new Razorpay_client(array("key_id" => "rzp_live_abc", "key_secret" => "s", "webhook_secret" => "w"));
+
+check($test_client->is_test_mode() === TRUE, "test key recognised");
+check($live_client->is_test_mode() === FALSE, "live key recognised");
+
+// Test cards are public, so a test gateway must never be reachable by an
+// ordinary shopper - only by a session deliberately let in.
+check($test_client->checkout_allowed(FALSE) === FALSE, "test mode closed to ordinary visitors");
+check($test_client->checkout_allowed(TRUE) === TRUE, "test mode open to an admitted session");
+check($live_client->checkout_allowed(FALSE) === TRUE, "live mode open to everyone");
+// No keys means no Pay Online at all, which is also what stops the dead-end
+// payment page that leaves an order Pending for ever.
+check($unconfigured->checkout_allowed(TRUE) === FALSE, "no keys means no online payment, admitted or not");
+
+// The door stays shut unless a long token is configured AND matches.
+putenv("RAZORPAY_TEST_ACCESS_TOKEN");
+check($test_client->test_access_token_matches("anything") === FALSE, "no token configured means no access");
+putenv("RAZORPAY_TEST_ACCESS_TOKEN=short");
+check($test_client->test_access_token_matches("short") === FALSE, "a short token is refused");
+putenv("RAZORPAY_TEST_ACCESS_TOKEN=0123456789abcdef0123456789abcdef");
+check($test_client->test_access_token_matches("0123456789abcdef0123456789abcdef") === TRUE, "matching token admits");
+check($test_client->test_access_token_matches("0123456789abcdef0123456789abcdeX") === FALSE, "near-miss token refused");
+check($test_client->test_access_token_matches("") === FALSE, "empty token refused");
+putenv("RAZORPAY_TEST_ACCESS_TOKEN");
+
 // ---- the secret must not be reachable from the object -------------------
 $public = get_object_vars($rzp);
 check($public === array(), "no public properties expose the secret");
@@ -125,6 +152,11 @@ check(strpos($controller, "verify_webhook_signature") !== FALSE, "webhook signat
 check(strpos($controller, "php://input") !== FALSE, "webhook reads the raw body");
 check(strpos($controller, "payment_status !=") !== FALSE, "settlement is guarded against replay");
 check(strpos($controller, "paid_paise !== \$expected") !== FALSE, "paid amount compared with our own figure");
+
+// Hiding the radio is not a control on its own; the post must be re-checked.
+$checkout = file_get_contents(APPPATH . "controllers/Checkout.php");
+check(strpos($checkout, "checkout_allowed") !== FALSE, "checkout re-checks entitlement server-side");
+check(strpos($checkout, "'Pay On Delivery'") !== FALSE, "a forged Pay Online falls back to delivery");
 
 echo json_encode(array(
     "suite" => "razorpay_regression",
