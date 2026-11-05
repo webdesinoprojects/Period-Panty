@@ -19,6 +19,7 @@ class Site_refresh_model extends CI_Model
             '20261031_sports_split_v1' => '20261031_sports_split.sql',
             '20261031_cotton_youth_sizes_v1' => '20261031_cotton_youth_sizes.sql',
             '20261101_razorpay_columns_v1' => '20261101_razorpay_columns.sql',
+            '20261106_cotton_black_gallery_v1' => '20261106_cotton_black_gallery.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -146,6 +147,11 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261106_cotton_black_gallery_v1' => array(
+                // All eight present before, so a replay after it has already run
+                // fails closed instead of silently re-ordering a gallery.
+                array("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 30 AND image IN ('1792566790_30_1.jpg','1792566790_30_2.jpg','1792566790_30_3.jpg','1792566790_30_4.jpg','1792566790_30_5.jpg','dx-sheet-cotton-black-logo-v1.jpg','dx-sheet-cotton-black-angle-v1.jpg','dx-sheet-cotton-black-side-v1.jpg')", 8),
+            ),
             '20261031_cotton_youth_sizes_v1' => array(
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (30,31,36,37) AND status = '1' AND delete_flag = '0'", 4),
                 // Fail closed rather than duplicate them if the marker is lost.
@@ -178,6 +184,13 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261106_cotton_black_gallery_v1') {
+            // Exactly her six photos, the standing one first, no pad photo left.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 30", 6, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 30 AND image IN ('1792566790_30_4.jpg','1792566790_30_5.jpg')", 0, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 30 AND position = 1 AND image = '1792566790_30_2.jpg'", 1, $key);
+            $this->require_count("SELECT COUNT(DISTINCT position) AS total FROM tbl_product_images WHERE product_id = 30 AND position BETWEEN 1 AND 6", 6, $key);
         }
         if ($key === '20261101_razorpay_columns_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_order WHERE amount_paise = 0 AND final_amount > 0", 0, $key);
