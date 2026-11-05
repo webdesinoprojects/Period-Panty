@@ -21,6 +21,7 @@ class Site_refresh_model extends CI_Model
             '20261101_razorpay_columns_v1' => '20261101_razorpay_columns.sql',
             '20261106_cotton_black_gallery_v1' => '20261106_cotton_black_gallery.sql',
             '20261106_cotton_absorbency_v1' => '20261106_cotton_absorbency.sql',
+            '20261106_sports_sheet_pair_v1' => '20261106_sports_sheet_pair.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -148,6 +149,14 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261106_sports_sheet_pair_v1' => array(
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (6,7,28) AND delete_flag = '0'", 3),
+                // Preconditions that say the swap has not happened yet. A replay
+                // after it has run must fail closed, not shuffle the products back.
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'seamless-period-panty-black-lace'", 1),
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
+                array("SELECT COUNT(*) AS total FROM tbl_categories WHERE url_slug = 'sports'", 1),
+            ),
             '20261106_cotton_absorbency_v1' => array(
                 // Four live cotton panties. Not asserting the old value: a rating
                 // edited in admin beforehand must not stop the migrations after it.
@@ -190,6 +199,19 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261106_sports_sheet_pair_v1') {
+            // Her row 8 on the product that carries her row 8 photo.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE p.id = 7 AND c.url_slug = 'sports' AND p.status = '1' AND p.price = 1850.00 AND p.url_slug = 'dexte-compression-period-shorts-black' AND p.title = 'DEXTE Compression-Style Period Shorts - Black'", 1, $key);
+            // The copy actually moved - not just the name.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND short_description LIKE '%COMPRESSION-STYLE PERIOD SHORTS%' AND short_description NOT LIKE '%Seamless construction%'", 1, $key);
+            // 28 is out of the storefront; Sports holds exactly her two rows.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND status = '0'", 1, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'sports' AND p.status = '1' AND p.delete_flag = '0'", 2, $key);
+            // One photo each, and it is the one in her sheet.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 6 AND image = '1684151774_3_2.jpg'", 1, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id = 7 AND image = '1684152041_15_1.JPG'", 1, $key);
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_product_images WHERE product_id IN (6,7)", 2, $key);
         }
         if ($key === '20261106_cotton_absorbency_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'cotton' AND p.status = '1' AND p.delete_flag = '0' AND p.absorbency_rate = 4", 4, $key);
