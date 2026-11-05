@@ -22,6 +22,7 @@ class Site_refresh_model extends CI_Model
             '20261106_cotton_black_gallery_v1' => '20261106_cotton_black_gallery.sql',
             '20261106_cotton_absorbency_v1' => '20261106_cotton_absorbency.sql',
             '20261106_sports_sheet_pair_v1' => '20261106_sports_sheet_pair.sql',
+            '20261106_sports_period_shorts_second_v1' => '20261106_sports_period_shorts_second.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -149,6 +150,12 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261106_sports_period_shorts_second_v1' => array(
+                // The state the previous migration leaves behind. A replay after
+                // this has run no longer matches, so it fails closed.
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND status = '0' AND url_slug = 'seamless-period-boyshorts-black'", 1),
+                array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 6 AND status = '1' AND title = 'DEXTE Period Shorts - Black'", 1),
+            ),
             '20261106_sports_sheet_pair_v1' => array(
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (6,7,28) AND delete_flag = '0'", 3),
                 // Preconditions that say the swap has not happened yet. A replay
@@ -199,6 +206,15 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261106_sports_period_shorts_second_v1') {
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 28 AND status = '1' AND title = 'DEXTE Period Shorts - Black' AND url_slug = 'dexte-period-shorts-black-2' AND price = 1850.00", 1, $key);
+            // Her row 7 copy, byte for byte, on both Period Shorts.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products a JOIN tbl_products b ON b.id = 6 WHERE a.id = 28 AND a.short_description = b.short_description AND a.meta_description = b.meta_description", 1, $key);
+            // Sports: the two Period Shorts and the compression product, nothing else.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'sports' AND p.status = '1' AND p.delete_flag = '0'", 3, $key);
+            // Row 8 is untouched.
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND title = 'DEXTE Compression-Style Period Shorts - Black' AND url_slug = 'dexte-compression-period-shorts-black'", 1, $key);
         }
         if ($key === '20261106_sports_sheet_pair_v1') {
             // Her row 8 on the product that carries her row 8 photo.

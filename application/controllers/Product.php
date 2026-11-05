@@ -417,8 +417,8 @@ class Product extends CI_Controller{
 		$catalogue_aliases = array(
 			'teen-period-panty-wine' => 'cotton-period-panty-wine',
 			'bamboo-cotton-period-panty-grey' => 'cotton-period-panty-dark-grey',
-			// Short-lived name of mine; 28 is her compression short, not a boyshort.
-			'seamless-period-boyshorts-black' => 'dexte-compression-period-shorts-black',
+			// A short-lived name of mine for the shiny shorts, which are her Period Shorts.
+			'seamless-period-boyshorts-black' => 'dexte-period-shorts-black-2',
 			// Was the lace panty in Seamless for a week; it is her row 8 now.
 			'seamless-period-panty-black-lace' => 'dexte-compression-period-shorts-black',
 		);
