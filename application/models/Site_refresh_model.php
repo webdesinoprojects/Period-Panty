@@ -20,6 +20,7 @@ class Site_refresh_model extends CI_Model
             '20261031_cotton_youth_sizes_v1' => '20261031_cotton_youth_sizes.sql',
             '20261101_razorpay_columns_v1' => '20261101_razorpay_columns.sql',
             '20261106_cotton_black_gallery_v1' => '20261106_cotton_black_gallery.sql',
+            '20261106_cotton_absorbency_v1' => '20261106_cotton_absorbency.sql',
         );
         foreach ($migrations as $key => $filename) {
             // A successor must never record success after its predecessor failed.
@@ -147,6 +148,11 @@ class Site_refresh_model extends CI_Model
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id IN (7,9,28) AND status = '1' AND delete_flag = '0'", 3),
                 array("SELECT COUNT(*) AS total FROM tbl_products WHERE id = 7 AND url_slug = 'dexte-compression-period-shorts-black'", 1),
             ),
+            '20261106_cotton_absorbency_v1' => array(
+                // Four live cotton panties. Not asserting the old value: a rating
+                // edited in admin beforehand must not stop the migrations after it.
+                array("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'cotton' AND p.status = '1' AND p.delete_flag = '0'", 4),
+            ),
             '20261106_cotton_black_gallery_v1' => array(
                 // All eight present before, so a replay after it has already run
                 // fails closed instead of silently re-ordering a gallery.
@@ -184,6 +190,9 @@ class Site_refresh_model extends CI_Model
         }
         if ($key === '20261028_teen_combo_approved_v1') {
             $this->require_count("SELECT COUNT(*) AS total FROM tbl_products WHERE url_slug = 'cotton-teen-period-panty-pack-of-2'", 1, $key);
+        }
+        if ($key === '20261106_cotton_absorbency_v1') {
+            $this->require_count("SELECT COUNT(*) AS total FROM tbl_products p JOIN tbl_categories c ON c.id = p.cat_id WHERE c.url_slug = 'cotton' AND p.status = '1' AND p.delete_flag = '0' AND p.absorbency_rate = 4", 4, $key);
         }
         if ($key === '20261106_cotton_black_gallery_v1') {
             // Exactly her six photos, the standing one first, no pad photo left.
